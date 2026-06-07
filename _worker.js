@@ -1,11 +1,11 @@
 import { connect } from "cloudflare:sockets";
 
-/* 
- * Project Nahan (نهان) - IoT Device Telemetry Gateway
+/* * Project Nahan (نهان) - IoT Device Telemetry Gateway
  * Handles real-time binary streams from remote sensor nodes.
+ * v2.1.0 + Smart Routing + Config Caching + AI Integration
  */
 
-const CURRENT_VERSION = "2.1.0";
+const CURRENT_VERSION = "2.1.0-optim";
 
 const getAlpha = () => String.fromCharCode(118, 108, 101, 115, 115);
 const getBeta = () => String.fromCharCode(116, 114, 111, 106, 97, 110);
@@ -45,6 +45,31 @@ let activeDeviceId = "";
 
 let sysUsageCache = { users: {} };
 let lastSysUsageSync = 0;
+
+// --- سیستم هوشمند و کشینگ (اضافه‌شده) ---
+let configCacheTime = 0;
+let ipHealth = new Map();
+const PENALTY_DECAY_TIME = 60000;
+
+function getBestRelay(relayString) {
+    if (!relayString) return ["pro", "xy", "ip.cmliussss.net"].join("");
+    let relays = relayString.split(/[\r\n,;]+/).map(s => s.trim()).filter(Boolean);
+    if (relays.length === 0) return ["pro", "xy", "ip.cmliussss.net"].join("");
+    if (relays.length === 1) return relays[0];
+
+    relays.sort((a, b) => (ipHealth.get(a) || 0) - (ipHealth.get(b) || 0));
+    return relays[0];
+}
+
+function reportRelayFailure(ip) {
+    let currentPenalty = ipHealth.get(ip) || 0;
+    ipHealth.set(ip, currentPenalty + 1);
+    setTimeout(() => {
+        let val = ipHealth.get(ip);
+        if (val > 0) ipHealth.set(ip, val - 1);
+    }, PENALTY_DECAY_TIME);
+}
+// ----------------------------------------
 
 function trackUsage(uuid, bytes, env, ctx) {
     if (!sysUsageCache) sysUsageCache = { users: {} };
@@ -142,7 +167,7 @@ export default {
 };
 
 async function serveMaintenancePage(request, url) {
-    let fakeList = sysConfig.maintenanceHost ? sysConfig.maintenanceHost.split(',').map(s => s.trim()).filter(s => s) : ["https://www.ubuntu.com"];
+    let fakeList = sysConfig.maintenanceHost ? sysConfig.maintenanceHost.split(/[\r\n,;]+/).map(s => s.trim()).filter(Boolean) : ["https://www.ubuntu.com"];
     const clientIP = request.headers.get("cf-connecting-ip") || "0.0.0.0";
     const ipHash = Array.from(clientIP).reduce((acc, char) => acc + char.charCodeAt(0), 0);
     const targetStr = fakeList[ipHash % fakeList.length].startsWith('http') ? fakeList[ipHash % fakeList.length] : `https://${fakeList[ipHash % fakeList.length]}`;
@@ -162,6 +187,10 @@ async function serveMaintenancePage(request, url) {
 }
 
 async function loadSysConfig(env) {
+    const now = Date.now();
+    // سیستم کش تنظیمات برای جلوگیری از تاخیر زیاد دیتابیس
+    if (now - configCacheTime < 60000 && sysConfig.deviceId) return;
+
     let dbData = null;
     if (env.IOT_DB) {
         try { const stored = await env.IOT_DB.get("sys_config"); if (stored) dbData = JSON.parse(stored); } catch (e) { }
@@ -174,6 +203,8 @@ async function loadSysConfig(env) {
     }
     const defaultRelay = ["pro", "xy", "ip.cmliussss.net"].join("");
     sysConfig.customRelay = externalRelayFromDb ?? env.RELAY_IP ?? defaultRelay;
+    
+    configCacheTime = now;
 }
 
 async function fetchCloudflareUsage(accountId, apiToken) {
@@ -334,6 +365,7 @@ async function handleConfigSync(request, env, ctx) {
         sysConfig = nextConfig;
         
         await env.IOT_DB.put("sys_config", JSON.stringify(nextConfig));
+        configCacheTime = 0; // Invalidate cache
         
         if (nextConfig.tgToken && ctx) {
             const hookUrl = `https://${new URL(request.url).hostname}/${encodeURI(nextConfig.apiRoute)}/tg`;
@@ -397,10 +429,12 @@ async function handleTelegramWebhook(request, env, hostName) {
                 } else if (data === "cb_pause") {
                     sysConfig.isPaused = true;
                     await env.IOT_DB.put("sys_config", JSON.stringify({ ...sysConfig, isPaused: true }));
+                    configCacheTime = 0;
                     await fetch(`${tgApi}/answerCallbackQuery`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ callback_query_id: cb.id, text: "سیستم متوقف شد. 🔴" }) });
                 } else if (data === "cb_resume") {
                     sysConfig.isPaused = false;
                     await env.IOT_DB.put("sys_config", JSON.stringify({ ...sysConfig, isPaused: false }));
+                    configCacheTime = 0;
                     await fetch(`${tgApi}/answerCallbackQuery`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ callback_query_id: cb.id, text: "سیستم مجدداً فعال شد. 🟢" }) });
                 }
             }
@@ -414,10 +448,12 @@ async function handleTelegramWebhook(request, env, hostName) {
                 } else if (text === "/pause") {
                     sysConfig.isPaused = true;
                     await env.IOT_DB.put("sys_config", JSON.stringify({ ...sysConfig, isPaused: true }));
+                    configCacheTime = 0;
                     await fetch(`${tgApi}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: "🔴 جریان داده‌ها متوقف شد." }) });
                 } else if (text === "/resume") {
                     sysConfig.isPaused = false;
                     await env.IOT_DB.put("sys_config", JSON.stringify({ ...sysConfig, isPaused: false }));
+                    configCacheTime = 0;
                     await fetch(`${tgApi}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: "🟢 جریان داده‌ها مجدداً برقرار شد." }) });
                 } else if (text === "/ping") {
                     const upSeconds = Math.floor((Date.now() - isolateStartTime)/1000);
@@ -428,7 +464,19 @@ async function handleTelegramWebhook(request, env, hostName) {
                     sysConfig.apiRoute = Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2,'0')).join('');
                     sysConfig.isPaused = true;
                     await env.IOT_DB.put("sys_config", JSON.stringify(sysConfig));
+                    configCacheTime = 0;
                     await fetch(`${tgApi}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: `🚨 PANIC MODE ACTIVATED 🚨\n\nRoute randomized & System Paused.\nAccess Revoked.` }) });
+                } else if (text.startsWith("/ai ")) {
+                    const prompt = text.replace("/ai ", "");
+                    await fetch(`${tgApi}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: "🧠 در حال پردازش..." }) });
+                    try {
+                        const aiResponse = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
+                            messages: [{ role: "user", content: prompt }]
+                        });
+                        await fetch(`${tgApi}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: `🤖 **هوش مصنوعی:**\n\n${aiResponse.response}`, parse_mode: 'Markdown' }) });
+                    } catch (e) {
+                        await fetch(`${tgApi}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: "❌ خطا در ارتباط با هوش مصنوعی. مطمئن شوید Binding مربوطه (AI) در پنل کلودفلر ست شده باشد." }) });
+                    }
                 } else if (text.startsWith("/users")) {
                     let umsg = "👥 لیست کاربران:\n\n";
                     if(!sysConfig.users || sysConfig.users.length === 0) umsg += "کاربری یافت نشد.";
@@ -456,6 +504,7 @@ async function handleTelegramWebhook(request, env, hostName) {
                             createdAt: Date.now()
                         });
                         await env.IOT_DB.put("sys_config", JSON.stringify(sysConfig));
+                        configCacheTime = 0;
                         await fetch(`${tgApi}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: `✅ کاربر جدید اضافه شد.\n\nنام: ${name}\nUUID: ${newUuid}\nحجم: ${gb ? gb + ' GB' : 'نامحدود'}\nاعتبار: ${days ? days + ' روز' : 'نامحدود'}` }) });
                     }
                 } else if (text.startsWith("/deluser")) {
@@ -467,6 +516,7 @@ async function handleTelegramWebhook(request, env, hostName) {
                         if(sysConfig.users) sysConfig.users = sysConfig.users.filter(u => u.id !== parts[1]);
                         if(sysConfig.users.length < initLen) {
                             await env.IOT_DB.put("sys_config", JSON.stringify(sysConfig));
+                            configCacheTime = 0;
                             await fetch(`${tgApi}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: "✅ کاربر حذف شد." }) });
                         } else {
                             await fetch(`${tgApi}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: "❌ کاربری با این UUID یافت نشد." }) });
@@ -479,7 +529,7 @@ async function handleTelegramWebhook(request, env, hostName) {
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             chat_id: chatId,
-                            text: "🤖 **ربات سیستم نهان**\nانتخاب کنید:\n\nدستورات سریع:\n/pause - توقف اتصالات\n/resume - از سرگیری\n/status - وضعیت\n/ping - پراکسی وضعیت\n/users - لیست کاربران\n/adduser [name] [gb] [days] - افزودن کاربر\n/deluser [uuid] - حذف کاربر\n/panic - قطع دسترسی 🚨",
+                            text: "🤖 **ربات سیستم نهان**\nانتخاب کنید:\n\nدستورات سریع:\n/pause - توقف اتصالات\n/resume - از سرگیری\n/status - وضعیت\n/ping - پراکسی وضعیت\n/users - لیست کاربران\n/adduser [name] [gb] [days] - افزودن کاربر\n/deluser [uuid] - حذف کاربر\n/panic - قطع دسترسی 🚨\n/ai [text] - گفتگو با هوش مصنوعی 🧠",
                             parse_mode: 'HTML',
                             reply_markup: {
                                 inline_keyboard: [
@@ -581,12 +631,16 @@ async function startDataPipe(webSocket, env, ctx) {
             remoteSocket = connect({ hostname: targetAddr, port: targetPort });
             await remoteSocket.opened;
         } catch {
-            const fallbackIp = sysConfig.backupRelay || ["pro", "xy", "ip.cmliussss.net"].join("");
+            const bestFallback = getBestRelay(sysConfig.backupRelay);
             try {
-                const [altIP, altPortStr] = fallbackIp.split(":");
+                const [altIP, altPortStr] = bestFallback.split(":");
                 remoteSocket = connect({ hostname: altIP, port: altPortStr ? Number(altPortStr) : targetPort });
                 await remoteSocket.opened;
-            } catch { webSocket.close(); return isModeAlpha; }
+            } catch { 
+                if (bestFallback) reportRelayFailure(bestFallback);
+                webSocket.close(); 
+                return isModeAlpha; 
+            }
         }
 
         dataWriter = remoteSocket.writable.getWriter();
@@ -737,9 +791,8 @@ function getDashboardUI(hasDB) {
   </head>
   <body class="bg-slate-50 dark:bg-darkbg text-slate-800 dark:text-slate-200 h-[100dvh] flex flex-col md:flex-row overflow-hidden selection:bg-primary selection:text-white transition-colors duration-300">
 
-      <!-- Global Controls -->
       <div class="fixed top-4 end-4 md:top-6 md:end-6 flex items-center space-x-2 space-x-reverse z-50">
-          <span id="top-version-badge" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-full text-[11px] font-mono font-bold border border-slate-200 dark:border-darkborder shadow-sm">v2.1.0</span>
+          <span id="top-version-badge" class="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-full text-[11px] font-mono font-bold border border-slate-200 dark:border-darkborder shadow-sm">v2.1.0-optim</span>
           <a href="https://github.com/itsyebekhe/nahan" id="github-link-btn" target="_blank" class="p-2 bg-white/80 dark:bg-darkcard/80 backdrop-blur rounded-full shadow border border-slate-200 dark:border-darkborder text-slate-600 dark:text-slate-400 hover:text-primary transition-all">
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
           </a>
@@ -753,7 +806,6 @@ function getDashboardUI(hasDB) {
           </button>
       </div>
 
-      <!-- LOGIN SCREEN -->
       <div id="login-box" class="absolute inset-0 flex items-center justify-center p-4 z-40 bg-slate-50 dark:bg-darkbg">
           <div class="absolute top-1/4 start-1/4 w-64 h-64 bg-primary/20 rounded-full blur-3xl -z-10"></div>
           <div class="max-w-md w-full bg-white/90 dark:bg-darkcard/90 backdrop-blur-xl p-8 rounded-3xl shadow-2xl border border-white/40 dark:border-slate-700/50">
@@ -770,16 +822,14 @@ function getDashboardUI(hasDB) {
           </div>
       </div>
 
-      <!-- DASHBOARD CONTAINER -->
       <div id="dash-box" class="hidden w-full h-full flex-col md:flex-row relative">
           
-          <!-- SIDEBAR (Desktop) -->
           <aside class="hidden md:flex w-64 bg-white dark:bg-darkcard border-e border-slate-200 dark:border-darkborder flex-col z-20 shrink-0">
               <div class="flex items-center p-6 border-b border-slate-100 dark:border-darkborder/50">
                   <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-primary flex items-center justify-center me-3 shrink-0"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
                   <div class="flex flex-col">
                       <h1 class="font-black text-xl leading-none" data-i18n="title">Nahan</h1>
-                      <span id="app-version" class="text-[10px] font-mono text-slate-400 mt-1 font-semibold">v2.1.0</span>
+                      <span id="app-version" class="text-[10px] font-mono text-slate-400 mt-1 font-semibold">v2.1.0-optim</span>
                   </div>
               </div>
               <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -816,17 +866,14 @@ function getDashboardUI(hasDB) {
               </div>
           </aside>
   
-          <!-- MAIN CONTENT AREA -->
           <main class="flex-1 flex flex-col h-full overflow-hidden">
               <header class="h-20 md:h-24 shrink-0 flex items-center px-6 md:px-10 z-10 pt-4 md:pt-0">
                   <h2 id="view-title" class="text-2xl md:text-3xl font-black text-slate-800 dark:text-white mt-2" data-i18n="tab_info">Endpoints</h2>
               </header>
   
-              <!-- Scrollable Content -->
               <div class="flex-1 overflow-y-auto p-4 md:p-10">
                   <div class="max-w-4xl mx-auto space-y-6 fade-in">
 
-                      <!-- Update Banner -->
                       <div id="update-alert-banner" class="hidden bg-gradient-to-r from-amber-500/10 to-primary/10 border-2 border-amber-300 dark:border-amber-950/20 rounded-3xl p-6 shadow-md flex-col sm:flex-row items-center justify-between gap-4 fade-in">
                           <div class="flex items-center space-x-4 space-x-reverse text-start w-full">
                               <div class="p-3 bg-amber-500/10 text-amber-500 rounded-2xl shrink-0">
@@ -845,12 +892,10 @@ function getDashboardUI(hasDB) {
                           </div>
                       </div>
 
-                      <!-- INFO VIEW -->
                       <div id="view-info" class="space-y-6 block">
                           <div id="dyn-profiles-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                       </div>
 
-                      <!-- NETWORK/METRICS VIEW -->
                       <div id="view-network" class="hidden space-y-6">
                             <div class="bg-white dark:bg-darkcard rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-darkborder mb-6">
                               <h3 class="text-sm uppercase font-bold text-slate-500 tracking-wider mb-4">Live Profile Usage</h3>
@@ -875,7 +920,6 @@ function getDashboardUI(hasDB) {
                                   <p id="net-loc" class="text-lg font-bold truncate">...</p>
                               </div>
   
-                              <!-- Diagnostics Segment -->
                               <div class="bg-white dark:bg-darkcard p-6 rounded-3xl shadow-sm border border-slate-200 dark:border-darkborder relative overflow-hidden group sm:col-span-2 lg:col-span-3">
                                   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                       <div>
@@ -908,7 +952,6 @@ function getDashboardUI(hasDB) {
                           </div>
                       </div>
   
-                      <!-- SETTINGS VIEW -->
                       <div id="view-settings" class="hidden">
                           <div class="bg-white dark:bg-darkcard rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-darkborder grid grid-cols-1 md:grid-cols-2 gap-5">
                               <div class="space-y-1">
@@ -944,7 +987,6 @@ function getDashboardUI(hasDB) {
                                   <input type="text" id="cfg-github-repo" placeholder="itsyebekhe/nahan" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                               </div>
   
-                              <!-- Import/Export Config Area -->
                               <div class="bg-white dark:bg-darkcard rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-darkborder md:col-span-2 space-y-4">
                                   <h3 class="text-sm uppercase font-bold text-slate-400 tracking-wider" data-i18n="backup_restore_title">Backup & Restore</h3>
                                   <div class="flex flex-col sm:flex-row gap-4">
@@ -960,9 +1002,7 @@ function getDashboardUI(hasDB) {
                           </div>
                       </div>
   
-                      <!-- ADVANCED VIEW -->
                       <div id="view-advanced" class="hidden space-y-6">
-                          <!-- Multi Clean IP Section -->
                           <div class="bg-white dark:bg-darkcard rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-darkborder">
                               <div class="flex items-center justify-between mb-4">
                                   <h3 class="text-sm uppercase font-bold text-slate-500 tracking-wider" data-i18n="lbl_clean_ips">Clean IPs (Multi-Generator)</h3>
@@ -988,13 +1028,13 @@ function getDashboardUI(hasDB) {
                                   <input type="text" id="cfg-fake" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                               </div>
                               <div class="space-y-1 md:col-span-2 text-start">
-                                  <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_relay">Backup Relay IP</label>
-                                  <input type="text" id="cfg-relay" placeholder="proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                  <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_relay">Backup Relay IP (Smart Routing)</label>
+                                  <input type="text" id="cfg-relay" placeholder="pro, api.neysh.ir" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                  <p class="text-xs text-slate-400 mt-1">آی‌پی‌ها را با کاما جدا کنید. سیستم هوشمند بهینه‌ترین مسیر را انتخاب می‌کند.</p>
                               </div>
                           </div>
   
                           <div class="flex flex-col sm:flex-row gap-4 p-4 bg-white dark:bg-darkcard rounded-3xl border border-slate-200 dark:border-darkborder">
-                              <!-- TCP Fast Open Toggle -->
                               <label class="flex-1 flex items-center justify-between sm:justify-start cursor-pointer group bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl">
                                   <span class="text-sm font-bold text-slate-700 dark:text-slate-300 sm:me-4" data-i18n="lbl_tfo">TCP Fast Open</span>
                                   <div class="relative inline-flex items-center cursor-pointer">
@@ -1002,7 +1042,6 @@ function getDashboardUI(hasDB) {
                                       <div class="w-11 h-6 bg-slate-300 dark:bg-slate-600 rounded-full peer peer-checked:after:translate-x-5 rtl:peer-checked:after:-translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-500 peer-checked:bg-primary"></div>
                                   </div>
                               </label>
-                              <!-- Secure Hello (ECH) Toggle -->
                               <label class="flex-1 flex items-center justify-between sm:justify-start cursor-pointer group bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl">
                                   <span class="text-sm font-bold text-slate-700 dark:text-slate-300 sm:me-4" data-i18n="lbl_ech">Secure Hello (ECH)</span>
                                   <div class="relative inline-flex items-center cursor-pointer">
@@ -1013,7 +1052,6 @@ function getDashboardUI(hasDB) {
                           </div>
 
                           <div class="flex flex-col sm:flex-row gap-4 p-4 bg-white dark:bg-darkcard rounded-3xl border border-slate-200 dark:border-darkborder mt-6">
-                              <!-- Silent Alert Toggle -->
                               <label class="flex-1 flex items-center justify-between sm:justify-start cursor-pointer group bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl">
                                   <span class="text-sm font-bold text-slate-700 dark:text-slate-300 sm:me-4" data-i18n="lbl_silent">Silent UI Alerts</span>
                                   <div class="relative inline-flex items-center cursor-pointer">
@@ -1021,7 +1059,6 @@ function getDashboardUI(hasDB) {
                                       <div class="w-11 h-6 bg-slate-300 dark:bg-slate-600 rounded-full peer peer-checked:after:translate-x-5 rtl:peer-checked:after:-translate-x-5 peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-500 peer-checked:bg-primary"></div>
                                   </div>
                               </label>
-                              <!-- Pause Kill Switch Toggle -->
                               <label class="flex-1 flex items-center justify-between sm:justify-start cursor-pointer group bg-red-50 dark:bg-red-900/10 p-3 rounded-2xl border border-red-200 dark:border-red-900/30">
                                   <span class="text-sm font-bold text-red-600 dark:text-red-400 sm:me-4" data-i18n="lbl_pause">Kill Switch (Pause System)</span>
                                   <div class="relative inline-flex items-center cursor-pointer">
@@ -1031,7 +1068,6 @@ function getDashboardUI(hasDB) {
                               </label>
                           </div>
 
-                          <!-- Telegram Bot Section -->
                           <div class="bg-white dark:bg-darkcard rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-darkborder grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
                               <div class="space-y-1 text-start">
                                   <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_tg_token">Token Bot</label>
@@ -1044,7 +1080,6 @@ function getDashboardUI(hasDB) {
                               <p class="text-xs text-slate-400 md:col-span-2" data-i18n="desc_tg_bot">Set these values to receive login alerts via Telegram.</p>
                           </div>
                           
-                          <!-- Cloudflare Usage Analytics -->
                           <div class="bg-white dark:bg-darkcard rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-darkborder grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
                               <div class="space-y-1 text-start">
                                   <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_cf_acc">CF Account ID</label>
@@ -1058,7 +1093,6 @@ function getDashboardUI(hasDB) {
                           </div>
                       </div>
                       
-                      <!-- USERS VIEW -->
                       <div id="view-users" class="hidden space-y-6">
                           <div class="bg-white dark:bg-darkcard rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-darkborder relative overflow-hidden">
                               <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
@@ -1086,7 +1120,6 @@ function getDashboardUI(hasDB) {
                           </div>
                       </div>
 
-                      <!-- Modal: Add User -->
                       <div id="modal-add-user" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
                           <div class="bg-white dark:bg-darkcard rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-200 dark:border-darkborder">
                               <h3 class="text-xl font-bold mb-4" data-i18n="modal_add_title">Add User</h3>
@@ -1111,7 +1144,6 @@ function getDashboardUI(hasDB) {
                           </div>
                       </div>
 
-                      <!-- LOGS VIEW -->
                       <div id="view-logs" class="hidden space-y-6">
                           <div class="bg-white dark:bg-darkcard rounded-3xl p-6 shadow-sm border border-slate-200 dark:border-darkborder relative overflow-hidden">
                               <div class="flex items-center justify-between mb-6">
@@ -1128,14 +1160,12 @@ function getDashboardUI(hasDB) {
                   </div>
               </div>
   
-              <!-- Save Bar (Docked to bottom of main content) -->
               <div class="shrink-0 bg-white dark:bg-darkcard border-t border-slate-200 dark:border-darkborder p-4 flex justify-between md:justify-end items-center z-20">
                   <span id="save-status" class="text-sm font-bold text-slate-500 md:me-4"></span>
                   <button onclick="doSave()" class="px-8 py-3 bg-primary text-white font-bold rounded-xl shadow-lg hover:opacity-90 transition-opacity" data-i18n="save_btn">Save Config</button>
               </div>
           </main>
   
-          <!-- BOTTOM NAV (Mobile) -->
           <nav class="md:hidden w-full h-16 bg-white dark:bg-darkcard border-t border-slate-200 dark:border-darkborder flex justify-around items-center z-30 shrink-0 pb-safe">
               <button onclick="switchTab('info')" id="mob-tab-info" class="mobile-nav-item active flex flex-col items-center justify-center w-full h-full text-slate-400">
                   <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
@@ -1164,12 +1194,10 @@ function getDashboardUI(hasDB) {
           </nav>
       </div>
   
-      <!-- Toast Notification -->
       <div id="copy-toast" class="fixed top-20 md:top-10 left-1/2 -translate-x-1/2 bg-slate-800 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-full shadow-2xl font-bold text-sm z-50 transition-all transform -translate-y-20 opacity-0 pointer-events-none">
           <span data-i18n="copied">Copied!</span>
       </div>
       
-      <!-- QR Code Modal (Enhanced) -->
       <div id="qr-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
           <div class="bg-white dark:bg-darkcard rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-slate-200 dark:border-darkborder relative">
               <button onclick="closeQRModal()" class="absolute top-4 end-4 text-slate-400 hover:text-slate-800 dark:hover:text-white">
@@ -1535,7 +1563,6 @@ function getDashboardUI(hasDB) {
                                       <input type="text" id="sync-\${p.id}" readonly value="\${p.sync}" class="w-full bg-slate-50 dark:bg-darkbg border border-slate-200 dark:border-darkborder px-4 py-3 rounded-xl text-sm outline-none font-mono text-slate-600 dark:text-slate-400 truncate pe-12">
                                       <button onclick="copyData('sync-\${p.id}')" class="absolute bottom-1 end-1 text-primary p-2 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></button>
                                   </div>
-                                  <!-- QR Code Button Enhanced -->
                                   <button onclick="showQR('\${p.name}', document.getElementById('sync-\${p.id}').value)" class="w-full mt-2 flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors text-sm">
                                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
                                       Show QR Code
@@ -1732,7 +1759,7 @@ function getDashboardUI(hasDB) {
                   if (remoteVer) {
                       const strip = v => v.replace(/^v/, '').trim();
                       const rVer = strip(remoteVer);
-                      const cVer = strip("2.1.0");
+                      const cVer = strip("2.1.0-optim");
                       
                       if (rVer && rVer !== cVer) {
                           showUpdateBanner(repo, rVer);
@@ -1781,4 +1808,4 @@ function getDashboardUI(hasDB) {
   </body>
   </html>
     `;
-  }
+}
