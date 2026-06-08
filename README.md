@@ -35,7 +35,39 @@ Nahan is not just a proxy script; it's a complete connection management solution
 | **💾 D1 Database** | Settings are persistently stored in Cloudflare D1 Database, solving KV's write limitations. |
 | **🚨 Emergency Kill Switch** | Immediately cut off all proxy traffic with a single click from the dashboard or Telegram. |
 
-## 🚀 Quick Setup Guide
+## ⚡ Automated Setup (Recommended)
+
+The easiest way to deploy Nahan is using the interactive setup script. It handles everything automatically — dependency checks, Cloudflare login, D1 database creation, and worker deployment.
+
+**Prerequisites:** `Node.js` and `npm` (the script will offer to install them if missing).
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/your-repo/nahan/main/setup.sh)
+```
+
+Or if you've already cloned the repository:
+
+```bash
+chmod +x setup.sh && ./setup.sh
+```
+
+The script will guide you through 5 automated phases:
+
+| Phase | Action |
+| :--- | :--- |
+| **1. Validation** | Checks for Node.js, npm, and Wrangler CLI (installs if missing) |
+| **2. Authentication** | Opens browser for Cloudflare SSO login |
+| **3. Database** | Creates and configures your D1 database |
+| **4. Configuration** | Generates `wrangler.toml` automatically |
+| **5. Deployment** | Uploads and activates your worker on Cloudflare Edge |
+
+The script also includes an **Uninstall** option to completely remove the worker and database from Cloudflare.
+
+> **⚠️ Note:** Disable any active VPN before running the script — it can interfere with Cloudflare's browser-based SSO login.
+
+---
+
+## 🚀 Manual Setup Guide
 
 Set up your gateway in less than 2 minutes.
 
