@@ -5,7 +5,7 @@ import { connect } from "cloudflare:sockets";
  * Handles real-time binary streams from remote sensor nodes.
  */
 
-const CURRENT_VERSION = "2.4.0";
+const CURRENT_VERSION = "2.4.1";
 
 const getAlpha = () => String.fromCharCode(118, 108, 101, 115, 115);
 const getBeta = () => String.fromCharCode(116, 114, 111, 106, 97, 110);
@@ -215,14 +215,14 @@ export default {
 
                     const clientHost = request.headers.get("Host") || url.hostname;
                     let targetSub = url.searchParams.get("sub");
-                    let targetUUID = url.searchParams.get("uuid");
+                    let targetUUID = url.searchParams.get("id");
                     let hasMultiUser = (sysConfig.users && sysConfig.users.length > 0);
                     if (hasMultiUser && (!targetSub || targetSub.toLowerCase() === 'default')) {
                         return new Response("Error: Default profile sync is disabled when multi-user is active.", { status: 403 });
                     }
                     if (!targetUUID)
                     {
-                        return new Response("Error: UUID is empty, please get new sub from admin");
+                        return new Response("Error: UUID is empty, please get new sub from admin", { status: 403 });
                     }
                     if (ua.includes(getGamma()) || ua.includes("meta") || ua.includes("stash")) {
                         return new Response(buildYamlProfile(clientHost, targetSub, targetUUID));
@@ -240,14 +240,14 @@ export default {
 
                     const clientHost = request.headers.get("Host") || url.hostname;
                     let targetSub = url.searchParams.get("sub");
-                    let targetUUID = url.searchParams.get("uuid");
+                    let targetUUID = url.searchParams.get("id");
                     let hasMultiUser = (sysConfig.users && sysConfig.users.length > 0);
                     if (hasMultiUser && (!targetSub || targetSub.toLowerCase() === 'default')) {
                         return new Response("Error: Default profile sync is disabled when multi-user is active.", { status: 403 });
                     }
                     if (!targetUUID)
                     {
-                        return new Response("Error: UUID is empty, please get new sub from admin");
+                        return new Response("Error: UUID is empty, please get new sub from admin", { status: 403 });
                     }
                     if (ua.includes(getGamma()) || ua.includes("meta") || ua.includes("stash")) {
                         return new Response(buildYamlProfile(clientHost, targetSub, targetUUID));
