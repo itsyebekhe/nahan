@@ -179,7 +179,7 @@ export default {
             };
 
             const isSyncRoute = reqPath.endsWith('/api/sync');
-            const isAuthorizedRoute = reqPath === routes.data || reqPath === routes.dash || reqPath === routes.auth || reqPath === routes.sync || reqPath === routes.tg || reqPath === routes.logs || isSyncRoute;
+            const isAuthorizedRoute = reqPath === routes.data || reqPath === routes.sub || reqPath === routes.dash || reqPath === routes.auth || reqPath === routes.sync || reqPath === routes.tg || reqPath === routes.logs || isSyncRoute;
 
             if (!isTelemetryStream && !isAuthorizedRoute) {
                 return serveMaintenancePage(request, url);
@@ -444,7 +444,7 @@ async function handleAuth(request, hostName, ctx, env) {
                 profiles: getAllProfiles().map(p => ({
                     name: p.name,
                     id: p.id,
-                    sync: `https://${hostName}/${sysConfig.apiRoute}?id=${p.id}${p.name === 'Default' ? '' : '&sub=' + encodeURIComponent(p.name)}`
+                    sync: `https://${hostName}/${sysConfig.subRoute}?id=${p.id}${p.name === 'Default' ? '' : '&sub=' + encodeURIComponent(p.name)}`
                 }))
             }), { status: 200 });
         }
@@ -725,7 +725,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
             
             const statusEmoji = u.isPaused ? "⏸️" : (isExp ? "🔴" : "🟢");
             const statusText = u.isPaused ? t("paused") : (isExp ? (langCode==='fa'?'منقضی':'Expired') : t("active"));
-            const subSync = `https://${hostName}/${sysConfig.apiRoute}?sub=${encodeURIComponent(u.name)}&id=${encodeURIComponent(u.id)}`;
+            const subSync = `https://${hostName}/${sysConfig.subRoute}?sub=${encodeURIComponent(u.name)}&id=${encodeURIComponent(u.id)}`;
             
             let text = `👤 **${t("sub_info")}**\n`;
             text += `━━━━━━━━━━━━━━━━\n`;
@@ -925,6 +925,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                     await sendOrEdit(chatId, text, kb, messageId);
                 } else if (data === "sys_panic_confirm") {
                     sysConfig.apiRoute = Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2,'0')).join('');
+                    sysConfig.subRoute = Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2,'0')).join('');
                     sysConfig.isPaused = true;
                     await d1Put(env, "sys_config", JSON.stringify(sysConfig));
                     const successText = `${t("msg_panic")}\n\n🔑 New Secret Path Randomized. All old sessions revoked.`;
@@ -1231,7 +1232,7 @@ function buildSingleUri(hostName) {
     let ports = sysConfig.socketPorts ? sysConfig.socketPorts.split(',').map(s=>s.trim()).filter(Boolean) : ["443"];
     let firstPort = ports[0];
     let sec = getTransportParams(firstPort);
-    let reqPath = encodeURI(`/${sysConfig.apiRoute}`);
+    let reqPath = encodeURI(`/${sysConfig.subRoute}`);
     let uriProto = sysConfig.mode === "beta" ? getBeta() : getAlpha();
     let ext = `encryption=none&security=${sec}&sni=${finalHost}&fp=${sysConfig.agent}&type=ws&host=${finalHost}&path=${reqPath}`;
     if (sysConfig.enableOpt2) ext += `&pbk=enabled`;
@@ -1262,7 +1263,7 @@ function buildUriProfile(hostName, targetSub = null, targetUUID) {
     if (sysConfig.slaveNodes) allHostNames.push(...sysConfig.slaveNodes.split(/[\r\n,;]+/).map(s=>s.trim()).filter(Boolean));
     
     let ports = sysConfig.socketPorts ? sysConfig.socketPorts.split(',').map(s=>s.trim()).filter(Boolean) : ["443"];
-    let reqPath = encodeURI(`/${sysConfig.apiRoute}`);
+    let reqPath = encodeURI(`/${sysConfig.subRoute}`);
     
     let lines = [];
     let profiles = getAllProfiles(targetSub, targetUUID);
@@ -1309,13 +1310,13 @@ function buildYamlProfile(hostName, targetSub = null, targetUUId = null) {
                     if (sysConfig.mode === "alpha" || sysConfig.mode === "both") {
                         let vName = getConfigName("alpha", p.name, port, hName, ip);
                         proxyNames.push(`"${vName}"`);
-                        proxies.push(`- name: "${vName}"\n  type: ${getAlpha()}\n  server: ${ip}\n  port: ${port}\n  uuid: ${p.id}\n  udp: true\n  tls: ${sec}\n  sni: ${hName}\n  client-fingerprint: ${sysConfig.agent}\n  network: ws\n  ws-opts:\n    path: "/${sysConfig.apiRoute}"\n    headers: { Host: ${hName} }\n${sysConfig.enableOpt1 ? "  tfo: true" : ""}`);
+                        proxies.push(`- name: "${vName}"\n  type: ${getAlpha()}\n  server: ${ip}\n  port: ${port}\n  uuid: ${p.id}\n  udp: true\n  tls: ${sec}\n  sni: ${hName}\n  client-fingerprint: ${sysConfig.agent}\n  network: ws\n  ws-opts:\n    path: "/${sysConfig.subRoute}"\n    headers: { Host: ${hName} }\n${sysConfig.enableOpt1 ? "  tfo: true" : ""}`);
                     }
 
                     if (sysConfig.mode === "beta" || sysConfig.mode === "both") {
                         let tName = getConfigName("beta", p.name, port, hName, ip);
                         proxyNames.push(`"${tName}"`);
-                        proxies.push(`- name: "${tName}"\n  type: ${getBeta()}\n  server: ${ip}\n  port: ${port}\n  password: ${p.id}\n  udp: true\n  tls: ${sec}\n  sni: ${hName}\n  client-fingerprint: ${sysConfig.agent}\n  network: ws\n  ws-opts:\n    path: "/${sysConfig.apiRoute}"\n    headers: { Host: ${hName} }\n${sysConfig.enableOpt1 ? "  tfo: true" : ""}`);
+                        proxies.push(`- name: "${tName}"\n  type: ${getBeta()}\n  server: ${ip}\n  port: ${port}\n  password: ${p.id}\n  udp: true\n  tls: ${sec}\n  sni: ${hName}\n  client-fingerprint: ${sysConfig.agent}\n  network: ws\n  ws-opts:\n    path: "/${sysConfig.subRoute}"\n    headers: { Host: ${hName} }\n${sysConfig.enableOpt1 ? "  tfo: true" : ""}`);
                     }
                 });
             });
@@ -1606,6 +1607,10 @@ function getDashboardUI(hasDB) {
                               <div class="space-y-1">
                                   <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_path">API Route (Hidden Path)</label>
                                   <input type="text" id="cfg-path" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none">
+                              </div>
+                              <div class="space-y-1">
+                                  <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_path">Sub Route (Public Path)</label>
+                                  <input type="text" id="cfg-sub" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none">
                               </div>
                               <div class="space-y-1">
                                   <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_pass">Master Key</label>
@@ -2124,7 +2129,7 @@ function getDashboardUI(hasDB) {
                   let finalIP = ipsList.length > 0 ? ipsList[0] : (hostName.endsWith('.pages.dev') ? 'time.is' : hostName);
                   
                   let fp = document.getElementById('cfg-fp').value;
-                  let path = encodeURI("/" + document.getElementById('cfg-path').value);
+                  let path = encodeURI("/" + document.getElementById('cfg-sub').value);
                   let sec = ["80","8080"].includes(port) ? "none" : "tls";
                   
                   let rawLink = proto + "://" + localUUID + "@" + finalIP + ":" + port + "?encryption=none&security=" + sec + "&sni=" + hostName + "&fp=" + fp + "&type=ws&host=" + hostName + "&path=" + path;
@@ -2155,6 +2160,7 @@ function getDashboardUI(hasDB) {
               const payload = {
                   mode: el('cfg-proto').value, socketPorts: Array.from(el('cfg-port').selectedOptions).map(o=>o.value).join(','), deviceId: el('cfg-uuid').value,
                   apiRoute: el('cfg-path').value, masterKey: el('cfg-pass').value, agent: el('cfg-fp').value,
+                  subRoute: el('cfg-sub').value,
                   resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns').value ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, maintenanceHost: el('cfg-fake').value, backupRelay: el('cfg-relay').value,
                   enableOpt1: el('cfg-tfo').checked, enableOpt2: el('cfg-ech').checked,
                   tgToken: el('cfg-tg-token').value, tgChatId: el('cfg-tg-chat').value,
@@ -2185,6 +2191,7 @@ function getDashboardUI(hasDB) {
                       Array.from(document.getElementById('cfg-port').options).forEach(o => o.selected = pList.includes(o.value));
                       mapId('cfg-uuid', conf.deviceId);
                       mapId('cfg-path', conf.apiRoute);
+                      mapId('cfg-sub', conf.subRoute);
                       mapId('cfg-pass', conf.masterKey);
                       mapId('cfg-fp', conf.agent);
                       mapId('cfg-dns', conf.resolveIp);
@@ -2274,6 +2281,7 @@ function getDashboardUI(hasDB) {
                       Array.from(document.getElementById('cfg-port').options).forEach(o => o.selected = pList.includes(o.value));
                       document.getElementById('cfg-uuid').value = conf.deviceId || '';
                       document.getElementById('cfg-path').value = conf.apiRoute || '';
+                      document.getElementById('cfg-sub').value = conf.subRoute || '';
                       document.getElementById('cfg-pass').value = conf.masterKey || '';
                       document.getElementById('cfg-fp').value = conf.agent || 'chrome';
                       document.getElementById('cfg-dns').value = conf.resolveIp || '';
@@ -2300,7 +2308,7 @@ function getDashboardUI(hasDB) {
                       renderUsersTable();
                       try { checkUpdate(); } catch(ue) { console.error(ue); }
 
-                      ['cfg-proto','cfg-port','cfg-fp','cfg-ips','cfg-nodes','cfg-path', 'cfg-relay', 'cfg-name-strategy', 'cfg-name-prefix'].forEach(id => {
+                      ['cfg-proto','cfg-port','cfg-fp','cfg-ips','cfg-nodes','cfg-path', 'cfg-sub', 'cfg-relay', 'cfg-name-strategy', 'cfg-name-prefix'].forEach(id => {
                           const el = document.getElementById(id);
                           if(el) { el.addEventListener('input', updateUI); el.addEventListener('change', updateUI); }
                       });
@@ -2372,6 +2380,7 @@ function getDashboardUI(hasDB) {
                   config: {
                       mode: el('cfg-proto').value, socketPorts: Array.from(el('cfg-port').selectedOptions).map(o=>o.value).join(','), deviceId: el('cfg-uuid').value,
                       apiRoute: el('cfg-path').value, masterKey: el('cfg-pass').value, agent: el('cfg-fp').value,
+                      subRoute: el('cfg-sub').value,
                       resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns').value ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, slaveNodes: el('cfg-nodes').value, maintenanceHost: el('cfg-fake').value, backupRelay: el('cfg-relay').value,
                       enableOpt1: el('cfg-tfo').checked, enableOpt2: el('cfg-ech').checked,
                       tgToken: el('cfg-tg-token').value, tgChatId: el('cfg-tg-chat').value,
@@ -2411,6 +2420,7 @@ function getDashboardUI(hasDB) {
                   config: {
                       mode: el('cfg-proto').value, socketPorts: Array.from(el('cfg-port').selectedOptions).map(o=>o.value).join(','), deviceId: el('cfg-uuid').value,
                       apiRoute: el('cfg-path').value, masterKey: el('cfg-pass').value, agent: el('cfg-fp').value,
+                      subRoute: el('cfg-sub').value,
                       resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns').value ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, slaveNodes: el('cfg-nodes').value, maintenanceHost: el('cfg-fake').value, backupRelay: el('cfg-relay').value,
                       enableOpt1: el('cfg-tfo').checked, enableOpt2: el('cfg-ech').checked,
                       tgToken: el('cfg-tg-token').value, tgChatId: el('cfg-tg-chat').value,
