@@ -5,7 +5,7 @@ import { connect } from "cloudflare:sockets";
  * Handles real-time binary streams from remote sensor nodes.
  */
 
-const CURRENT_VERSION = "2.3.5";
+const CURRENT_VERSION = "2.4.0";
 
 const getAlpha = () => String.fromCharCode(118, 108, 101, 115, 115);
 const getBeta = () => String.fromCharCode(116, 114, 111, 106, 97, 110);
@@ -13,6 +13,7 @@ const getGamma = () => String.fromCharCode(99, 108, 97, 115, 104);
 
 const SYSTEM_DEFAULTS = {
     apiRoute: "sync",
+    subRoute: "sub",
     maintenanceHost: "https://www.ubuntu.com, https://www.docker.com",
     backupRelay: "",
     customRelay: "",
@@ -35,7 +36,7 @@ const SYSTEM_DEFAULTS = {
     cfApiToken: "",
     isPaused: false,
     silentAlerts: false,
-    githubRepo: "itsyebekhe/nahan",
+    githubRepo: "taha-ghadirian/nahan",
     nameStrategy: "default",
     namePrefix: "Core",
     tgBotLang: "fa",
@@ -169,6 +170,7 @@ export default {
 
             const routes = {
                 data: `/${encodeURI(sysConfig.apiRoute)}`,
+                sub: `/${encodeURI(sysConfig.subRoute)}`,
                 dash: `/${encodeURI(sysConfig.apiRoute)}/dash`,
                 auth: `/${encodeURI(sysConfig.apiRoute)}/api/auth`,
                 sync: `/${encodeURI(sysConfig.apiRoute)}/api/sync`,
@@ -177,7 +179,7 @@ export default {
             };
 
             const isSyncRoute = reqPath.endsWith('/api/sync');
-            const isAuthorizedRoute = reqPath === routes.data || reqPath === routes.dash || reqPath === routes.auth || reqPath === routes.sync || reqPath === routes.tg || reqPath === routes.logs || isSyncRoute;
+            const isAuthorizedRoute = reqPath === routes.data || reqPath === routes.sub || reqPath === routes.dash || reqPath === routes.auth || reqPath === routes.sync || reqPath === routes.tg || reqPath === routes.logs || isSyncRoute;
 
             if (!isTelemetryStream && !isAuthorizedRoute) {
                 return serveMaintenancePage(request, url);
@@ -207,17 +209,50 @@ export default {
                     const ua = (request.headers.get("User-Agent") || "").toLowerCase();
                     if (ua.includes("mozilla") || ua.includes("chrome") || ua.includes("safari") || ua.includes("applewebkit")) {
                         return serveMaintenancePage(request, url);
-                    }
+                    } 
+                    // BREAKING: I seprated ApiRoute And SubRoute, currently, legacy sub path works, but will remove in next version.
+
+
                     const clientHost = request.headers.get("Host") || url.hostname;
                     let targetSub = url.searchParams.get("sub");
+                    let targetUUID = url.searchParams.get("uuid");
                     let hasMultiUser = (sysConfig.users && sysConfig.users.length > 0);
                     if (hasMultiUser && (!targetSub || targetSub.toLowerCase() === 'default')) {
                         return new Response("Error: Default profile sync is disabled when multi-user is active.", { status: 403 });
                     }
+                    if (!targetUUID)
+                    {
+                        return new Response("Error: UUID is empty, please get new sub from admin");
+                    }
                     if (ua.includes(getGamma()) || ua.includes("meta") || ua.includes("stash")) {
-                        return new Response(buildYamlProfile(clientHost, targetSub));
+                        return new Response(buildYamlProfile(clientHost, targetSub, targetUUID));
                     } else {
-                        const raw = buildUriProfile(clientHost, targetSub);
+                        const raw = buildUriProfile(clientHost, targetSub, targetUUID);
+                        return new Response(btoa(raw));
+                    }
+                }
+                if (reqPath == routes.sub)
+                {
+                    const ua = (request.headers.get("User-Agent") || "").toLowerCase();
+                    if (ua.includes("mozilla") || ua.includes("chrome") || ua.includes("safari") || ua.includes("applewebkit")) {
+                        return serveMaintenancePage(request, url);
+                    }
+
+                    const clientHost = request.headers.get("Host") || url.hostname;
+                    let targetSub = url.searchParams.get("sub");
+                    let targetUUID = url.searchParams.get("uuid");
+                    let hasMultiUser = (sysConfig.users && sysConfig.users.length > 0);
+                    if (hasMultiUser && (!targetSub || targetSub.toLowerCase() === 'default')) {
+                        return new Response("Error: Default profile sync is disabled when multi-user is active.", { status: 403 });
+                    }
+                    if (!targetUUID)
+                    {
+                        return new Response("Error: UUID is empty, please get new sub from admin");
+                    }
+                    if (ua.includes(getGamma()) || ua.includes("meta") || ua.includes("stash")) {
+                        return new Response(buildYamlProfile(clientHost, targetSub, targetUUID));
+                    } else {
+                        const raw = buildUriProfile(clientHost, targetSub, targetUUID);
                         return new Response(btoa(raw));
                     }
                 }
@@ -409,7 +444,7 @@ async function handleAuth(request, hostName, ctx, env) {
                 profiles: getAllProfiles().map(p => ({
                     name: p.name,
                     id: p.id,
-                    sync: `https://${hostName}/${sysConfig.apiRoute}${p.name === 'Default' ? '' : '?sub=' + encodeURIComponent(p.name)}`
+                    sync: `https://${hostName}/${sysConfig.subRoute}?id=${p.id}${p.name === 'Default' ? '' : '&sub=' + encodeURIComponent(p.name)}`
                 }))
             }), { status: 200 });
         }
@@ -690,7 +725,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
             
             const statusEmoji = u.isPaused ? "⏸️" : (isExp ? "🔴" : "🟢");
             const statusText = u.isPaused ? t("paused") : (isExp ? (langCode==='fa'?'منقضی':'Expired') : t("active"));
-            const subSync = `https://${hostName}/${sysConfig.apiRoute}?sub=${encodeURIComponent(u.name)}`;
+            const subSync = `https://${hostName}/${sysConfig.subRoute}?sub=${encodeURIComponent(u.name)}&id=${encodeURIComponent(u.id)}`;
             
             let text = `👤 **${t("sub_info")}**\n`;
             text += `━━━━━━━━━━━━━━━━\n`;
@@ -890,6 +925,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                     await sendOrEdit(chatId, text, kb, messageId);
                 } else if (data === "sys_panic_confirm") {
                     sysConfig.apiRoute = Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2,'0')).join('');
+                    sysConfig.subRoute = Array.from(crypto.getRandomValues(new Uint8Array(8))).map(b => b.toString(16).padStart(2,'0')).join('');
                     sysConfig.isPaused = true;
                     await d1Put(env, "sys_config", JSON.stringify(sysConfig));
                     const successText = `${t("msg_panic")}\n\n🔑 New Secret Path Randomized. All old sessions revoked.`;
@@ -1159,7 +1195,7 @@ function getCleanIps(hostName) {
 }
 
 
-function getAllProfiles(targetSub = null) {
+function getAllProfiles(targetSub = null, targetUUId = null) {
     let list = [{ id: activeDeviceId, name: "Default" }];
     
     if (sysConfig.users && sysConfig.users.length > 0) {
@@ -1181,8 +1217,9 @@ function getAllProfiles(targetSub = null) {
         });
     }
 
-    if (targetSub) {
-        list = list.filter(p => p.name.toLowerCase() === targetSub.toLowerCase());
+    if (targetSub && targetUUId) {
+        list = list.filter(p => p.name.toLowerCase() === targetSub.toLowerCase() &&
+            p.id == targetUUId);
     }
     return list;
 }
@@ -1195,7 +1232,7 @@ function buildSingleUri(hostName) {
     let ports = sysConfig.socketPorts ? sysConfig.socketPorts.split(',').map(s=>s.trim()).filter(Boolean) : ["443"];
     let firstPort = ports[0];
     let sec = getTransportParams(firstPort);
-    let reqPath = encodeURI(`/${sysConfig.apiRoute}`);
+    let reqPath = encodeURI(`/${sysConfig.subRoute}`);
     let uriProto = sysConfig.mode === "beta" ? getBeta() : getAlpha();
     let ext = `encryption=none&security=${sec}&sni=${finalHost}&fp=${sysConfig.agent}&type=ws&host=${finalHost}&path=${reqPath}`;
     if (sysConfig.enableOpt2) ext += `&pbk=enabled`;
@@ -1221,15 +1258,15 @@ function getConfigName(type, profileName, port, hostName, ip) {
     }
 }
 
-function buildUriProfile(hostName, targetSub = null) {
+function buildUriProfile(hostName, targetSub = null, targetUUID) {
     let allHostNames = [hostName];
     if (sysConfig.slaveNodes) allHostNames.push(...sysConfig.slaveNodes.split(/[\r\n,;]+/).map(s=>s.trim()).filter(Boolean));
     
     let ports = sysConfig.socketPorts ? sysConfig.socketPorts.split(',').map(s=>s.trim()).filter(Boolean) : ["443"];
-    let reqPath = encodeURI(`/${sysConfig.apiRoute}`);
+    let reqPath = encodeURI(`/${sysConfig.subRoute}`);
     
     let lines = [];
-    let profiles = getAllProfiles(targetSub);
+    let profiles = getAllProfiles(targetSub, targetUUID);
     
     profiles.forEach(p => {
         allHostNames.forEach(hName => {
@@ -1255,14 +1292,14 @@ function buildUriProfile(hostName, targetSub = null) {
     return lines.join('\n');
 }
 
-function buildYamlProfile(hostName, targetSub = null) {
+function buildYamlProfile(hostName, targetSub = null, targetUUId = null) {
     let allHostNames = [hostName];
     if (sysConfig.slaveNodes) allHostNames.push(...sysConfig.slaveNodes.split(/[\r\n,;]+/).map(s=>s.trim()).filter(Boolean));
     
     let ports = sysConfig.socketPorts ? sysConfig.socketPorts.split(',').map(s=>s.trim()).filter(Boolean) : ["443"];
     let proxies = [];
     let proxyNames = [];
-    let profiles = getAllProfiles(targetSub);
+    let profiles = getAllProfiles(targetSub, targetUUId);
 
     profiles.forEach(p => {
         allHostNames.forEach(hName => {
@@ -1273,13 +1310,13 @@ function buildYamlProfile(hostName, targetSub = null) {
                     if (sysConfig.mode === "alpha" || sysConfig.mode === "both") {
                         let vName = getConfigName("alpha", p.name, port, hName, ip);
                         proxyNames.push(`"${vName}"`);
-                        proxies.push(`- name: "${vName}"\n  type: ${getAlpha()}\n  server: ${ip}\n  port: ${port}\n  uuid: ${p.id}\n  udp: true\n  tls: ${sec}\n  sni: ${hName}\n  client-fingerprint: ${sysConfig.agent}\n  network: ws\n  ws-opts:\n    path: "/${sysConfig.apiRoute}"\n    headers: { Host: ${hName} }\n${sysConfig.enableOpt1 ? "  tfo: true" : ""}`);
+                        proxies.push(`- name: "${vName}"\n  type: ${getAlpha()}\n  server: ${ip}\n  port: ${port}\n  uuid: ${p.id}\n  udp: true\n  tls: ${sec}\n  sni: ${hName}\n  client-fingerprint: ${sysConfig.agent}\n  network: ws\n  ws-opts:\n    path: "/${sysConfig.subRoute}"\n    headers: { Host: ${hName} }\n${sysConfig.enableOpt1 ? "  tfo: true" : ""}`);
                     }
 
                     if (sysConfig.mode === "beta" || sysConfig.mode === "both") {
                         let tName = getConfigName("beta", p.name, port, hName, ip);
                         proxyNames.push(`"${tName}"`);
-                        proxies.push(`- name: "${tName}"\n  type: ${getBeta()}\n  server: ${ip}\n  port: ${port}\n  password: ${p.id}\n  udp: true\n  tls: ${sec}\n  sni: ${hName}\n  client-fingerprint: ${sysConfig.agent}\n  network: ws\n  ws-opts:\n    path: "/${sysConfig.apiRoute}"\n    headers: { Host: ${hName} }\n${sysConfig.enableOpt1 ? "  tfo: true" : ""}`);
+                        proxies.push(`- name: "${tName}"\n  type: ${getBeta()}\n  server: ${ip}\n  port: ${port}\n  password: ${p.id}\n  udp: true\n  tls: ${sec}\n  sni: ${hName}\n  client-fingerprint: ${sysConfig.agent}\n  network: ws\n  ws-opts:\n    path: "/${sysConfig.subRoute}"\n    headers: { Host: ${hName} }\n${sysConfig.enableOpt1 ? "  tfo: true" : ""}`);
                     }
                 });
             });
@@ -1329,7 +1366,7 @@ function getDashboardUI(hasDB) {
       <!-- Global Controls -->
       <div class="fixed top-4 end-4 md:top-5 md:end-5 flex items-center gap-2 z-50">
           <span id="top-version-badge" class="px-3 py-1.5 rounded-xl text-[11px] font-mono font-bold" style="background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);color:#818cf8;">v${CURRENT_VERSION}</span>
-          <a href="https://github.com/itsyebekhe/nahan" id="github-link-btn" target="_blank" class="p-2 rounded-xl transition-all" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;" onmouseover="this.style.color='#818cf8';this.style.borderColor='rgba(99,102,241,0.4)'" onmouseout="this.style.color='#94a3b8';this.style.borderColor='rgba(255,255,255,0.1)'">
+          <a href="https://github.com/taha-ghadirian/nahan" id="github-link-btn" target="_blank" class="p-2 rounded-xl transition-all" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;" onmouseover="this.style.color='#818cf8';this.style.borderColor='rgba(99,102,241,0.4)'" onmouseout="this.style.color='#94a3b8';this.style.borderColor='rgba(255,255,255,0.1)'">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
           </a>
           <button onclick="toggleLang()" id="lang-toggle" class="px-3 py-1.5 rounded-xl text-sm font-bold transition-all" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e2e8f0;" onmouseover="this.style.borderColor='rgba(99,102,241,0.4)';this.style.color='#a5b4fc'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='#e2e8f0'">EN</button>
@@ -1462,7 +1499,7 @@ function getDashboardUI(hasDB) {
                           </div>
                           <div class="flex gap-2 w-full sm:w-auto shrink-0 justify-end">
                               <button onclick="dismissUpdate()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs transition-colors" data-i18n="btn_cancel">Cancel</button>
-                              <a id="update-alert-btn" href="https://github.com/itsyebekhe/nahan" target="_blank" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-1.5" data-i18n="update_btn">
+                              <a id="update-alert-btn" href="https://github.com/taha-ghadirian/nahan" target="_blank" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-1.5" data-i18n="update_btn">
                                   Get Latest Code ➜
                               </a>
                           </div>
@@ -1572,6 +1609,10 @@ function getDashboardUI(hasDB) {
                                   <input type="text" id="cfg-path" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none">
                               </div>
                               <div class="space-y-1">
+                                  <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_path">Sub Route (Public Path)</label>
+                                  <input type="text" id="cfg-sub" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none">
+                              </div>
+                              <div class="space-y-1">
                                   <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_pass">Master Key</label>
                                   <div class="relative">
                                       <input type="password" id="cfg-pass" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none pe-12">
@@ -1580,7 +1621,7 @@ function getDashboardUI(hasDB) {
                               </div>
                               <div class="space-y-1 md:col-span-2 font-mono">
                                   <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_github_repo">GitHub Update Repository</label>
-                                  <input type="text" id="cfg-github-repo" placeholder="itsyebekhe/nahan" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                  <input type="text" id="cfg-github-repo" placeholder="taha-ghadirian/nahan" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                               </div>
   
                               <!-- Import/Export Config Area -->
@@ -2088,7 +2129,7 @@ function getDashboardUI(hasDB) {
                   let finalIP = ipsList.length > 0 ? ipsList[0] : (hostName.endsWith('.pages.dev') ? 'time.is' : hostName);
                   
                   let fp = document.getElementById('cfg-fp').value;
-                  let path = encodeURI("/" + document.getElementById('cfg-path').value);
+                  let path = encodeURI("/" + document.getElementById('cfg-sub').value);
                   let sec = ["80","8080"].includes(port) ? "none" : "tls";
                   
                   let rawLink = proto + "://" + localUUID + "@" + finalIP + ":" + port + "?encryption=none&security=" + sec + "&sni=" + hostName + "&fp=" + fp + "&type=ws&host=" + hostName + "&path=" + path;
@@ -2119,6 +2160,7 @@ function getDashboardUI(hasDB) {
               const payload = {
                   mode: el('cfg-proto').value, socketPorts: Array.from(el('cfg-port').selectedOptions).map(o=>o.value).join(','), deviceId: el('cfg-uuid').value,
                   apiRoute: el('cfg-path').value, masterKey: el('cfg-pass').value, agent: el('cfg-fp').value,
+                  subRoute: el('cfg-sub').value,
                   resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns').value ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, maintenanceHost: el('cfg-fake').value, backupRelay: el('cfg-relay').value,
                   enableOpt1: el('cfg-tfo').checked, enableOpt2: el('cfg-ech').checked,
                   tgToken: el('cfg-tg-token').value, tgChatId: el('cfg-tg-chat').value,
@@ -2149,6 +2191,7 @@ function getDashboardUI(hasDB) {
                       Array.from(document.getElementById('cfg-port').options).forEach(o => o.selected = pList.includes(o.value));
                       mapId('cfg-uuid', conf.deviceId);
                       mapId('cfg-path', conf.apiRoute);
+                      mapId('cfg-sub', conf.subRoute);
                       mapId('cfg-pass', conf.masterKey);
                       mapId('cfg-fp', conf.agent);
                       mapId('cfg-dns', conf.resolveIp);
@@ -2238,6 +2281,7 @@ function getDashboardUI(hasDB) {
                       Array.from(document.getElementById('cfg-port').options).forEach(o => o.selected = pList.includes(o.value));
                       document.getElementById('cfg-uuid').value = conf.deviceId || '';
                       document.getElementById('cfg-path').value = conf.apiRoute || '';
+                      document.getElementById('cfg-sub').value = conf.subRoute || '';
                       document.getElementById('cfg-pass').value = conf.masterKey || '';
                       document.getElementById('cfg-fp').value = conf.agent || 'chrome';
                       document.getElementById('cfg-dns').value = conf.resolveIp || '';
@@ -2254,7 +2298,7 @@ function getDashboardUI(hasDB) {
                       document.getElementById('cfg-cf-token').value = conf.cfApiToken || '';
                       document.getElementById('cfg-pause').checked = conf.isPaused || false;
                       document.getElementById('cfg-silent').checked = conf.silentAlerts || false;
-                      document.getElementById('cfg-github-repo').value = conf.githubRepo || 'itsyebekhe/nahan';
+                      document.getElementById('cfg-github-repo').value = conf.githubRepo || 'taha-ghadirian/nahan';
                       document.getElementById('cfg-name-strategy').value = conf.nameStrategy || 'default';
                       document.getElementById('cfg-name-prefix').value = conf.namePrefix || 'Core';
   
@@ -2264,7 +2308,7 @@ function getDashboardUI(hasDB) {
                       renderUsersTable();
                       try { checkUpdate(); } catch(ue) { console.error(ue); }
 
-                      ['cfg-proto','cfg-port','cfg-fp','cfg-ips','cfg-nodes','cfg-path', 'cfg-relay', 'cfg-name-strategy', 'cfg-name-prefix'].forEach(id => {
+                      ['cfg-proto','cfg-port','cfg-fp','cfg-ips','cfg-nodes','cfg-path', 'cfg-sub', 'cfg-relay', 'cfg-name-strategy', 'cfg-name-prefix'].forEach(id => {
                           const el = document.getElementById(id);
                           if(el) { el.addEventListener('input', updateUI); el.addEventListener('change', updateUI); }
                       });
@@ -2336,6 +2380,7 @@ function getDashboardUI(hasDB) {
                   config: {
                       mode: el('cfg-proto').value, socketPorts: Array.from(el('cfg-port').selectedOptions).map(o=>o.value).join(','), deviceId: el('cfg-uuid').value,
                       apiRoute: el('cfg-path').value, masterKey: el('cfg-pass').value, agent: el('cfg-fp').value,
+                      subRoute: el('cfg-sub').value,
                       resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns').value ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, slaveNodes: el('cfg-nodes').value, maintenanceHost: el('cfg-fake').value, backupRelay: el('cfg-relay').value,
                       enableOpt1: el('cfg-tfo').checked, enableOpt2: el('cfg-ech').checked,
                       tgToken: el('cfg-tg-token').value, tgChatId: el('cfg-tg-chat').value,
@@ -2375,6 +2420,7 @@ function getDashboardUI(hasDB) {
                   config: {
                       mode: el('cfg-proto').value, socketPorts: Array.from(el('cfg-port').selectedOptions).map(o=>o.value).join(','), deviceId: el('cfg-uuid').value,
                       apiRoute: el('cfg-path').value, masterKey: el('cfg-pass').value, agent: el('cfg-fp').value,
+                      subRoute: el('cfg-sub').value,
                       resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns').value ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, slaveNodes: el('cfg-nodes').value, maintenanceHost: el('cfg-fake').value, backupRelay: el('cfg-relay').value,
                       enableOpt1: el('cfg-tfo').checked, enableOpt2: el('cfg-ech').checked,
                       tgToken: el('cfg-tg-token').value, tgChatId: el('cfg-tg-chat').value,
@@ -2581,7 +2627,7 @@ function getDashboardUI(hasDB) {
           }
 
           async function checkUpdate() {
-              let repo = document.getElementById('cfg-github-repo')?.value || window.nahanConfig?.githubRepo || 'itsyebekhe/nahan';
+              let repo = document.getElementById('cfg-github-repo')?.value || window.nahanConfig?.githubRepo || 'taha-ghadirian/nahan';
               repo = repo.replace(/https:\\/\\/github\\.com\\//, '').trim();
               if (!repo) return;
               
@@ -2611,7 +2657,7 @@ function getDashboardUI(hasDB) {
                   if (remoteVer) {
                       const strip = v => v.replace(/^v/, '').trim();
                       const rVer = strip(remoteVer);
-                      const cVer = strip("2.3.5");
+                      const cVer = strip("2.4.0");
                       
                       if (rVer && rVer > cVer) {
                           showUpdateBanner(repo, rVer);
