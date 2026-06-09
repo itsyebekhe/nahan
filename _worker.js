@@ -13,6 +13,7 @@ const getGamma = () => String.fromCharCode(99, 108, 97, 115, 104);
 
 const SYSTEM_DEFAULTS = {
     apiRoute: "sync",
+    subRoute: "sub",
     maintenanceHost: "https://www.ubuntu.com, https://www.docker.com",
     backupRelay: "",
     customRelay: "",
@@ -169,6 +170,7 @@ export default {
 
             const routes = {
                 data: `/${encodeURI(sysConfig.apiRoute)}`,
+                sub: `/${encodeURI(sysConfig.subRoute)}`,
                 dash: `/${encodeURI(sysConfig.apiRoute)}/dash`,
                 auth: `/${encodeURI(sysConfig.apiRoute)}/api/auth`,
                 sync: `/${encodeURI(sysConfig.apiRoute)}/api/sync`,
@@ -207,17 +209,50 @@ export default {
                     const ua = (request.headers.get("User-Agent") || "").toLowerCase();
                     if (ua.includes("mozilla") || ua.includes("chrome") || ua.includes("safari") || ua.includes("applewebkit")) {
                         return serveMaintenancePage(request, url);
-                    }
+                    } 
+                    // BREAKING: I seprated ApiRoute And SubRoute, currently, legacy sub path works, but will remove in next version.
+
+
                     const clientHost = request.headers.get("Host") || url.hostname;
                     let targetSub = url.searchParams.get("sub");
+                    let targetUUID = url.searchParams.get("uuid");
                     let hasMultiUser = (sysConfig.users && sysConfig.users.length > 0);
                     if (hasMultiUser && (!targetSub || targetSub.toLowerCase() === 'default')) {
                         return new Response("Error: Default profile sync is disabled when multi-user is active.", { status: 403 });
                     }
+                    if (!targetUUID)
+                    {
+                        return new Response("Error: UUID is empty, please get new sub from admin");
+                    }
                     if (ua.includes(getGamma()) || ua.includes("meta") || ua.includes("stash")) {
-                        return new Response(buildYamlProfile(clientHost, targetSub));
+                        return new Response(buildYamlProfile(clientHost, targetSub, targetUUID));
                     } else {
-                        const raw = buildUriProfile(clientHost, targetSub);
+                        const raw = buildUriProfile(clientHost, targetSub, targetUUID);
+                        return new Response(btoa(raw));
+                    }
+                }
+                if (reqPath == routes.sub)
+                {
+                    const ua = (request.headers.get("User-Agent") || "").toLowerCase();
+                    if (ua.includes("mozilla") || ua.includes("chrome") || ua.includes("safari") || ua.includes("applewebkit")) {
+                        return serveMaintenancePage(request, url);
+                    }
+
+                    const clientHost = request.headers.get("Host") || url.hostname;
+                    let targetSub = url.searchParams.get("sub");
+                    let targetUUID = url.searchParams.get("uuid");
+                    let hasMultiUser = (sysConfig.users && sysConfig.users.length > 0);
+                    if (hasMultiUser && (!targetSub || targetSub.toLowerCase() === 'default')) {
+                        return new Response("Error: Default profile sync is disabled when multi-user is active.", { status: 403 });
+                    }
+                    if (!targetUUID)
+                    {
+                        return new Response("Error: UUID is empty, please get new sub from admin");
+                    }
+                    if (ua.includes(getGamma()) || ua.includes("meta") || ua.includes("stash")) {
+                        return new Response(buildYamlProfile(clientHost, targetSub, targetUUID));
+                    } else {
+                        const raw = buildUriProfile(clientHost, targetSub, targetUUID);
                         return new Response(btoa(raw));
                     }
                 }
@@ -409,7 +444,7 @@ async function handleAuth(request, hostName, ctx, env) {
                 profiles: getAllProfiles().map(p => ({
                     name: p.name,
                     id: p.id,
-                    sync: `https://${hostName}/${sysConfig.apiRoute}${p.name === 'Default' ? '' : '?sub=' + encodeURIComponent(p.name)}`
+                    sync: `https://${hostName}/${sysConfig.apiRoute}?id=${p.id}${p.name === 'Default' ? '' : '&sub=' + encodeURIComponent(p.name)}`
                 }))
             }), { status: 200 });
         }
@@ -690,7 +725,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
             
             const statusEmoji = u.isPaused ? "⏸️" : (isExp ? "🔴" : "🟢");
             const statusText = u.isPaused ? t("paused") : (isExp ? (langCode==='fa'?'منقضی':'Expired') : t("active"));
-            const subSync = `https://${hostName}/${sysConfig.apiRoute}?sub=${encodeURIComponent(u.name)}`;
+            const subSync = `https://${hostName}/${sysConfig.apiRoute}?sub=${encodeURIComponent(u.name)}&id=${encodeURIComponent(u.id)}`;
             
             let text = `👤 **${t("sub_info")}**\n`;
             text += `━━━━━━━━━━━━━━━━\n`;
@@ -1159,7 +1194,7 @@ function getCleanIps(hostName) {
 }
 
 
-function getAllProfiles(targetSub = null) {
+function getAllProfiles(targetSub = null, targetUUId = null) {
     let list = [{ id: activeDeviceId, name: "Default" }];
     
     if (sysConfig.users && sysConfig.users.length > 0) {
@@ -1181,8 +1216,9 @@ function getAllProfiles(targetSub = null) {
         });
     }
 
-    if (targetSub) {
-        list = list.filter(p => p.name.toLowerCase() === targetSub.toLowerCase());
+    if (targetSub && targetUUId) {
+        list = list.filter(p => p.name.toLowerCase() === targetSub.toLowerCase() &&
+            p.id == targetUUId);
     }
     return list;
 }
@@ -1221,7 +1257,7 @@ function getConfigName(type, profileName, port, hostName, ip) {
     }
 }
 
-function buildUriProfile(hostName, targetSub = null) {
+function buildUriProfile(hostName, targetSub = null, targetUUID) {
     let allHostNames = [hostName];
     if (sysConfig.slaveNodes) allHostNames.push(...sysConfig.slaveNodes.split(/[\r\n,;]+/).map(s=>s.trim()).filter(Boolean));
     
@@ -1229,7 +1265,7 @@ function buildUriProfile(hostName, targetSub = null) {
     let reqPath = encodeURI(`/${sysConfig.apiRoute}`);
     
     let lines = [];
-    let profiles = getAllProfiles(targetSub);
+    let profiles = getAllProfiles(targetSub, targetUUID);
     
     profiles.forEach(p => {
         allHostNames.forEach(hName => {
@@ -1255,14 +1291,14 @@ function buildUriProfile(hostName, targetSub = null) {
     return lines.join('\n');
 }
 
-function buildYamlProfile(hostName, targetSub = null) {
+function buildYamlProfile(hostName, targetSub = null, targetUUId = null) {
     let allHostNames = [hostName];
     if (sysConfig.slaveNodes) allHostNames.push(...sysConfig.slaveNodes.split(/[\r\n,;]+/).map(s=>s.trim()).filter(Boolean));
     
     let ports = sysConfig.socketPorts ? sysConfig.socketPorts.split(',').map(s=>s.trim()).filter(Boolean) : ["443"];
     let proxies = [];
     let proxyNames = [];
-    let profiles = getAllProfiles(targetSub);
+    let profiles = getAllProfiles(targetSub, targetUUId);
 
     profiles.forEach(p => {
         allHostNames.forEach(hName => {
