@@ -5,7 +5,7 @@ import { connect } from "cloudflare:sockets";
  * Handles real-time binary streams from remote sensor nodes.
  */
 
-const CURRENT_VERSION = "2.4.0.1";
+const CURRENT_VERSION = "2.4.1";
 
 const getAlpha = () => String.fromCharCode(118, 108, 101, 115, 115);
 const getBeta = () => String.fromCharCode(116, 114, 111, 106, 97, 110);
@@ -255,21 +255,26 @@ export default {
                     }
                     
                     let flag = (url.searchParams.get("flag") || url.searchParams.get("format") || url.searchParams.get("type") || url.searchParams.get("output") || "").toLowerCase();
+                    let headers = { "Content-Type": "application/json; charset=utf-8", ...getSubscriptionHeaders(targetUser, url) };
                     if (flag === "b" || flag.includes("cla" + "sh") || flag === "c_legacy") {
                         return new Response(JSON.stringify(buildClashJsonProfile(clientHost, targetSub), null, 2), {
-                            headers: { "Content-Type": "application/json; charset=utf-8" }
+                            headers: headers
                         });
                     } else if (flag === "c" || flag === "g" || flag.includes("si" + "ng") || flag === "s" + "b" || flag === "s") {
                         return new Response(JSON.stringify(buildSingBoxJsonProfile(clientHost, targetSub), null, 2), {
-                            headers: { "Content-Type": "application/json; charset=utf-8" }
+                            headers: headers
                         });
                     }
 
                     if (ua.includes(getGamma()) || ua.includes("meta") || ua.includes("sta" + "sh")) {
-                        return new Response(buildYamlProfile(clientHost, targetSub));
+                        return new Response(buildYamlProfile(clientHost, targetSub), {
+                            headers: getSubscriptionHeaders(targetUser, url)
+                        });
                     } else {
                         const raw = buildUriProfile(clientHost, targetSub);
-                        return new Response(btoa(raw));
+                        return new Response(btoa(raw), {
+                            headers: getSubscriptionHeaders(targetUser, url)
+                        });
                     }
                 }
             }
@@ -1541,6 +1546,41 @@ function getCleanIps(hostName) {
     return ips;
 }
 
+function getSubscriptionHeaders(targetUser, url) {
+    let idClean = targetUser.id.replace(/-/g, '').toLowerCase();
+    let sysU = sysUsageCache?.users?.[idClean] || { reqs: 0, dReqs: 0 };
+    let totalReqs = sysU.reqs || 0;
+
+    let totalGb = parseFloat((totalReqs / 6000).toFixed(2));
+    let limitTotalReq = targetUser.limitTotalReq || 0;
+    let limitTotalGb = limitTotalReq ? parseFloat((limitTotalReq / 6000).toFixed(2)) : 0;
+
+    let downloadBytes = Math.floor(totalGb * 1024 * 1024 * 1024);
+    let totalBytes = limitTotalGb ? Math.floor(limitTotalGb * 1024 * 1024 * 1024) : 0;
+    let expireSeconds = targetUser.expiryMs ? Math.floor(targetUser.expiryMs / 1000) : 0;
+
+    let cleanUrl = new URL(url.href);
+    if (sysConfig.customPanelUrl && sysConfig.customPanelUrl.trim()) {
+        let customUrlStr = sysConfig.customPanelUrl.trim();
+        if (!customUrlStr.startsWith('http://') && !customUrlStr.startsWith('https://')) {
+            customUrlStr = 'https://' + customUrlStr;
+        }
+        try {
+            const customUrl = new URL(customUrlStr);
+            cleanUrl.protocol = customUrl.protocol;
+            cleanUrl.host = customUrl.host;
+        } catch(e) {}
+    }
+
+    return {
+        "Content-Disposition": `attachment; filename="${targetUser.name}"`,
+        "Profile-Web-Page-Url": cleanUrl.href,
+        "Support-Url": "https://t.me/",
+        "Profile-Title": "base64:U3Vic2NyaXB0aW9u",
+        "Profile-Update-Interval": "12",
+        "Subscription-Userinfo": `upload=0; download=${downloadBytes}; total=${totalBytes}; expire=${expireSeconds}`
+    };
+}
 
 function getAllProfiles(targetSub = null) {
     let list = [{ id: activeDeviceId, name: "Default" }];
