@@ -2,7 +2,7 @@
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/
 
 name = "nahan"
-main = "worker.js"
+main = "_worker.js"
 compatibility_date = "2024-03-01"
 
 # Automatically run the local dev server on a predictable port
