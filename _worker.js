@@ -1,11 +1,11 @@
 import { connect } from "cloudflare:sockets";
 
 /* 
- * Project Nahan (نهان) - IoT Device Telemetry Gateway
+ * Project AnishtayiN - IoT Device Telemetry Gateway
  * Handles real-time binary streams from remote sensor nodes.
  */
 
-const CURRENT_VERSION = "2.4.9";
+const CURRENT_VERSION = "3.0.0-AnishtayiN";
 
 const getAlpha = () => String.fromCharCode(118, 108, 101, 115, 115);
 const getBeta = () => String.fromCharCode(116, 114, 111, 106, 97, 110);
@@ -48,7 +48,7 @@ const SYSTEM_DEFAULTS = {
     cfApiToken: "",
     isPaused: false,
     silentAlerts: false,
-    githubRepo: "itsyebekhe/nahan",
+    githubRepo: "AnishtayiN/AnishtayiN",
     nameStrategy: "default",
     namePrefix: "Core",
     tgBotLang: "fa",
@@ -882,7 +882,7 @@ async function handleConfigSync(request, env, ctx) {
 
 const botI18n = {
     en: {
-        welcome: "🤖 **Welcome to Nahan Gateway Bot**\nSelect your option below to manage your system:",
+        welcome: "🤖 **Welcome to AnishtayiN Gateway Bot**\nSelect your option below to manage your system:",
         status: "📊 System Status",
         users: "👥 Subscribers",
         metrics: "📡 Gateway Health",
@@ -923,7 +923,7 @@ const botI18n = {
         status_updated: "Status updated! 🔁"
     },
     fa: {
-        welcome: "🤖 **به ربات ترانزیت نهان خوش آمدید**\nجهت مدیریت سیستم نظارتی خود یکی از گزینه‌های زیر را انتخاب نمایید:",
+        welcome: "🤖 **به ربات ترانزیت AnishtayiN خوش آمدید**\nجهت مدیریت سیستم نظارتی خود یکی از گزینه‌های زیر را انتخاب نمایید:",
         status: "📊 وضعیت سیستم",
         users: "👥 مدیریت مشترکین",
         metrics: "📡 سلامت درگاه شبکه",
@@ -2556,7 +2556,7 @@ function getDashboardUI(hasDB) {
   <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-      <title>Nahan Gateway</title>
+      <title>AnishtayiN Gateway</title>
       <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
       <script src="https://cdn.tailwindcss.com"></script>
       <script>
@@ -2752,7 +2752,7 @@ function getDashboardUI(hasDB) {
       <!-- Global Controls -->
       <div class="fixed top-4 end-4 md:top-5 md:end-5 flex items-center gap-2 z-50">
           <span id="top-version-badge" class="px-3 py-1.5 rounded-xl text-[11px] font-mono font-bold" style="background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.25);color:#818cf8;">v${CURRENT_VERSION}</span>
-          <a href="https://github.com/itsyebekhe/nahan" id="github-link-btn" target="_blank" class="p-2 rounded-xl transition-all" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;" onmouseover="this.style.color='#818cf8';this.style.borderColor='rgba(99,102,241,0.4)'" onmouseout="this.style.color='#94a3b8';this.style.borderColor='rgba(255,255,255,0.1)'">
+          <a href="https://github.com/AnishtayiN/AnishtayiN" id="github-link-btn" target="_blank" class="p-2 rounded-xl transition-all" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;" onmouseover="this.style.color='#818cf8';this.style.borderColor='rgba(99,102,241,0.4)'" onmouseout="this.style.color='#94a3b8';this.style.borderColor='rgba(255,255,255,0.1)'">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
           </a>
           <button onclick="toggleLang()" id="lang-toggle" class="px-3 py-1.5 rounded-xl text-sm font-bold transition-all" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#e2e8f0;" onmouseover="this.style.borderColor='rgba(99,102,241,0.4)';this.style.color='#a5b4fc'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='#e2e8f0'">EN</button>
@@ -2783,7 +2783,7 @@ function getDashboardUI(hasDB) {
                           <svg class="w-9 h-9" style="color:#a5b4fc" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                       </div>
                   </div>
-                  <h2 class="text-3xl font-black" style="color:#f1f5f9;" data-i18n="title">Nahan Gateway</h2>
+                  <h2 class="text-3xl font-black" style="color:#f1f5f9;" data-i18n="title">AnishtayiN Gateway</h2>
                   <p class="text-sm mt-2" style="color:#64748b;">Sign in to manage your gateway</p>
               </div>
               <div class="rounded-3xl p-px" style="background:linear-gradient(145deg,rgba(99,102,241,0.45),rgba(99,102,241,0.08) 50%,rgba(139,92,246,0.3));box-shadow:0 25px 60px rgba(0,0,0,0.5);">
@@ -2824,7 +2824,7 @@ function getDashboardUI(hasDB) {
               <div class="flex items-center p-6 border-b border-slate-100 dark:border-darkborder/50">
                   <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-primary flex items-center justify-center me-3 shrink-0"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
                   <div class="flex flex-col">
-                      <h1 class="font-black text-xl leading-none" data-i18n="title">Nahan</h1>
+                      <h1 class="font-black text-xl leading-none" data-i18n="title">AnishtayiN</h1>
                       <span id="app-version" class="text-[10px] font-mono text-slate-400 mt-1 font-semibold">v${CURRENT_VERSION}</span>
                   </div>
               </div>
@@ -2886,7 +2886,7 @@ function getDashboardUI(hasDB) {
                               </div>
                               <div class="flex gap-2 w-full sm:w-auto shrink-0 justify-end">
                                   <button onclick="dismissUpdate()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800/80 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs transition-colors" data-i18n="btn_cancel">Cancel</button>
-                                  <a id="update-alert-btn" href="https://github.com/itsyebekhe/nahan" target="_blank" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-1.5" data-i18n="update_btn">
+                                  <a id="update-alert-btn" href="https://github.com/AnishtayiN/AnishtayiN" target="_blank" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-xs transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-1.5" data-i18n="update_btn">
                                       Get Latest Code ➜
                                   </a>
                               </div>
@@ -3081,7 +3081,7 @@ function getDashboardUI(hasDB) {
                               </div>
                               <div class="space-y-1 md:col-span-2 font-mono">
                                   <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_github_repo">GitHub Update Repository</label>
-                                  <input type="text" id="cfg-github-repo" placeholder="itsyebekhe/nahan" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                  <input type="text" id="cfg-github-repo" placeholder="AnishtayiN/AnishtayiN" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                               </div>
                               <div class="space-y-1 md:col-span-2">
                                   <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_sub_ua">Custom Subscription User-Agent</label>
@@ -3542,10 +3542,10 @@ function getDashboardUI(hasDB) {
       </div>
   
       <script>
-          const CURRENT_VERSION = "2.4.9";
+          const CURRENT_VERSION = "3.0.0-AnishtayiN";
           const i18n = {
               en: {
-                  title: "Nahan Gateway", pass_ph: "Master Key", login_btn: "Authenticate", err_pass: "Access Denied", missing_db: "⚠️ IOT_DB namespace missing! Settings won't save.",
+                  title: "AnishtayiN Gateway", pass_ph: "Master Key", login_btn: "Authenticate", err_pass: "Access Denied", missing_db: "⚠️ IOT_DB namespace missing! Settings won't save.",
                   logout: "Disconnect", tab_info: "Endpoints", tab_status: "Metrics", tab_settings: "System", tab_adv: "Advanced", tab_logs: "Activity Logs",
                   qr_title: "Direct Stream Link", badge_multi: "Dual-Core Multiplexed", copy: "Copy", copied: "Copied to clipboard!", sync_link: "Cloud Sync URL", active_id: "Hardware ID",
                   stat_ip: "Origin IP", stat_dc: "Edge Node", stat_loc: "Data Region",
@@ -3581,7 +3581,7 @@ function getDashboardUI(hasDB) {
                   changelog_title: "Release Notes & Changelog:"
               },
               fa: {
-                  title: "دروازه نهان", pass_ph: "کلید اصلی", login_btn: "ورود به سیستم", err_pass: "دسترسی مسدود شد", missing_db: "⚠️ فضای پایگاه داده یافت نشد! تنظیمات ذخیره نمی‌شوند.",
+                  title: "دروازه AnishtayiN", pass_ph: "کلید اصلی", login_btn: "ورود به سیستم", err_pass: "دسترسی مسدود شد", missing_db: "⚠️ فضای پایگاه داده یافت نشد! تنظیمات ذخیره نمی‌شوند.",
                   logout: "خروج", tab_info: "نقاط اتصال", tab_status: "وضعیت شبکه", tab_settings: "تنظیمات پایه", tab_adv: "پیشرفته", tab_logs: "گزارش فعالیت",
                   qr_title: "لینک اتصال مستقیم", badge_multi: "ترکیب ترانزیت پیشرفته دوگانه", copy: "کپی", copied: "در حافظه کپی شد!", sync_link: "لینک ساب (همگام سازی ابری)", active_id: "شناسه سخت‌افزار",
                   stat_ip: "آی‌پی مبدا", stat_dc: "گره لبه", stat_loc: "منطقه داده",
@@ -3632,7 +3632,7 @@ function getDashboardUI(hasDB) {
           let hostName = window.location.hostname, localUUID = "";
 
           window.addEventListener('DOMContentLoaded', () => {
-              let savedSession = localStorage.getItem('nahan_session');
+              let savedSession = localStorage.getItem('AnishtayiN_session');
               if (savedSession) {
                   try {
                       let parsed = JSON.parse(savedSession);
@@ -3640,7 +3640,7 @@ function getDashboardUI(hasDB) {
                           sessionKey = parsed.key;
                           doLogin(true);
                       } else {
-                          localStorage.removeItem('nahan_session');
+                          localStorage.removeItem('AnishtayiN_session');
                       }
                   } catch(e){}
               }
@@ -3676,7 +3676,7 @@ function getDashboardUI(hasDB) {
           }
 
           function checkVersionPopup() {
-              const popupKey = \`nahan_shown_v\${CURRENT_VERSION}\`;
+              const popupKey = \`AnishtayiN_shown_v\${CURRENT_VERSION}\`;
               if (!localStorage.getItem(popupKey)) {
                   setTimeout(() => {
                       const m = document.getElementById('modal-version-update');
@@ -3694,7 +3694,7 @@ function getDashboardUI(hasDB) {
                   m.classList.add('hidden');
                   m.classList.remove('flex');
               }
-              const popupKey = \`nahan_shown_v\${CURRENT_VERSION}\`;
+              const popupKey = \`AnishtayiN_shown_v\${CURRENT_VERSION}\`;
               localStorage.setItem(popupKey, 'true');
           }
   
@@ -3799,7 +3799,7 @@ function getDashboardUI(hasDB) {
           }
   
           function logout() {
-              localStorage.removeItem('nahan_session');
+              localStorage.removeItem('AnishtayiN_session');
               window.location.reload();
           }
   
@@ -3821,7 +3821,7 @@ function getDashboardUI(hasDB) {
               const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
               const dlAnchor = document.createElement('a');
               dlAnchor.setAttribute("href", dataStr);
-              dlAnchor.setAttribute("download", "nahan-gateway-config.json");
+              dlAnchor.setAttribute("download", "AnishtayiN-gateway-config.json");
               document.body.appendChild(dlAnchor);
               dlAnchor.click();
               dlAnchor.remove();
@@ -3932,7 +3932,7 @@ function getDashboardUI(hasDB) {
                   const data = await res.json();
                   if (data.success) {
                       sessionKey = pass; localUUID = data.deviceId;
-                      localStorage.setItem('nahan_session', JSON.stringify({ key: pass, expiry: Date.now() + 30 * 60 * 1000 }));
+                      localStorage.setItem('AnishtayiN_session', JSON.stringify({ key: pass, expiry: Date.now() + 30 * 60 * 1000 }));
                       
                       document.getElementById('login-box').classList.add('hidden');
                       document.getElementById('dash-box').classList.remove('hidden');
@@ -3966,15 +3966,15 @@ function getDashboardUI(hasDB) {
                       document.getElementById('cfg-cf-token').value = conf.cfApiToken || '';
                       document.getElementById('cfg-pause').checked = conf.isPaused || false;
                       document.getElementById('cfg-silent').checked = conf.silentAlerts || false;
-                      document.getElementById('cfg-github-repo').value = conf.githubRepo || 'itsyebekhe/nahan';
+                      document.getElementById('cfg-github-repo').value = conf.githubRepo || 'AnishtayiN/AnishtayiN';
                       document.getElementById('cfg-name-strategy').value = conf.nameStrategy || 'default';
                       document.getElementById('cfg-name-prefix').value = conf.namePrefix || 'Core';
                       document.getElementById('cfg-sub-ua').value = conf.subUserAgent || '';
                       document.getElementById('cfg-custom-panel-url').value = conf.customPanelUrl || '';
   
-                      window.nahanConfig = JSON.parse(JSON.stringify(conf));
-                      window.nahanUsage = data.sysUsage || {};
-                      window.nahanProfiles = data.profiles || [];
+                      window.AnishtayiNConfig = JSON.parse(JSON.stringify(conf));
+                      window.AnishtayiNUsage = data.sysUsage || {};
+                      window.AnishtayiNProfiles = data.profiles || [];
                       renderUsersTable();
                       try { checkUpdate(); } catch(ue) { console.error(ue); }
 
@@ -4040,7 +4040,7 @@ function getDashboardUI(hasDB) {
                       updateUI();
                   } else { 
                       if(!silent) { document.getElementById('err-msg').classList.remove('hidden'); btn.innerText = origText; }
-                      else { localStorage.removeItem('nahan_session'); }
+                      else { localStorage.removeItem('AnishtayiN_session'); }
                   }
               } catch (err) { if(!silent) btn.innerText = origText; }
           }
@@ -4127,8 +4127,8 @@ function getDashboardUI(hasDB) {
           function renderUsersTable() {
               const tbl = document.getElementById('tbl-users');
               if(!tbl) return;
-              let users = window.nahanConfig?.users || [];
-              let usage = window.nahanUsage || {};
+              let users = window.AnishtayiNConfig?.users || [];
+              let usage = window.AnishtayiNUsage || {};
               
               // Calculate stats metrics
               let totalUsersVal = users.length;
@@ -4212,7 +4212,7 @@ function getDashboardUI(hasDB) {
                   let tr = document.createElement('tr');
                   tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors";
                   
-                  let rawSync = window.nahanProfiles?.find(p => p.id === u.id)?.sync || '';
+                  let rawSync = window.AnishtayiNProfiles?.find(p => p.id === u.id)?.sync || '';
                   if (rawSync) {
                       rawSync += rawSync.includes('?') ? '&flag=a' : '?flag=a';
                   }
@@ -4286,8 +4286,8 @@ function getDashboardUI(hasDB) {
           function deleteUser(uuid) {
               const deleteMsg = lang === 'fa' ? 'آیا از حذف این کاربر مطمئن هستید؟' : 'Are you sure you want to delete this user?';
               if(!confirm(deleteMsg)) return;
-              if(window.nahanConfig && window.nahanConfig.users) {
-                  window.nahanConfig.users = window.nahanConfig.users.filter(u => u.id !== uuid);
+              if(window.AnishtayiNConfig && window.AnishtayiNConfig.users) {
+                  window.AnishtayiNConfig.users = window.AnishtayiNConfig.users.filter(u => u.id !== uuid);
               }
               // Automatically sync
               renderUsersTable();
@@ -4295,8 +4295,8 @@ function getDashboardUI(hasDB) {
           }
 
           function togglePauseUser(uuid) {
-              if(window.nahanConfig && window.nahanConfig.users) {
-                  let usr = window.nahanConfig.users.find(u => u.id === uuid);
+              if(window.AnishtayiNConfig && window.AnishtayiNConfig.users) {
+                  let usr = window.AnishtayiNConfig.users.find(u => u.id === uuid);
                   if (usr) {
                       usr.isPaused = !usr.isPaused;
                       renderUsersTable();
@@ -4327,8 +4327,8 @@ function getDashboardUI(hasDB) {
               dReq = dReq ? parseInt(dReq) : null;
               days = days ? parseInt(days) : null;
               
-              if(!window.nahanConfig) window.nahanConfig = {};
-              if(!window.nahanConfig.users) window.nahanConfig.users = [];
+              if(!window.AnishtayiNConfig) window.AnishtayiNConfig = {};
+              if(!window.AnishtayiNConfig.users) window.AnishtayiNConfig.users = [];
               
               let newId = Array.from(crypto.getRandomValues(new Uint8Array(16)))
                   .map((b,i) => (i===4||i===6||i===8||i===10?'-':'') + b.toString(16).padStart(2,'0')).join('');
@@ -4346,7 +4346,7 @@ function getDashboardUI(hasDB) {
                    createdAt: Date.now()
                };
               
-              window.nahanConfig.users.push(u);
+              window.AnishtayiNConfig.users.push(u);
               document.getElementById('modal-add-user').classList.add('hidden');
               document.getElementById('add-user-name').value = '';
               document.getElementById('add-user-total-reqs').value = '';
@@ -4362,8 +4362,8 @@ function getDashboardUI(hasDB) {
           }
 
           function editUser(uuid) {
-              if(!window.nahanConfig || !window.nahanConfig.users) return;
-              let u = window.nahanConfig.users.find(usr => usr.id === uuid);
+              if(!window.AnishtayiNConfig || !window.AnishtayiNConfig.users) return;
+              let u = window.AnishtayiNConfig.users.find(usr => usr.id === uuid);
               if(!u) return;
               
               document.getElementById('edit-user-id').value = u.id;
@@ -4408,8 +4408,8 @@ function getDashboardUI(hasDB) {
               dReq = dReq ? parseInt(dReq) : null;
               days = days ? parseInt(days) : null;
               
-              if(!window.nahanConfig || !window.nahanConfig.users) return;
-              let u = window.nahanConfig.users.find(usr => usr.id === uuid);
+              if(!window.AnishtayiNConfig || !window.AnishtayiNConfig.users) return;
+              let u = window.AnishtayiNConfig.users.find(usr => usr.id === uuid);
               if(!u) return;
               
               u.name = name;
@@ -4433,7 +4433,7 @@ function getDashboardUI(hasDB) {
                   const res = await fetch(baseRoute + '/api/sync', {
                       method: 'POST',
                       headers: {'Content-Type': 'application/json'},
-                      body: JSON.stringify({ key: sessionKey, config: window.nahanConfig })
+                      body: JSON.stringify({ key: sessionKey, config: window.AnishtayiNConfig })
                   });
                   if(res.ok) {
                        const stat = document.getElementById('save-status');
@@ -4445,7 +4445,7 @@ function getDashboardUI(hasDB) {
           }
 
           async function checkUpdate() {
-              let repo = document.getElementById('cfg-github-repo')?.value || window.nahanConfig?.githubRepo || 'itsyebekhe/nahan';
+              let repo = document.getElementById('cfg-github-repo')?.value || window.AnishtayiNConfig?.githubRepo || 'AnishtayiN/AnishtayiN';
               repo = repo.replace(/https:\\/\\/github\\.com\\//, '').trim();
               if (!repo) return;
               
@@ -4675,15 +4675,15 @@ function getDashboardUI(hasDB) {
           }
 
           document.addEventListener('DOMContentLoaded', () => {
-              const cached = localStorage.getItem('nahan_session');
+              const cached = localStorage.getItem('AnishtayiN_session');
               if(cached) {
                   try {
                       const session = JSON.parse(cached);
                       if (Date.now() < session.expiry) {
                           document.getElementById('pwd').value = session.key;
                           doLogin(true);
-                      } else { localStorage.removeItem('nahan_session'); }
-                  } catch(e) { localStorage.removeItem('nahan_session'); }
+                      } else { localStorage.removeItem('AnishtayiN_session'); }
+                  } catch(e) { localStorage.removeItem('AnishtayiN_session'); }
               }
           });
       </script>
