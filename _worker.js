@@ -5989,6 +5989,7 @@ function getDashboardUI(hasDB) {
                               \${u.userMode ? \`<span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300">\${u.userMode === 'alpha' ? 'VLESS' : u.userMode === 'beta' ? 'Trojan' : 'VLESS+Trojan'}</span>\` : ''}
                               \${u.userPorts ? \`<span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300">🔌 \${u.userPorts}</span>\` : ''}
                               \${u.maxConfigs ? \`<span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300">max \${u.maxConfigs} cfgs</span>\` : ''}
+                              \${u.accessHourFrom && u.accessHourTo ? \`<span class="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-sky-100 dark:bg-sky-900/40 text-sky-600 dark:text-sky-300">🕐 \${u.accessHourFrom}-\${u.accessHourTo}</span>\` : ''}
                           </div>
                           \${disableInfoHtml}
                       </td>
