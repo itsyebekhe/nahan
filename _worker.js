@@ -1,6 +1,6 @@
 import { connect } from "cloudflare:sockets";
 
-/* 
+/*
  * Project Nahan (نهان) - IoT Device Telemetry Gateway
  * Handles real-time binary streams from remote sensor nodes.
  */
@@ -166,6 +166,17 @@ function sha224Hex(m) {
     }
     return H.slice(0, 7).map(v => v.toString(16).padStart(8, '0')).join('');
 }
+function isWithinAccessHours(user) {
+    if (!user.accessHourFrom || !user.accessHourTo) return true;
+    const now = new Date().toLocaleString('en-US', { timeZone: sysConfig.timezone || 'Asia/Tehran' });
+    const cur = new Date(now);
+    const curMins = cur.getHours() * 60 + cur.getMinutes();
+    const [fh, fm] = user.accessHourFrom.split(':').map(Number);
+    const [th, tm] = user.accessHourTo.split(':').map(Number);
+    const start = fh * 60 + fm;
+    const end = th * 60 + tm;
+    return start <= end ? (curMins >= start && curMins <= end) : (curMins >= start || curMins <= end);
+}
 const trojanHashCache = new Map();
 function getTrojanHash(uuid) {
     if (trojanHashCache.has(uuid)) return trojanHashCache.get(uuid);
@@ -178,7 +189,7 @@ function trackUsage(uuid, bytes, env, ctx) {
     if (!sysUsageCache) sysUsageCache = { users: {} };
     if (!sysUsageCache.users) sysUsageCache.users = {};
     if (!sysUsageCache.users[uuid]) sysUsageCache.users[uuid] = { reqs: 0, dReqs: 0, lastDay: new Date().toISOString().split('T')[0] };
-    
+
     let u = sysUsageCache.users[uuid];
     let today = new Date().toISOString().split('T')[0];
     if (u.lastDay !== today) {
@@ -192,7 +203,7 @@ function trackUsage(uuid, bytes, env, ctx) {
         u.reqs += 1;
         u.dReqs += 1;
     }
-    
+
     const now = Date.now();
     if (now - lastSysUsageSync > 30000) {
         lastSysUsageSync = now;
@@ -230,7 +241,7 @@ function trackUsage(uuid, bytes, env, ctx) {
                     }
                 });
             }
-            
+
             if (changedConfig) {
                 ctx?.waitUntil(cachedD1Put(env, "sys_config", JSON.stringify(sysConfig)).catch(()=>{}));
             }
@@ -314,7 +325,7 @@ export default {
                     const clientHost = request.headers.get("Host") || url.hostname;
                     let targetSub = url.searchParams.get("sub");
                     let hasMultiUser = (sysConfig.users && sysConfig.users.length > 0);
-                    
+
                     let targetUser = null;
                     let isValidUser = false;
                     if (hasMultiUser) {
@@ -326,20 +337,20 @@ export default {
                         isValidUser = true;
                         targetUser = { id: activeDeviceId, name: "Default" };
                     }
-                    
+
                     const acceptHeader = (request.headers.get("Accept") || "").toLowerCase();
                     const secFetchDest = (request.headers.get("Sec-Fetch-Dest") || "").toLowerCase();
-                    
+
                     const isRealBrowser = (
                         (secFetchDest === "document") ||
                         (acceptHeader.includes("text/html"))
                     ) && (
-                        ua.includes("mozilla") || 
-                        ua.includes("chrome") || 
-                        ua.includes("safari") || 
-                        ua.includes("applewebkit") || 
-                        ua.includes("gecko") || 
-                        ua.includes("opera") || 
+                        ua.includes("mozilla") ||
+                        ua.includes("chrome") ||
+                        ua.includes("safari") ||
+                        ua.includes("applewebkit") ||
+                        ua.includes("gecko") ||
+                        ua.includes("opera") ||
                         ua.includes("edge")
                     ) && !ua.includes("cla" + "sh") && !ua.includes("si" + "ng-box") && !ua.includes("v" + "2r" + "ay") && !ua.includes("shadow" + "rocket") && !ua.includes("quantum" + "ult") && !ua.includes("surf" + "board") && !ua.includes("sta" + "sh");
 
@@ -350,20 +361,22 @@ export default {
                             return serveMaintenancePage(request, url);
                         }
                     }
-                    
+
                     if (hasMultiUser && !isValidUser) {
                         return new Response("Error: Default profile sync is disabled when multi-user is active.", { status: 403 });
                     }
-                    
-                    const allowInsecure = url.searchParams.get("insecure") === "true" || 
-                                         url.searchParams.get("allowInsecure") === "true" ||
-                                         url.searchParams.get("allow_insecure") === "1" ||
-                                         url.searchParams.get("allowInsecure") === "1";
+                    if (targetUser && !isWithinAccessHours(targetUser))
+                        return new Response("Access restricted at this time.", { status: 403 });
+
+                    const allowInsecure = url.searchParams.get("insecure") === "true" ||
+                        url.searchParams.get("allowInsecure") === "true" ||
+                        url.searchParams.get("allow_insecure") === "1" ||
+                        url.searchParams.get("allowInsecure") === "1";
 
                     const resHeaders = new Headers();
                     resHeaders.set("Cache-Control", "no-store");
                     resHeaders.set("Access-Control-Allow-Origin", "*");
-                    
+
                     let flag = (url.searchParams.get("flag") || url.searchParams.get("format") || url.searchParams.get("type") || url.searchParams.get("output") || "").toLowerCase();
 
                     if (isValidUser && targetUser) {
@@ -379,17 +392,17 @@ export default {
                             limitTotal = sysConfig.limitTotalReq || 0;
                             expiryMs = sysConfig.expiryMs || 0;
                         }
-                        
+
                         let usedBytes = Math.floor(totalReqs * (1073741824 / 6000));
                         let limitBytes = Math.floor(limitTotal * (1073741824 / 6000));
                         let expireSec = expiryMs ? Math.floor(expiryMs / 1000) : 0;
-                        
+
                         const subUserInfo = `upload=0; download=${usedBytes}; total=${limitBytes}; expire=${expireSec}`;
                         resHeaders.set("Subscription-UserInfo", subUserInfo);
                         resHeaders.set("subscription-userinfo", subUserInfo);
                         resHeaders.set("Profile-Update-Interval", "12");
                         resHeaders.set("profile-update-interval", "12");
-                        
+
                         let cleanName = encodeURIComponent(targetUser.name);
                         resHeaders.set("Content-Disposition", `attachment; filename="${cleanName}"; filename*=UTF-8''${cleanName}`);
                     }
@@ -476,22 +489,22 @@ function serveSubscriptionInfoPage(user, host, url, request) {
     let idClean = user.id.replace(/-/g, '').toLowerCase();
     let sysU = sysUsageCache?.users?.[idClean] || { reqs: 0, dReqs: 0, lastDay: '' };
     let totalReqs = sysU.reqs || 0;
-    
+
     let todayDate = new Date().toISOString().split('T')[0];
     let dailyReqs = sysU.lastDay === todayDate ? (sysU.dReqs || 0) : 0;
-    
+
     let limitTotal = user.limitTotalReq || 0;
     let limitDaily = user.limitDailyReq || 0;
-    
+
     let totalGb = (totalReqs / 6000).toFixed(2);
     let limitTotalGb = limitTotal ? (limitTotal / 6000).toFixed(2) : 'Unlimited';
-    
+
     let dailyGb = (dailyReqs / 6000).toFixed(2);
     let limitDailyGb = limitDaily ? (limitDaily / 6000).toFixed(2) : 'Unlimited';
-    
+
     let totalPercent = limitTotal ? Math.min(100, (totalReqs / limitTotal) * 100).toFixed(1) : 0;
     let dailyPercent = limitDaily ? Math.min(100, (dailyReqs / limitDaily) * 100).toFixed(1) : 0;
-    
+
     let expiryDateTxt = 'Never Expired';
     let isExpired = false;
     if (user.expiryMs) {
@@ -501,7 +514,7 @@ function serveSubscriptionInfoPage(user, host, url, request) {
             isExpired = true;
         }
     }
-    
+
     let statusText = "Active 🟢";
     let statusColor = "text-emerald-500 bg-emerald-500/10 border-emerald-500/25";
     if (user.isPaused) {
@@ -535,7 +548,7 @@ function serveSubscriptionInfoPage(user, host, url, request) {
     cleanUrl.searchParams.delete("type");
     cleanUrl.searchParams.delete("output");
     cleanUrl.searchParams.delete("raw");
-    
+
     let syncNormal = cleanUrl.href;
     let syncRaw = cleanUrl.href + (cleanUrl.href.includes('?') ? '&flag=a' : '?flag=a');
 
@@ -786,10 +799,10 @@ async function fetchCloudflareUsage(accountId, apiToken) {
     try {
         const d = new Date();
         const currentDate = d.toISOString().split('T')[0] + "T00:00:00Z";
-        
+
         const query = `query GetDailyUsage($accountId: String!, $start: ISO8601DateTime!) { viewer { accounts(filter: {accountTag: $accountId}) { workersInvocationsAdaptive(limit: 1, filter: { datetime_geq: $start }) { sum { requests } } } } }`;
         const variables = { accountId: accountId, start: currentDate };
-        
+
         const res = await fetch("https://api.cloudflare.com/client/v4/graphql", {
             method: "POST",
             headers: {
@@ -798,7 +811,7 @@ async function fetchCloudflareUsage(accountId, apiToken) {
             },
             body: JSON.stringify({ query, variables })
         });
-        
+
         const json = await res.json();
         const reqs = json?.data?.viewer?.accounts?.[0]?.workersInvocationsAdaptive?.[0]?.sum?.requests;
         return typeof reqs === 'number' ? reqs : null;
@@ -833,20 +846,20 @@ async function sendTelegramMessage(request, type, hostName) {
     const ua = request.headers.get("User-Agent") || "حالا یوزرایجنت مارو نبینین";
 
     const d = new Date();
-    const timeStr = new Intl.DateTimeFormat('fa-IR', { 
-        year: 'numeric', month: 'long', day: 'numeric', 
-        hour: '2-digit', minute: '2-digit', second: '2-digit' 
+    const timeStr = new Intl.DateTimeFormat('fa-IR', {
+        year: 'numeric', month: 'long', day: 'numeric',
+        hour: '2-digit', minute: '2-digit', second: '2-digit'
     }).format(d);
 
     const text = `📌 نوع: ${escMd(type)}\n` +
-                 `🌐 IP: ${escMd(ip)}\n` +
-                 `📍 موقعیت: ${escMd(country)} ${escMd(city)}\n` +
-                 `🏢 ASN: AS${escMd(asn)} ${escMd(asOrg)}\n` +
-                 `🔗 دامنه: ${escMd(domain)}\n` +
-                 `🔍 مسیر: ${escMd(path)}\n` +
-                 `🤖 مرورگر: ${escMd(ua)}\n` +
-                 `📅 زمان: ${escMd(timeStr)}\n` +
-                 `📊 مصرف: ${usageStr}`;
+        `🌐 IP: ${escMd(ip)}\n` +
+        `📍 موقعیت: ${escMd(country)} ${escMd(city)}\n` +
+        `🏢 ASN: AS${escMd(asn)} ${escMd(asOrg)}\n` +
+        `🔗 دامنه: ${escMd(domain)}\n` +
+        `🔍 مسیر: ${escMd(path)}\n` +
+        `🤖 مرورگر: ${escMd(ua)}\n` +
+        `📅 زمان: ${escMd(timeStr)}\n` +
+        `📊 مصرف: ${usageStr}`;
 
     const h = hostName || domain;
     const langCode = sysConfig.tgBotLang || "fa";
@@ -1295,15 +1308,15 @@ async function handleAuth(request, hostName, ctx, env) {
 async function handleConfigSync(request, env, ctx) {
     try {
         const data = await request.json();
-        const isAuthorized = (data.key === sysConfig.masterKey) || 
-                             (data.oldKey && data.oldKey === sysConfig.masterKey) || 
-                             (sysConfig.masterKey === "admin");
+        const isAuthorized = (data.key === sysConfig.masterKey) ||
+            (data.oldKey && data.oldKey === sysConfig.masterKey) ||
+            (sysConfig.masterKey === "admin");
         if (!isAuthorized) return new Response(JSON.stringify({ success: false }), { status: 401 });
         if (data.fromMaster && !sysConfig.allowSyncWorker) {
-    return new Response(JSON.stringify({ success: false, error: "Sync not allowed" }), { status: 403 });
-}
+            return new Response(JSON.stringify({ success: false, error: "Sync not allowed" }), { status: 403 });
+        }
         if (!env.IOT_DB) return new Response(JSON.stringify({ success: false, msg: "DB Error" }), { status: 400 });
-        
+
         let nextConfig = sysConfig;
         if (data.config) {
             nextConfig = { ...sysConfig, ...data.config };
@@ -1330,15 +1343,15 @@ async function handleConfigSync(request, env, ctx) {
             let currentHost = new URL(request.url).hostname;
             nodes.forEach(node => {
                 if(node !== currentHost) {
-                     ctx?.waitUntil(fetch(`https://${node}/${encodeURI(nextConfig.apiRoute)}/api/sync`, {
-                         method: 'POST',
-                         headers: { 'Content-Type': 'application/json' },
-                         body: JSON.stringify({ key: nextConfig.masterKey, oldKey: oldMasterKey, config: nextConfig, fromMaster: true })
-                     }).catch(() => {}));
+                    ctx?.waitUntil(fetch(`https://${node}/${encodeURI(nextConfig.apiRoute)}/api/sync`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ key: nextConfig.masterKey, oldKey: oldMasterKey, config: nextConfig, fromMaster: true })
+                    }).catch(() => {}));
                 }
             });
         }
-        
+
         if (nextConfig.tgToken && ctx) {
             const hookUrl = `https://${new URL(request.url).hostname}/${encodeURI(nextConfig.apiRoute)}/tg`;
             ctx.waitUntil(fetch(`https://api.telegram.org/bot${nextConfig.tgToken}/setWebhook`, {
@@ -1722,11 +1735,11 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
             const panelName = activePanel ? activePanel.name : (sysConfig.name || "Main Panel");
             const panelIndicator = isLocal ? `🏠 ${panelName}` : `🌐 ${panelName}`;
             let text = `${t("welcome")}\n\n` +
-                         `━━━━━━━━━━━━━━━━\n` +
-                         `📌 **${t("current_panel")}**: ${panelIndicator}\n` +
-                         `⚡ **${t("status")}**: ${isPaused ? t("paused") : t("active")} ${statusEmoji}\n` +
-                         `👥 **${t("users")}**: ${users.length} (${activeCount} ${t("count_active")}, ${pausedCount} ${t("count_paused")}, ${autoDisabledCount} ${t("count_disabled")})\n` +
-                         `━━━━━━━━━━━━━━━━`;
+                `━━━━━━━━━━━━━━━━\n` +
+                `📌 **${t("current_panel")}**: ${panelIndicator}\n` +
+                `⚡ **${t("status")}**: ${isPaused ? t("paused") : t("active")} ${statusEmoji}\n` +
+                `👥 **${t("users")}**: ${users.length} (${activeCount} ${t("count_active")}, ${pausedCount} ${t("count_paused")}, ${autoDisabledCount} ${t("count_disabled")})\n` +
+                `━━━━━━━━━━━━━━━━`;
             const panelUrl = isLocal ? `https://${hostName}/${encodeURI(sysConfig.apiRoute)}/dash` : null;
             const subUrl = `https://${hostName}/${sysConfig.apiRoute}`;
             /** @type {any} */
@@ -1779,10 +1792,10 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
             const start = page * itemsPerPage;
             const end = start + itemsPerPage;
             const pageUsers = users.slice(start, end);
-            
+
             let text = `👥 **${t("users")}** (${t("lbl_page")} ${page + 1}/${Math.max(1, totalPages)})\n`;
             text += `━━━━━━━━━━━━━━━━\n`;
-            
+
             if (users.length === 0) {
                 text += `⚠️ ${t("no_users")}\n`;
             } else {
@@ -1791,12 +1804,12 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                 });
             }
             text += `━━━━━━━━━━━━━━━━`;
-            
+
             const inline_keyboard = [];
             pageUsers.forEach((u) => {
                 inline_keyboard.push([{ text: `👤 ${u.name}`, callback_data: `sub_detail:${u.id}` }]);
             });
-            
+
             const navRow = [];
             if (page > 0) {
                 navRow.push({ text: `⬅️ ${t("btn_back")}`, callback_data: `subs_list:${page - 1}` });
@@ -1807,10 +1820,10 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
             if (navRow.length > 0) {
                 inline_keyboard.push(navRow);
             }
-            
+
             inline_keyboard.push([{ text: `➕ ${t("btn_add")}`, callback_data: "sub_add_init" }]);
             inline_keyboard.push([{ text: t("btn_main_menu"), callback_data: "main_menu" }]);
-            
+
             return { text, kb: { inline_keyboard } };
         };
 
@@ -1820,17 +1833,17 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
             if (!u) {
                 return { text: "⚠️ User not found", kb: { inline_keyboard: [[{ text: t("btn_back"), callback_data: "subs_list:0" }]] } };
             }
-            
+
             const sysU = sysUsageCache?.users?.[u.id.replace(/-/g,'').toLowerCase()] || { reqs: 0, dReqs: 0, lastDay: '' };
             const userReqs = sysU.reqs || 0;
             const curDate = new Date().toISOString().split('T')[0];
             const userDReqs = sysU.lastDay === curDate ? (sysU.dReqs || 0) : 0;
-            
+
             const limitTotalTxt = u.limitTotalReq ? `${u.limitTotalReq}` : t("unlimited");
             const limitDailyTxt = u.limitDailyReq ? `${u.limitDailyReq}` : t("unlimited");
             const usedGB = (userReqs / 6000).toFixed(2);
             const limitGB = u.limitTotalReq ? (u.limitTotalReq / 6000).toFixed(2) : t("unlimited");
-            
+
             let expTxt = t("unlimited");
             let isExp = false;
             let daysLeft = t("unlimited");
@@ -1844,13 +1857,13 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                     isExp = true;
                 }
             }
-            
+
             const statusEmoji = u.isPaused ? "⏸️" : (isExp ? "🔴" : "🟢");
             const statusText = u.isPaused ? t("paused") : (isExp ? t("dash_expired") : t("active"));
             const subSync = `https://${hostName}/${sysConfig.apiRoute}?sub=${encodeURIComponent(u.name)}`;
             const maxCfgTxt = u.maxConfigs || t("unlimited");
             const notesTxt = u.notes || t("lbl_none");
-            
+
             let text = `👤 **${t("sub_info")}**\n`;
             text += `━━━━━━━━━━━━━━━━\n`;
             text += `📛 **${t("name")}**: ${u.name}\n`;
@@ -1864,7 +1877,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
             text += `📝 **${t("notes")}**: ${notesTxt}\n`;
             text += `━━━━━━━━━━━━━━━━\n`;
             text += `🔗 **${t("lbl_subscription")}:**\n\`${subSync}\``;
-            
+
             const kb = {
                 inline_keyboard: [
                     [
@@ -1951,14 +1964,14 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                     const upSeconds = Math.floor((Date.now() - isolateStartTime)/1000);
                     const dh = Math.floor(upSeconds/3600);
                     const dm = Math.floor((upSeconds%3600)/60);
-                    
+
                     let text = `📡 **${t("metrics")}**\n`;
                     text += `━━━━━━━━━━━━━━━━\n`;
                     text += `⏱ **${t("uptime")}**: ${dh}h ${dm}m\n`;
                     text += `🔌 **${t("streams")}**: ${activeConnections}\n`;
                     text += `📊 **Cloudflare API Usage**: ${usageStr}\n`;
                     text += `━━━━━━━━━━━━━━━━`;
-                    
+
                     const kb = { inline_keyboard: [[{ text: t("btn_main_menu"), callback_data: "main_menu" }]] };
                     await sendOrEdit(chatId, text, kb, messageId);
                 } else if (data.startsWith("subs_list:")) {
@@ -2071,7 +2084,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                             }
                         }
                     } catch(e){}
-                    
+
                     const newUuid = crypto.randomUUID();
                     if (isRemotePanel) {
                         const res = await remotePanelWriteAction(activePanel, 'POST', null, { key: activePanel.masterKey, name: stateName });
@@ -2204,9 +2217,9 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                         }
                     }
                     const kb = { inline_keyboard: [
-                        [{ text: `🔄 ${t("btn_update_usage")}`, callback_data: "sys_stats" }],
-                        [{ text: t("btn_main_menu"), callback_data: "main_menu" }]
-                    ] };
+                            [{ text: `🔄 ${t("btn_update_usage")}`, callback_data: "sys_stats" }],
+                            [{ text: t("btn_main_menu"), callback_data: "main_menu" }]
+                        ] };
                     await sendOrEdit(chatId, statsText, kb, messageId);
                 } else if (data === "sys_panel_info") {
                     let infoText = `ℹ️ **${t("panel_info")}**\n`;
@@ -2297,9 +2310,9 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                     ctx?.waitUntil(d1Put(env, "tg_bot_state", JSON.stringify(tgState)).catch(()=>{}));
                     const text = `📱 ${t("msg_enter_device_limit")}`;
                     const kb = { inline_keyboard: [
-                        [{ text: `♾️ Unlimited`, callback_data: `sub_device_unlimited:${uuid}` }],
-                        [{ text: `❌ ${t("btn_cancel")}`, callback_data: `sub_detail:${uuid}` }]
-                    ] };
+                            [{ text: `♾️ Unlimited`, callback_data: `sub_device_unlimited:${uuid}` }],
+                            [{ text: `❌ ${t("btn_cancel")}`, callback_data: `sub_detail:${uuid}` }]
+                        ] };
                     await sendOrEdit(chatId, text, kb, messageId);
                 } else if (data.startsWith("sub_device_unlimited:")) {
                     const uuid = data.replace("sub_device_unlimited:", "");
@@ -2324,7 +2337,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                     });
                     answerText = t("sub_link_sent");
                 }
-                
+
                 ctx?.waitUntil(fetch(`${tgApi}/answerCallbackQuery`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -2334,7 +2347,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
         } else if (update.message && update.message.text) {
             const chatId = update.message.chat.id;
             const text = update.message.text.trim();
-            
+
             if (isAuthorized) {
                 // Get active panel from last login signal
                 const activePanel = getActivePanel();
@@ -2359,7 +2372,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                 }
 
                 const state = tgState[chatId];
-                
+
                 if (state) {
                     if (!isAuthorized) {
                         tgState[chatId] = null;
@@ -2372,7 +2385,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                         const name = text;
                         tgState[chatId] = { step: "sub_add_limits", name: name };
                         ctx?.waitUntil(d1Put(env, "tg_bot_state", JSON.stringify(tgState)).catch(()=>{}));
-                        
+
                         const msg = `⚙️ **${name}**\n\n${t("msg_enter_limits")}`;
                         const kb = {
                             inline_keyboard: [
@@ -2383,20 +2396,20 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                         await sendOrEdit(chatId, msg, kb);
                         return new Response("OK", { status: 200 });
                     }
-                    
+
                     if (state.step === "sub_add_limits" || state.step === "sub_add_unlimited_skip") {
                         const name = state.name;
                         let tReq = null;
                         let dReq = null;
                         let days = null;
-                        
+
                         if (state.step !== "sub_add_unlimited_skip" && text !== "0" && text !== "0 0 0") {
                             const parts = text.split(/\s+/).map(Number);
                             if (parts[0] > 0) tReq = parts[0];
                             if (parts[1] > 0) dReq = parts[1];
                             if (parts[2] > 0) days = parts[2];
                         }
-                        
+
                         const newUuid = crypto.randomUUID();
                         if (isRemotePanel) {
                             const res = await remotePanelWriteAction(activePanel, 'POST', null, {
@@ -2426,12 +2439,12 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                             const detail = getSubDetail(newUuid);
                             await sendOrEdit(chatId, `✅ ${t("msg_added")}\n\n${detail.text}`, detail.kb);
                         }
-                        
+
                         tgState[chatId] = null;
                         ctx?.waitUntil(d1Put(env, "tg_bot_state", JSON.stringify(tgState)).catch(()=>{}));
                         return new Response("OK", { status: 200 });
                     }
-                    
+
                     if (state.step.startsWith("sub_edit_name:")) {
                         const uuid = state.step.replace("sub_edit_name:", "");
                         if (isRemotePanel) {
@@ -2445,24 +2458,24 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                         }
                         tgState[chatId] = null;
                         ctx?.waitUntil(d1Put(env, "tg_bot_state", JSON.stringify(tgState)).catch(()=>{}));
-                        
+
                         const panelUsers = await getPanelUsers();
                         const detail = getSubDetail(uuid, panelUsers);
                         await sendOrEdit(chatId, `✅ Successfully Changed!`, detail.kb);
                         return new Response("OK", { status: 200 });
                     }
-                    
+
                     if (state.step.startsWith("sub_edit_limits:")) {
                         const uuid = state.step.replace("sub_edit_limits:", "");
                         let tReq = null;
                         let dReq = null;
                         let days = null;
-                        
+
                         const parts = text.split(/\s+/).map(Number);
                         if (parts[0] > 0) tReq = parts[0];
                         if (parts[1] > 0) dReq = parts[1];
                         if (parts[2] > 0) days = parts[2];
-                        
+
                         if (isRemotePanel) {
                             await remotePanelWriteAction(activePanel, 'PUT', uuid, {
                                 key: activePanel.masterKey,
@@ -2481,7 +2494,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                         }
                         tgState[chatId] = null;
                         ctx?.waitUntil(d1Put(env, "tg_bot_state", JSON.stringify(tgState)).catch(()=>{}));
-                        
+
                         const panelUsers = await getPanelUsers();
                         const detail = getSubDetail(uuid, panelUsers);
                         await sendOrEdit(chatId, `✅ Limits Updated!`, detail.kb);
@@ -2589,7 +2602,7 @@ async function handleTelegramWebhook(request, env, hostName, ctx) {
                         return new Response("OK", { status: 200 });
                     }
                 }
-                
+
                 // Default message / fallback menu
                 const menu = getMainMenu(activePanel, isAuthorized);
                 await sendOrEdit(chatId, menu.text, menu.kb);
@@ -2637,20 +2650,21 @@ async function startDataPipe(webSocket, env, ctx) {
 
         if (view[0] === 0x00) {
             isModeAlpha = true;
-            
+
             // Validate UUID
             let clientHash = Array.from(view.slice(1, 17)).map(b => b.toString(16).padStart(2, '0')).join('');
             let validUUIDs = getAllProfiles().map(p => p.id.replace(/-/g, '').toLowerCase());
             if (!validUUIDs.includes(clientHash)) return false; // DROP IF INVALID PROFILE
-            
+            const vlessUser = getAllProfiles().find(p => p.id.replace(/-/g, '').toLowerCase() === clientHash);
+            if (vlessUser && !isWithinAccessHours(vlessUser)) { webSocket.close(); return false; }
             activeClientHash = clientHash;
             trackUsage(activeClientHash, 0, env, ctx);
-            
+
             let uTrack = uuidUsage.get(clientHash) || { connects: 0, last: 0 };
             uTrack.connects++;
             uTrack.last = Date.now();
             uuidUsage.set(clientHash, uTrack);
-            
+
             const optLen = view[17];
             const pPos = 18 + optLen + 1;
             targetPort = new DataView(bufferData.slice(pPos, pPos + 2)).getUint16(0);
@@ -2664,11 +2678,11 @@ async function startDataPipe(webSocket, env, ctx) {
         } else {
             let ePos = bufferData.byteLength;
             for (let i = 0; i < bufferData.byteLength; i++) { if (view[i] === 0x0D && view[i + 1] === 0x0A) { ePos = i; break; } }
-            
+
             let clientHashHex = new TextDecoder().decode(view.slice(0, ePos));
             let validProfile = getAllProfiles().find(p => getTrojanHash(p.id) === clientHashHex);
             if (!validProfile) return false;
-            
+            if (!isWithinAccessHours(validProfile)) { webSocket.close(); return false; }
             activeClientHash = validProfile.id.replace(/-/g, '').toLowerCase();
             trackUsage(activeClientHash, 0, env, ctx);
             let uTrack = uuidUsage.get(activeClientHash) || { connects: 0, last: 0 };
@@ -2720,9 +2734,9 @@ async function startDataPipe(webSocket, env, ctx) {
             let chunk = bufferData.slice(offset);
             await dataWriter.write(chunk);
         }
-        remoteSocket.readable.pipeTo(new WritableStream({ write(chunk) { 
-            webSocket.send(chunk); 
-        } }));
+        remoteSocket.readable.pipeTo(new WritableStream({ write(chunk) {
+                webSocket.send(chunk);
+            } }));
 
         return isModeAlpha;
     }
@@ -2742,7 +2756,7 @@ function getSubscriptionStats(targetSub = null) {
     let id = activeDeviceId;
     let limitTotalReq = 0;
     let expiryMs = 0;
-    
+
     let hasMultiUser = (sysConfig.users && sysConfig.users.length > 0);
     if (hasMultiUser && targetSub) {
         let user = sysConfig.users.find(u => u.name.toLowerCase() === targetSub.toLowerCase() || u.id === targetSub);
@@ -2756,14 +2770,14 @@ function getSubscriptionStats(targetSub = null) {
         limitTotalReq = sysConfig.limitTotalReq || 0;
         expiryMs = sysConfig.expiryMs || 0;
     }
-    
+
     let idClean = id.replace(/-/g, '').toLowerCase();
     let sysU = sysUsageCache?.users?.[idClean] || { reqs: 0, dReqs: 0 };
     let totalReqs = sysU.reqs || 0;
-    
+
     let totalGb = (totalReqs / 6000).toFixed(2);
     let limitTotalGb = limitTotalReq ? (limitTotalReq / 6000).toFixed(2) : 'Unlimited';
-    
+
     let expiryDateTxt = 'Never Expire';
     let remDaysTxt = 'Never Expire';
     if (expiryMs) {
@@ -2772,7 +2786,7 @@ function getSubscriptionStats(targetSub = null) {
         let remDays = Math.ceil((expiryMs - Date.now()) / (1000 * 60 * 60 * 24));
         remDaysTxt = remDays >= 0 ? `${remDays} Days Left` : 'Expired';
     }
-    
+
     return {
         usedStr: `Used: ${totalGb} GB / ${limitTotalGb} GB`,
         expiryStr: `Expiry: ${expiryDateTxt} (${remDaysTxt})`
@@ -2789,7 +2803,7 @@ function getCleanIps(hostName, userCleanIps = null) {
 
 function getAllProfiles(targetSub = null) {
     let list = [{ id: activeDeviceId, name: "Default" }];
-    
+
     if (sysConfig.users && sysConfig.users.length > 0) {
         let now = Date.now();
         sysConfig.users.forEach(u => {
@@ -2804,7 +2818,7 @@ function getAllProfiles(targetSub = null) {
                 if (usr.lastDay === new Date().toISOString().split('T')[0] && usr.dReqs >= u.limitDailyReq) skip = true;
             }
             if(!skip) {
-                list.push({ id: u.id, name: u.name, proxyIp: u.proxyIp, userMode: u.userMode || null, userPorts: u.userPorts || null, maxConfigs: u.maxConfigs || null });
+                list.push({ id: u.id, name: u.name, proxyIp: u.proxyIp, userMode: u.userMode || null, userPorts: u.userPorts || null, maxConfigs: u.maxConfigs || null, accessHourFrom: u.accessHourFrom || null, accessHourTo: u.accessHourTo || null });
             }
         });
     }
@@ -2835,7 +2849,7 @@ function getConfigName(type, profileName, port, hostName, ip) {
     let strategy = sysConfig.nameStrategy || "default";
     let cleanName = profileName === "Default" ? "" : `-${profileName}`;
     let typeLab = type === "alpha" ? "V" : "T";
-    
+
     if (strategy === "type-user-port") {
         return `${type === "alpha" ? "vl" + "ess" : "tro" + "jan"}-${profileName}-${port}`;
     } else if (strategy === "user-port") {
@@ -2844,11 +2858,11 @@ function getConfigName(type, profileName, port, hostName, ip) {
         return `${hostName}-${port}${cleanName}`;
     } else if (strategy === "prefix-user-port") {
         return `${prefix}${cleanName}-${port}`;
-    } 
+    }
     else if (strategy === "ip") {
-    return ip || 'unknown';
-}
-    
+        return ip || 'unknown';
+    }
+
     else { // "default"
         return `${typeLab}-Core-${port}${cleanName}`;
     }
@@ -2866,19 +2880,19 @@ function calcEffectiveIps(ips, maxCfg, effectiveMode, effectivePorts) {
 function buildUriProfile(hostName, targetSub = null, allowInsecure = false) {
     let allHostNames = [hostName];
     if (sysConfig.slaveNodes) allHostNames.push(...sysConfig.slaveNodes.split(/[\r\n,;]+/).map(s=>s.trim()).filter(Boolean));
-    
+
     let ports = sysConfig.socketPorts ? sysConfig.socketPorts.split(',').map(s=>s.trim()).filter(Boolean) : ["443"];
     let reqPath = encodeURI(`/${sysConfig.apiRoute}`);
-    
+
     let lines = [];
     let profiles = getAllProfiles(targetSub);
-    
+
     // Add fake configs
     let stats = getSubscriptionStats(targetSub);
     let fakeU1 = `trojan://00000000-0000-0000-0000-000000000000@127.0.0.1:1080?encryption=none&security=none#${encodeURIComponent("📊 " + stats.usedStr)}`;
     let fakeU2 = `trojan://00000000-0000-0000-0000-000000000000@127.0.0.1:1080?encryption=none&security=none#${encodeURIComponent("📅 " + stats.expiryStr)}`;
     lines.push(fakeU1, fakeU2);
-    
+
     profiles.forEach(p => {
         let effectiveMode = p.userMode || sysConfig.mode;
         let effectivePorts = p.userPorts ? p.userPorts.split(',').map(s=>s.trim()).filter(Boolean) : ports;
@@ -2911,7 +2925,7 @@ function buildUriProfile(hostName, targetSub = null, allowInsecure = false) {
 function buildYamlProfile(hostName, targetSub = null, allowInsecure = false) {
     let allHostNames = [hostName];
     if (sysConfig.slaveNodes) allHostNames.push(...sysConfig.slaveNodes.split(/[\r\n,;]+/).map(s=>s.trim()).filter(Boolean));
-    
+
     let ports = sysConfig.socketPorts ? sysConfig.socketPorts.split(',').map(s=>s.trim()).filter(Boolean) : ["443"];
     let proxies = [];
     let proxyNames = [];
@@ -3150,7 +3164,7 @@ function buildClashJsonProfile(hostName, targetSub = null, allowInsecure = false
                         let tagStr = getConfigName("alpha", p.name, port, hName, ip);
                         tagStr = getUniqueName(tagStr);
                         dynamicTags.push(tagStr);
-                        
+
                         let randomJunk = Array.from({length: 11}, () => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[Math.floor(Math.random() * 62)]).join('');
                         let payloadVl = { junk: randomJunk, protocol: "vl", mode: "proxyip", panelIPs: [] };
                         let pathStrVl = "/" + btoa(JSON.stringify(payloadVl));
@@ -4691,6 +4705,15 @@ function getDashboardUI(hasDB) {
                                           <input type="number" id="add-user-days" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none">
                                       </div>
                                       <div>
+                                        <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_limit_hour">Access Hours (Optional)</label>
+                                        <div class="flex gap-2 items-center">
+                                            <span class="text-xs text-slate-400 mb-1" data-i18n="limit_hour_from">From</span>
+                                            <input type="time" id="add-user-access-from" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                            <span class="text-slate-400" data-i18n="limit_hour_to">To</span>
+                                            <input type="time" id="add-user-access-to" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                        </div>
+                                    </div>
+                                      <div>
                                           <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_u_ipproxy">User Proxy IP(s) (Optional - overrides global Clean IP, comma/newline separated)</label>
                                           <input type="text" id="add-user-proxy-ip" placeholder="e.g. 104.20.0.1, proxyip.com" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                       </div>
@@ -4745,6 +4768,15 @@ function getDashboardUI(hasDB) {
                                           <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="limit_days">Expiration limit (Days remaining) - Leave empty for unlimited</label>
                                           <input type="number" id="edit-user-days" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none">
                                       </div>
+                                         <div>
+                                        <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_limit_hour">Access Hours (Optional)</label>
+                                        <div class="flex gap-2 items-center">
+                                            <span class="text-xs text-slate-400 mb-1" data-i18n="limit_hour_from">From</span>
+                                            <input type="time" id="edit-user-access-from" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                            <span class="text-slate-400" data-i18n="limit_hour_to">To</span>
+                                            <input type="time" id="edit-user-access-to" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                        </div>
+                                    </div>
                                       <div>
                                           <label class="block text-xs font-bold text-slate-500 mb-1">User Proxy IP(s) (Optional - overrides global Clean IP, comma/newline separated)</label>
                                           <input type="text" id="edit-user-proxy-ip" placeholder="e.g. 104.20.0.1, proxyip.com" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
@@ -4935,6 +4967,9 @@ function getDashboardUI(hasDB) {
                    ov_quick_actions: "Quick Actions", ov_add_user: "Add User", ov_backup_config: "Backup Config", ov_refresh: "Refresh Statistics", ov_manage_users: "Manage Users",
                    ov_gb_unit: "GB",
                    lbl_allow_sync:"Allow Sync",
+                   limit_hour_from:"From",
+                    limit_hour_to:"To",
+                   lbl_limit_hour:"Access Hours (Optional)",
                    deploy_btn: "Deploy Now", update_deploying: "Deploying update...",
                    update_success: "Update successful! Reloading...", update_error: "Update failed",
                    lbl_cf_worker: "CF Worker Script Name", desc_cf_worker: "Required for in-panel updates. The script name shown in your Cloudflare Workers dashboard.",
@@ -4986,7 +5021,10 @@ function getDashboardUI(hasDB) {
                    ov_system: "سیستم", ov_recent_activity: "فعالیت‌های اخیر", ov_view_all: "مشاهده همه ←", ov_loading: "در حال بارگذاری...",
                    ov_quick_actions: "عملیات سریع", ov_add_user: "افزودن کاربر", ov_backup_config: "پشتیبان‌گیری", ov_refresh: "بروزرسانی آمار", ov_manage_users: "مدیریت کاربران",
                    ov_gb_unit: "گیگابایت",
-                     lbl_allow_sync:"اجازه همگام سازی",
+                    lbl_allow_sync:"اجازه همگام سازی",
+                   limit_hour_from:"از",
+                    limit_hour_to:"تا",
+                   lbl_limit_hour:"ساعات دسترسی",
                       deploy_btn: "هم‌اکنون نصب کن", update_deploying: "در حال نصب بروزرسانی...",
                       update_success: "بروزرسانی موفق! در حال بارگذاری...", update_error: "خطا در بروزرسانی",
                       lbl_cf_worker: "نام اسکریپت کارگر ابری", desc_cf_worker: "برای بروزرسانی خودکار الزامی است. نام اسکریپت در داشبورد کارگرهای ابری.",
@@ -6096,6 +6134,8 @@ function getDashboardUI(hasDB) {
               const userMode = readModeFromCheckboxes('add-mode-cb');
               const userPorts = readPortsFromCheckboxes('add-user-ports-wrap');
               let maxConfigs = document.getElementById('add-user-max-configs').value;
+              let accessHourFrom=document.getElementById('add-user-access-from').value;
+              let accessHourTo=document.getElementById('add-user-access-to').value;
               maxConfigs = maxConfigs ? parseInt(maxConfigs) : null;
               
               if(!name) {
@@ -6128,6 +6168,8 @@ function getDashboardUI(hasDB) {
                    userMode: userMode,
                    userPorts: userPorts,
                    maxConfigs: maxConfigs,
+                   accessHourFrom:accessHourFrom,
+                   accessHourTo: accessHourTo,
                    createdAt: Date.now()
                };
               
@@ -6139,6 +6181,8 @@ function getDashboardUI(hasDB) {
               document.getElementById('add-user-days').value = '';
               document.getElementById('add-user-proxy-ip').value = '';
               document.getElementById('add-user-max-configs').value = '';
+              document.getElementById('add-user-access-from').value = '';
+              document.getElementById('add-user-access-to').value = '';
               
               renderUsersTable();
               doSaveDirectly();
@@ -6155,7 +6199,9 @@ function getDashboardUI(hasDB) {
               document.getElementById('edit-user-daily-reqs').value = u.limitDailyReq? (u.limitDailyReq / 6000).toFixed(2): '';
               document.getElementById('edit-user-proxy-ip').value = u.proxyIp || '';
               document.getElementById('edit-user-max-configs').value = u.maxConfigs || '';
-              
+              document.getElementById('edit-user-access-from').value=u.accessHourFrom || '';
+              document.getElementById('edit-user-access-to').value=u.accessHourTo || '';
+             
               buildPortCheckboxes('edit-user-ports-wrap', u.userPorts);
               buildModeCheckboxes('edit-user-mode-wrap', u.userMode);
 
@@ -6181,7 +6227,10 @@ function getDashboardUI(hasDB) {
               const userMode = readModeFromCheckboxes('edit-mode-cb');
               const userPorts = readPortsFromCheckboxes('edit-user-ports-wrap');
               let maxConfigs = document.getElementById('edit-user-max-configs').value;
+              let accessHourFrom=document.getElementById('edit-user-access-from').value;
+              let accessHourTo=document.getElementById('edit-user-access-to').value;
               maxConfigs = maxConfigs ? parseInt(maxConfigs) : null;
+              
               
               if(!name) {
                   alert(lang === 'fa' ? 'لطفاً نام را وارد کنید' : 'Please enter a name');
@@ -6209,6 +6258,8 @@ function getDashboardUI(hasDB) {
               u.userMode = userMode;
               u.userPorts = userPorts;
               u.maxConfigs = maxConfigs;
+              u.accessHourFrom=accessHourFrom;
+              u.accessHourTo=accessHourTo;
               
               document.getElementById('modal-edit-user').classList.add('hidden');
               renderUsersTable();
@@ -6492,7 +6543,9 @@ function getDashboardUI(hasDB) {
     parts.forEach(p => {
         map[p.type] = p.value;
     });
-
+    
+    
+   
   
       
         const custom = \`\${map.day} \${map.month} \${map.year} \${map.hour}:\${map.minute}:\${map.second}\`;
@@ -6530,4 +6583,4 @@ function getDashboardUI(hasDB) {
   </body>
   </html>
     `;
-  } 
+}
