@@ -1365,6 +1365,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                                <div id="add-user-mode-wrap" class="flex gap-4 mt-1">
                                                    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="alpha" class="add-mode-cb accent-primary"> <span>Alpha (VLESS)</span></label>
                                                    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="beta" class="add-mode-cb accent-primary"> <span>Beta (Trojan)</span></label>
+                                                   <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="ss" class="add-mode-cb accent-primary"> <span>Shadowsocks</span></label>
                                                </div>
                                            </div>
                                            <div>
@@ -1479,6 +1480,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                                <div id="edit-user-mode-wrap" class="flex gap-4 mt-1">
                                                    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="alpha" class="edit-mode-cb accent-primary"> <span>Alpha (VLESS)</span></label>
                                                    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="beta" class="edit-mode-cb accent-primary"> <span>Beta (Trojan)</span></label>
+                                                   <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="ss" class="edit-mode-cb accent-primary"> <span>Shadowsocks</span></label>
                                                </div>
                                            </div>
                                            <div>
@@ -3418,7 +3420,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                       </div>
                       <div class="flex flex-wrap gap-1 mb-3">
                           ${u.isPaused && u.disabledReason ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300">Auto-Disabled</span>` : ''}
-                          ${u.userMode ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300">${u.userMode === 'alpha' ? 'VLESS' : u.userMode === 'beta' ? 'Trojan' : 'Both'}</span>` : ''}
+                          ${u.userMode ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300">${u.userMode === 'alpha' ? 'VLESS' : u.userMode === 'beta' ? 'Trojan' : u.userMode === 'ss' || u.userMode === 'shadowsocks' ? 'Shadowsocks' : 'Both'}</span>` : ''}
                           ${u.userPorts ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-300">${u.userPorts}</span>` : ''}
                            ${u.maxConfigs ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300">${u.maxConfigs} cfgs</span>` : ''}
                            ${u.connLimit ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-300">${u.connLimit} conn</span>` : ''}
@@ -3643,21 +3645,25 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
               const globalMode = getGlobalMode();
               const alphaAllowed = globalMode === 'alpha' || globalMode === 'both';
               const betaAllowed = globalMode === 'beta' || globalMode === 'both';
+              const ssAllowed = true;
               const selAlpha = userMode === 'alpha' || userMode === 'both' || (!userMode && alphaAllowed);
               const selBeta = userMode === 'beta' || userMode === 'both' || (!userMode && betaAllowed);
+              const selSs = userMode === 'ss' || userMode === 'shadowsocks' || userMode === 'both' || (!userMode && ssAllowed);
               const wrap = document.getElementById(wrapId);
               if (!wrap) return;
               wrap.querySelectorAll('input[type=checkbox]').forEach(cb => {
-                  if (cb.value === 'alpha') { cb.disabled = !alphaAllowed; cb.checked = selAlpha && alphaAllowed; cb.closest			('label').style.opacity = alphaAllowed ? '1' : '0.35'; }
-                  if (cb.value === 'beta')  { cb.disabled = !betaAllowed;  cb.checked = selBeta && betaAllowed;  cb.closest			('label').style.opacity = betaAllowed  ? '1' : '0.35'; }
+                  if (cb.value === 'alpha') { cb.disabled = !alphaAllowed; cb.checked = selAlpha && alphaAllowed; cb.closest('label').style.opacity = alphaAllowed ? '1' : '0.35'; }
+                  if (cb.value === 'beta')  { cb.disabled = !betaAllowed;  cb.checked = selBeta && betaAllowed;  cb.closest('label').style.opacity = betaAllowed  ? '1' : '0.35'; }
+                  if (cb.value === 'ss')    { cb.disabled = !ssAllowed;    cb.checked = selSs && ssAllowed;      cb.closest('label').style.opacity = ssAllowed    ? '1' : '0.35'; }
               });
           }
 
           function readModeFromCheckboxes(cbClass) {
              const cbs = [...document.querySelectorAll('.' + cbClass + ':checked')].map(c=>c.value);
-              if (cbs.includes('alpha') && cbs.includes('beta')) return 'both';
+              if (cbs.length > 1) return 'both';
               if (cbs.includes('alpha')) return 'alpha';
               if (cbs.includes('beta')) return 'beta';
+              if (cbs.includes('ss')) return 'ss';
               return getGlobalMode();
           }
 
