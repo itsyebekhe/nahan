@@ -382,6 +382,6 @@ Once your bot is configured in the Advanced tab, these commands are available:
 
 <div align="center">
 
-[📖 README](./README.md) · [🇮🇷 راهنمای فارسی](./HELP_FA.md) · [⭐ Star on GitHub](https://github.com/itsyebekhe/nahan)
+[📖 README](./README.md) · [🇮🇷 راهنمای فارسی](./HELP_FA.md) · [⭐ Star on GitHub](https://github.com/uuxnubv/nahan)
 
 </div>
