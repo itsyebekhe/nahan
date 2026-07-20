@@ -5,7 +5,7 @@ import { connect } from "cloudflare:sockets";
  * Handles real-time binary streams from remote sensor nodes.
  */
 
-const CURRENT_VERSION = "2.9.4";
+const CURRENT_VERSION = "2.10.0";
 
 const getAlpha = () => String.fromCharCode(118, 108, 101, 115, 115);
 const getBeta = () => String.fromCharCode(116, 114, 111, 106, 97, 110);
@@ -51,7 +51,7 @@ const SYSTEM_DEFAULTS = {
     cfWorkerName: "",
     isPaused: false,
     silentAlerts: false,
-    githubRepo: "itsyebekhe/nahan",
+    githubRepo: "uuxnubv/nahan",
     nameStrategy: "default",
     namePrefix: "Core",
     tgBotLang: "fa",
@@ -73,6 +73,17 @@ const SYSTEM_DEFAULTS = {
         { name: "📊 {usage}", enabled: true },
         { name: "📅 {expiry}", enabled: true },
     ],
+    shopConfig: {
+        packages: [
+            { id: "basic", name: "Basic", price: 5, durationDays: 30, description: "Starter package", enabled: true },
+            { id: "pro", name: "Pro", price: 12, durationDays: 90, description: "Popular package", enabled: true },
+        ],
+        coupons: [
+            { id: "welcome", code: "WELCOME10", percent: 10, expiresAt: "2099-01-01", enabled: true },
+        ],
+        referral: { enabled: true, percent: 10 },
+        trial: { enabled: true, days: 3, oneTime: true },
+    },
 };
 
 let sysConfig = { ...SYSTEM_DEFAULTS };
@@ -466,6 +477,7 @@ export default {
                 stats: `/${encodeURI(sysConfig.apiRoute)}/api/stats`,
                 update: `/${encodeURI(sysConfig.apiRoute)}/api/update`,
                 apiKeys: `/${encodeURI(sysConfig.apiRoute)}/api/keys`,
+                shop: `/${encodeURI(sysConfig.apiRoute)}/api/shop`,
             };
 
             const isSyncRoute = reqPath.endsWith("/api/sync");
@@ -489,7 +501,9 @@ export default {
                 isUsersRoute ||
                 isStatsRoute ||
                 isUpdateRoute ||
-                isApiKeysRoute;
+                isApiKeysRoute ||
+                reqPath === routes.shop ||
+                reqPath.endsWith("/api/shop");
 
             if (!isTelemetryStream && !isAuthorizedRoute) {
                 return serveMaintenancePage(request, url);
@@ -497,7 +511,7 @@ export default {
 
             if (!isTelemetryStream) {
                 if (reqPath === routes.dash) {
-                    const dashboardUrl = env.DASHBOARD_URL || 'https://raw.githubusercontent.com/itsyebekhe/nahan/main/dashboard.html';
+                    const dashboardUrl = env.DASHBOARD_URL || 'https://raw.githubusercontent.com/uuxnubv/nahan/main/dashboard.html';
                     try {
                         const resp = await fetch(dashboardUrl);
                         let html = await resp.text();
@@ -634,7 +648,7 @@ export default {
 
                     if (isRealBrowser && !isCustomUaAllowed) {
                         if (isValidUser) {
-                            const subscriptionUrl = env.SUBSCRIPTION_URL || 'https://raw.githubusercontent.com/itsyebekhe/nahan/main/subscription.html';
+                            const subscriptionUrl = env.SUBSCRIPTION_URL || 'https://raw.githubusercontent.com/uuxnubv/nahan/main/subscription.html';
                             try {
                                 const resp = await fetch(subscriptionUrl);
                                 let html = await resp.text();
@@ -937,7 +951,7 @@ export default {
         try {
             await loadSysConfig(env, ctx);
             if (sysConfig.autoUpdate && sysConfig.cfAccountId && sysConfig.cfApiToken && sysConfig.cfWorkerName) {
-                const repo = (sysConfig.githubRepo || "itsyebekhe/nahan")
+                const repo = (sysConfig.githubRepo || "uuxnubv/nahan")
                     .replace(/https?:\/\/github\.com\//, "")
                     .trim();
                 let remoteVer = null;
@@ -1291,6 +1305,212 @@ async function logActivity(env, type, detail) {
         if (logs.length > 50) logs = logs.slice(0, 50);
         await d1Put(env, "sys_logs", JSON.stringify(logs));
     } catch (e) {}
+}
+
+function normalizeShopUserKey(value) {
+    return String(value || "").trim().toLowerCase();
+}
+
+function createDefaultShopStore() {
+    return {
+        config: {
+            packages: [
+                { id: "basic", name: "Basic", price: 5, durationDays: 30, description: "Starter package", enabled: true },
+                { id: "pro", name: "Pro", price: 12, durationDays: 90, description: "Popular package", enabled: true },
+            ],
+            coupons: [{ id: "welcome", code: "WELCOME10", percent: 10, expiresAt: "2099-01-01", enabled: true }],
+            referral: { enabled: true, percent: 10 },
+            trial: { enabled: true, days: 3, oneTime: true },
+        },
+        state: {
+            users: {},
+            purchases: [],
+            receipts: [],
+            services: [],
+        },
+    };
+}
+
+async function getShopStore(env) {
+    try {
+        const stored = await d1Get(env, "shop_store");
+        if (!stored) return createDefaultShopStore();
+        const parsed = JSON.parse(stored);
+        return {
+            config: parsed.config || createDefaultShopStore().config,
+            state: parsed.state || createDefaultShopStore().state,
+        };
+    } catch (e) {
+        return createDefaultShopStore();
+    }
+}
+
+async function saveShopStore(env, store) {
+    try {
+        await d1Put(env, "shop_store", JSON.stringify(store));
+    } catch (e) {}
+}
+
+async function handleShopApi(request, env, ctx) {
+    try {
+        const url = new URL(request.url);
+        const method = request.method;
+        const body = method === "GET" ? {} : await request.json().catch(() => ({}));
+        const authKey = body.key || url.searchParams.get("key") || "";
+        const isAdmin = authKey === sysConfig.masterKey || isPanelApiKey(authKey);
+        const sub = body.sub || url.searchParams.get("sub") || "";
+        const userKey = normalizeShopUserKey(sub || body.user || body.userId || body.userName || "");
+
+        const store = await getShopStore(env);
+        const state = store.state || { users: {}, purchases: [], receipts: [], services: [] };
+        const config = store.config || createDefaultShopStore().config;
+
+        if (method === "GET") {
+            const userData = userKey ? (state.users[userKey] || { balance: 0, purchases: [], receipts: [], services: [], trialUsed: false }) : null;
+            return new Response(
+                JSON.stringify({
+                    success: true,
+                    config,
+                    user: userData,
+                    purchases: isAdmin ? state.purchases : undefined,
+                    receipts: isAdmin ? state.receipts : undefined,
+                    services: isAdmin ? state.services : undefined,
+                }),
+                { headers: { "Content-Type": "application/json" } },
+            );
+        }
+
+        if (method !== "POST") {
+            return new Response(JSON.stringify({ success: false, error: "Method not allowed" }), { status: 405, headers: { "Content-Type": "application/json" } });
+        }
+
+        if (isAdmin && body.action === "save-config") {
+            store.config = body.config || config;
+            await saveShopStore(env, store);
+            ctx?.waitUntil(logActivity(env, "Shop Config Updated", "Store configuration updated via dashboard").catch(() => {}));
+            return new Response(JSON.stringify({ success: true, config: store.config }), { headers: { "Content-Type": "application/json" } });
+        }
+
+        if (isAdmin && body.action === "approve-receipt") {
+            const receipt = state.receipts.find((item) => item.id === body.receiptId);
+            if (!receipt) return new Response(JSON.stringify({ success: false, error: "Receipt not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
+            const userEntry = state.users[receipt.userId] || { balance: 0, purchases: [], receipts: [], services: [], trialUsed: false };
+            userEntry.balance = Number(userEntry.balance || 0) + Number(receipt.amount || 0);
+            state.users[receipt.userId] = userEntry;
+            receipt.status = "approved";
+            receipt.approvedAt = Date.now();
+            await saveShopStore(env, store);
+            return new Response(JSON.stringify({ success: true, receipt }), { headers: { "Content-Type": "application/json" } });
+        }
+
+        if (isAdmin && body.action === "reject-receipt") {
+            const receipt = state.receipts.find((item) => item.id === body.receiptId);
+            if (!receipt) return new Response(JSON.stringify({ success: false, error: "Receipt not found" }), { status: 404, headers: { "Content-Type": "application/json" } });
+            receipt.status = "rejected";
+            receipt.rejectedAt = Date.now();
+            await saveShopStore(env, store);
+            return new Response(JSON.stringify({ success: true, receipt }), { headers: { "Content-Type": "application/json" } });
+        }
+
+        if (!userKey) {
+            return new Response(JSON.stringify({ success: false, error: "User identifier required" }), { status: 400, headers: { "Content-Type": "application/json" } });
+        }
+
+        if (body.action === "topup-request") {
+            const amount = Number(body.amount || 0);
+            if (!amount || amount <= 0) return new Response(JSON.stringify({ success: false, error: "Valid amount required" }), { status: 400, headers: { "Content-Type": "application/json" } });
+            const receipt = {
+                id: `rcpt-${Date.now()}`,
+                userId: userKey,
+                amount,
+                method: body.method || "card-to-card",
+                note: body.note || "",
+                status: "pending",
+                createdAt: Date.now(),
+            };
+            state.receipts.push(receipt);
+            const userEntry = state.users[userKey] || { balance: 0, purchases: [], receipts: [], services: [], trialUsed: false };
+            userEntry.receipts = userEntry.receipts || [];
+            userEntry.receipts.push(receipt.id);
+            state.users[userKey] = userEntry;
+            await saveShopStore(env, store);
+            return new Response(JSON.stringify({ success: true, receipt }), { headers: { "Content-Type": "application/json" } });
+        }
+
+        if (body.action === "purchase") {
+            const pkg = (config.packages || []).find((item) => item.id === body.packageId);
+            if (!pkg || !pkg.enabled) {
+                return new Response(JSON.stringify({ success: false, error: "Package not available" }), { status: 400, headers: { "Content-Type": "application/json" } });
+            }
+
+            let price = Number(pkg.price || 0);
+            const couponCode = String(body.coupon || "").trim().toUpperCase();
+            const coupon = (config.coupons || []).find((item) => item.enabled && item.code === couponCode && (!item.expiresAt || new Date(item.expiresAt) >= new Date()));
+            if (coupon) price = Math.max(0, price * (1 - Number(coupon.percent || 0) / 100));
+            const finalPrice = Number(price.toFixed(2));
+
+            const userEntry = state.users[userKey] || { balance: 0, purchases: [], receipts: [], services: [], trialUsed: false };
+            if (finalPrice > Number(userEntry.balance || 0)) {
+                return new Response(JSON.stringify({ success: false, error: "Insufficient wallet balance" }), { status: 402, headers: { "Content-Type": "application/json" } });
+            }
+
+            userEntry.balance = Number(userEntry.balance || 0) - finalPrice;
+            userEntry.purchases = userEntry.purchases || [];
+            const purchase = {
+                id: `purchase-${Date.now()}`,
+                userId: userKey,
+                packageId: pkg.id,
+                packageName: pkg.name,
+                amount: finalPrice,
+                coupon: coupon ? coupon.code : null,
+                createdAt: Date.now(),
+                expiresAt: Date.now() + (Number(pkg.durationDays || 30) * 86400000),
+            };
+            userEntry.purchases.push(purchase);
+            state.purchases.push(purchase);
+            const serviceLink = `${url.protocol}//${url.host}/${encodeURI(sysConfig.apiRoute)}?sub=${encodeURIComponent(userKey)}`;
+            const service = {
+                id: `svc-${Date.now()}`,
+                userId: userKey,
+                name: pkg.name,
+                link: serviceLink,
+                createdAt: Date.now(),
+                purchaseId: purchase.id,
+            };
+            userEntry.services = userEntry.services || [];
+            userEntry.services.push(service);
+            state.services.push(service);
+            state.users[userKey] = userEntry;
+            await saveShopStore(env, store);
+            return new Response(JSON.stringify({ success: true, purchase, service, balance: userEntry.balance }), { headers: { "Content-Type": "application/json" } });
+        }
+
+        if (body.action === "claim-trial") {
+            if (!config.trial || !config.trial.enabled) return new Response(JSON.stringify({ success: false, error: "Trial is disabled" }), { status: 400, headers: { "Content-Type": "application/json" } });
+            const userEntry = state.users[userKey] || { balance: 0, purchases: [], receipts: [], services: [], trialUsed: false };
+            if (config.trial.oneTime && userEntry.trialUsed) return new Response(JSON.stringify({ success: false, error: "Trial already used" }), { status: 400, headers: { "Content-Type": "application/json" } });
+            userEntry.trialUsed = true;
+            const trialPurchase = {
+                id: `trial-${Date.now()}`,
+                userId: userKey,
+                packageId: "trial",
+                packageName: "Free Trial",
+                amount: 0,
+                createdAt: Date.now(),
+                expiresAt: Date.now() + (Number(config.trial.days || 3) * 86400000),
+            };
+            userEntry.purchases = userEntry.purchases || [];
+            userEntry.purchases.push(trialPurchase);
+            state.purchases.push(trialPurchase);
+            state.users[userKey] = userEntry;
+            await saveShopStore(env, store);
+            return new Response(JSON.stringify({ success: true, purchase: trialPurchase }), { headers: { "Content-Type": "application/json" } });
+        }
+
+        return new Response(JSON.stringify({ success: false, error: "Invalid shop action" }), { status: 400, headers: { "Content-Type": "application/json" } });
+    } catch (e) {
+        return new Response(JSON.stringify({ success: false, error: e.message }), { status: 500, headers: { "Content-Type": "application/json" } });
+    }
 }
 
 async function handleLogs(request, env) {
@@ -1946,7 +2166,7 @@ async function handleUpdateApi(request, env, ctx) {
         const accountId = sysConfig.cfAccountId;
         const apiToken = sysConfig.cfApiToken;
         const workerName = sysConfig.cfWorkerName;
-        const repo = (sysConfig.githubRepo || "itsyebekhe/nahan")
+        const repo = (sysConfig.githubRepo || "uuxnubv/nahan")
             .replace(/https?:\/\/github\.com\//, "")
             .trim();
 
@@ -7278,7 +7498,7 @@ let singboxTemplate = null;
 let VTemplate = null;
 
 async function fetchTemplates(env) {
-    const repo = sysConfig.githubRepo || "itsyebekhe/nahan";
+    const repo = sysConfig.githubRepo || "uuxnubv/nahan";
     if (!clashTemplate) {
         try {
             let res = await fetch(`https://raw.githubusercontent.com/${repo}/main/clash.yml`);

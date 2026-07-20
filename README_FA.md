@@ -8,7 +8,7 @@
 
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=Cloudflare&logoColor=white)](https://workers.cloudflare.com/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](./LICENSE)
-[![JavaScript](https://img.shields.io/badge/JavaScript-100%25-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://github.com/itsyebekhe/nahan/blob/main/_worker.js)
+[![JavaScript](https://img.shields.io/badge/JavaScript-100%25-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://github.com/uuxnubv/nahan/blob/main/_worker.js)
 
 > 🌐 [English Version / نسخه انگلیسی](./README.md)
 
@@ -108,7 +108,7 @@
 4. روی **Deploy** کلیک کنید تا Worker با کد placeholder ساخته شود.
 5. در صفحه تأیید، روی **Edit code** کلیک کنید تا ویرایشگر آنلاین باز شود.
 6. تمام کد placeholder موجود را انتخاب کرده و **حذف کنید**.
-7. در مخزن نهان، فایل [`_worker.js`](https://github.com/itsyebekhe/nahan/blob/main/_worker.js) را باز کنید.
+7. در مخزن نهان، فایل [`_worker.js`](https://github.com/uuxnubv/nahan/blob/main/_worker.js) را باز کنید.
 8. روی **Raw** کلیک کنید، سپس تمام محتوا را انتخاب و کپی کنید.
 9. کد کپی‌شده را در ویرایشگر Cloudflare پیست کنید.
 10. روی **Save and Deploy** کلیک کنید.
@@ -368,7 +368,7 @@ nahan/
 
 ساخته شده با ❤️ توسط جامعه متن‌باز
 
-[⭐ ستاره بدهید](https://github.com/itsyebekhe/nahan) · [🐛 گزارش خطا](https://github.com/itsyebekhe/nahan/issues) · [🌐 نسخه انگلیسی](./README.md)
+[⭐ ستاره بدهید](https://github.com/uuxnubv/nahan) · [🐛 گزارش خطا](https://github.com/uuxnubv/nahan/issues) · [🌐 نسخه انگلیسی](./README.md)
 
 </div>
 

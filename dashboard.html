@@ -11,7 +11,7 @@
       <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%236366f1'/><text x='50' y='62' font-size='40' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>N</text></svg>">
       <title>Nahan Gateway</title>
       <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
-      <script src="https://cdn.jsdelivr.net/gh/itsyebekhe/nahan@main/tailwindcss.js"></script>
+      <script src="https://cdn.jsdelivr.net/gh/uuxnubv/nahan@main/tailwindcss.js"></script>
             <script>
           tailwind.config = {
     darkMode: 'class',
@@ -289,7 +289,7 @@ html.dark select option {
       <!-- Global Controls -->
       <div class="fixed top-4 end-4 md:top-5 md:end-5 flex items-center gap-2 z-50">
           <span id="top-version-badge" class="hidden md:inline-block px-3 py-1.5 rounded-xl text-[11px] font-mono font-bold" style="background: color-mix(in srgb, var(--color-primary) 12%, transparent); border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent); color: var(--color-primary);">v__CURRENT_VERSION__</span>
-          <a href="https://github.com/itsyebekhe/nahan" id="github-link-btn" target="_blank" class="hidden md:inline-flex btn-top-bar p-2 rounded-xl transition-all" style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-muted);">
+          <a href="https://github.com/uuxnubv/nahan" id="github-link-btn" target="_blank" class="hidden md:inline-flex btn-top-bar p-2 rounded-xl transition-all" style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-muted);">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
           </a>
           <button onclick="toggleLang()" id="lang-toggle" class="btn-top-bar px-3 py-1.5 rounded-xl text-sm font-bold transition-all" style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text);">EN</button>
@@ -388,6 +388,10 @@ html.dark select option {
                       <svg class="w-6 h-6 me-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                       <span class="font-semibold" data-i18n="tab_users">Clients</span>
                   </button>
+                  <button onclick="switchTab('shop')" id="tab-shop" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 group">
+                      <svg class="w-6 h-6 me-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.5 3M7 13h10l4-8H5.5M7 13L5.5 6M7 13l-2 7m10-7l2 7m-6-7v7"></path></svg>
+                      <span class="font-semibold" data-i18n="tab_shop">Shop</span>
+                  </button>
                   <button onclick="switchTab('help')" id="tab-help" class="nav-item flex items-center w-full px-4 py-3 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 group">
                       <svg class="w-6 h-6 me-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                       <span class="font-semibold" data-i18n="tab_help">Help & FAQ</span>
@@ -459,7 +463,7 @@ html.dark select option {
                           </div>
                           <div id="update-deploy-status" class="hidden w-full mt-3 p-3 rounded-xl text-sm font-bold text-center"></div>
                           <div class="w-full mt-2 text-center">
-                              <a id="update-github-link" href="https://github.com/itsyebekhe/nahan" target="_blank" class="text-xs text-slate-400 hover:text-amber-500 transition-colors underline" data-i18n="view_github">View on GitHub</a>
+                              <a id="update-github-link" href="https://github.com/uuxnubv/nahan" target="_blank" class="text-xs text-slate-400 hover:text-amber-500 transition-colors underline" data-i18n="view_github">View on GitHub</a>
                           </div>
                       </div>
 
@@ -769,7 +773,7 @@ html.dark select option {
                               </div>
                               <div class="space-y-1 md:col-span-2">
                                   <label class="block text-sm font-bold text-slate-600 dark:text-slate-300 ms-1" data-i18n="lbl_github_repo">GitHub Update Repository</label>
-                                  <input type="text" id="cfg-github-repo" placeholder="itsyebekhe/nahan" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                  <input type="text" id="cfg-github-repo" placeholder="uuxnubv/nahan" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                   <div class="flex justify-start items-center gap-2 mt-2">
                                       <button type="button" onclick="triggerManualRedeploy()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold rounded-lg transition-colors border border-primary/20">
                                           🔄 <span data-i18n="btn_redeploy_force">Force Redeploy / Switch Format</span>
@@ -1514,6 +1518,51 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                           </div>
                       </div>
 
+                      <!-- SHOP VIEW -->
+                      <div id="view-shop" class="hidden space-y-6">
+                          <div class="bg-[var(--color-surface)]/70 backdrop-blur-xl rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-darkborder/50 space-y-4">
+                              <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                                  <div>
+                                      <h3 class="text-lg font-black text-slate-800 dark:text-white" data-i18n="shop_title">Store & Wallet</h3>
+                                      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="shop_desc">Manage packages, coupons, trial access, wallet top-ups, purchases, and service links.</p>
+                                  </div>
+                                  <div class="flex gap-2">
+                                      <button onclick="loadShopData()" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-bold">🔄 Refresh</button>
+                                      <button onclick="saveShopConfig()" class="px-3 py-2 bg-primary text-white rounded-xl text-xs font-bold">💾 Save</button>
+                                  </div>
+                              </div>
+                              <div id="shop-status" class="text-xs text-slate-500"></div>
+                              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                  <div class="rounded-2xl border border-slate-200 dark:border-darkborder p-4 space-y-3">
+                                      <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200">Packages</h4>
+                                      <div id="shop-packages-list" class="space-y-2"></div>
+                                      <button onclick="addShopPackage()" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-bold">+ Add Package</button>
+                                  </div>
+                                  <div class="rounded-2xl border border-slate-200 dark:border-darkborder p-4 space-y-3">
+                                      <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200">Coupons</h4>
+                                      <div id="shop-coupons-list" class="space-y-2"></div>
+                                      <button onclick="addShopCoupon()" class="px-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-bold">+ Add Coupon</button>
+                                  </div>
+                              </div>
+                              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                  <div class="rounded-2xl border border-slate-200 dark:border-darkborder p-4 space-y-3">
+                                      <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200">Referral & Trial</h4>
+                                      <label class="block text-xs font-bold text-slate-500">Referral Percentage</label>
+                                      <input type="number" id="shop-referral-percent" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800">
+                                      <label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><input type="checkbox" id="shop-referral-enabled"> Enabled</label>
+                                      <label class="block text-xs font-bold text-slate-500">Trial Days</label>
+                                      <input type="number" id="shop-trial-days" class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800">
+                                      <label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><input type="checkbox" id="shop-trial-enabled"> Enabled</label>
+                                      <label class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300"><input type="checkbox" id="shop-trial-one-time"> One-time</label>
+                                  </div>
+                                  <div class="rounded-2xl border border-slate-200 dark:border-darkborder p-4 space-y-3">
+                                      <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200">Receipts & Services</h4>
+                                      <div id="shop-receipts-list" class="space-y-2 max-h-64 overflow-y-auto"></div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
                       <!-- HELP & FAQ VIEW -->
                       <div id="view-help" class="hidden space-y-6">
                           <div class="bg-[var(--color-surface)]/70 backdrop-blur-xl rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-darkborder/50 relative overflow-hidden">
@@ -1672,6 +1721,10 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
               <button onclick="switchTab('users')" id="mob-tab-users" class="mobile-tab-item mobile-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400">
                   <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                   <span class="text-[10px] font-bold" data-i18n="tab_users">Clients</span>
+              </button>
+              <button onclick="switchTab('shop')" id="mob-tab-shop" class="mobile-tab-item mobile-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400">
+                  <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.5 3M7 13h10l4-8H5.5M7 13L5.5 6M7 13l-2 7m10-7l2 7m-6-7v7"></path></svg>
+                  <span class="text-[10px] font-bold" data-i18n="tab_shop">Shop</span>
               </button>
               <button onclick="switchTab('help')" id="mob-tab-help" class="mobile-tab-item mobile-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400">
                   <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
@@ -2468,7 +2521,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
           let dashboardInterval = null;
           let networkInterval = null;
           function switchTab(tab) {
-            ['overview','info','network','settings','advanced','logs','users','help'].forEach(t => {
+            ['overview','info','network','settings','advanced','logs','users','shop','help'].forEach(t => {
                   const view = document.getElementById('view-'+t);
                   const deskBtn = document.getElementById('tab-'+t);
                   const mobBtn = document.getElementById('mob-tab-'+t);
@@ -2505,6 +2558,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                 doLogin(true);
                 networkInterval = setInterval(()=>doLogin(true), 15000);
             }
+            if(tab === 'shop') loadShopData();
           }
 
         function toggleFAQ(button) {
@@ -2530,6 +2584,80 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                     item.classList.add('hidden');
                 }
             });
+        }
+
+        function setShopStatus(message, isError) {
+            const el = document.getElementById('shop-status');
+            if (!el) return;
+            el.textContent = message;
+            el.className = isError ? 'text-xs text-red-500' : 'text-xs text-emerald-600';
+        }
+
+        function renderShopItems() {
+            const packagesEl = document.getElementById('shop-packages-list');
+            const couponsEl = document.getElementById('shop-coupons-list');
+            const receiptsEl = document.getElementById('shop-receipts-list');
+            const state = window.__shopState || {};
+            const config = state.config || {};
+            packagesEl.innerHTML = (config.packages || []).map(pkg => `<div class="rounded-xl border border-slate-200 dark:border-darkborder p-2 text-xs"><div class="flex justify-between"><strong>${pkg.name}</strong><span>${pkg.price} $</span></div><div class="text-slate-500">${pkg.description || ''}</div><div class="text-[11px] text-slate-400">${pkg.durationDays || 30} days • ${pkg.enabled ? 'enabled' : 'disabled'}</div></div>`).join('');
+            couponsEl.innerHTML = (config.coupons || []).map(c => `<div class="rounded-xl border border-slate-200 dark:border-darkborder p-2 text-xs"><div class="flex justify-between"><strong>${c.code}</strong><span>${c.percent}%</span></div><div class="text-slate-500">${c.expiresAt || 'No expiry'}</div></div>`).join('');
+            receiptsEl.innerHTML = (state.receipts || []).slice(0, 10).map(r => `<div class="rounded-xl border border-slate-200 dark:border-darkborder p-2 text-xs"><div class="flex justify-between"><strong>${r.userId}</strong><span>${r.status || 'pending'}</span></div><div class="text-slate-500">${r.amount || 0} • ${new Date(r.createdAt || Date.now()).toLocaleDateString()}</div></div>`).join('');
+        }
+
+        async function loadShopData() {
+            const statusEl = document.getElementById('shop-status');
+            if (statusEl) statusEl.textContent = 'Loading shop data...';
+            try {
+                const res = await fetch(baseRoute + '/api/shop?key=' + encodeURIComponent(sessionKey));
+                const data = await res.json();
+                if (!data.success) throw new Error(data.error || 'Failed');
+                window.__shopState = data;
+                document.getElementById('shop-referral-percent').value = data.config?.referral?.percent || 0;
+                document.getElementById('shop-referral-enabled').checked = !!data.config?.referral?.enabled;
+                document.getElementById('shop-trial-days').value = data.config?.trial?.days || 0;
+                document.getElementById('shop-trial-enabled').checked = !!data.config?.trial?.enabled;
+                document.getElementById('shop-trial-one-time').checked = !!data.config?.trial?.oneTime;
+                renderShopItems();
+                setShopStatus('Shop data loaded.', false);
+            } catch (e) {
+                setShopStatus(e.message || 'Unable to load shop data.', true);
+            }
+        }
+
+        async function saveShopConfig() {
+            try {
+                const config = window.__shopState?.config || {};
+                config.referral = { enabled: document.getElementById('shop-referral-enabled').checked, percent: Number(document.getElementById('shop-referral-percent').value || 0) };
+                config.trial = { enabled: document.getElementById('shop-trial-enabled').checked, days: Number(document.getElementById('shop-trial-days').value || 0), oneTime: document.getElementById('shop-trial-one-time').checked };
+                const res = await fetch(baseRoute + '/api/shop', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: sessionKey, action: 'save-config', config }) });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.error || 'Failed to save');
+                window.__shopState = { ...window.__shopState, config: data.config };
+                setShopStatus('Shop configuration saved.', false);
+                renderShopItems();
+            } catch (e) {
+                setShopStatus(e.message || 'Unable to save shop config.', true);
+            }
+        }
+
+        function addShopPackage() {
+            const state = window.__shopState || { config: { packages: [] } };
+            const pkg = { id: 'pkg-' + Date.now(), name: 'New Package', price: 5, durationDays: 30, description: 'New package', enabled: true };
+            state.config.packages = state.config.packages || [];
+            state.config.packages.push(pkg);
+            window.__shopState = state;
+            renderShopItems();
+            setShopStatus('Package added locally. Save to persist.', false);
+        }
+
+        function addShopCoupon() {
+            const state = window.__shopState || { config: { coupons: [] } };
+            const coupon = { id: 'coupon-' + Date.now(), code: 'NEW10', percent: 10, expiresAt: '2099-01-01', enabled: true };
+            state.config.coupons = state.config.coupons || [];
+            state.config.coupons.push(coupon);
+            window.__shopState = state;
+            renderShopItems();
+            setShopStatus('Coupon added locally. Save to persist.', false);
         }
 
         async function loadLogs() {
@@ -3051,7 +3179,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                       document.getElementById('cfg-cf-worker').value = conf.cfWorkerName || '';
                       document.getElementById('cfg-pause').checked = conf.isPaused || false;
                       document.getElementById('cfg-silent').checked = conf.silentAlerts || false;
-                      document.getElementById('cfg-github-repo').value = conf.githubRepo || 'itsyebekhe/nahan';
+                      document.getElementById('cfg-github-repo').value = conf.githubRepo || 'uuxnubv/nahan';
                       document.getElementById('cfg-name-strategy').value = conf.nameStrategy || 'default';
                       document.getElementById('cfg-name-prefix').value = conf.namePrefix || 'Core';
                       document.getElementById('cfg-sub-ua').value = conf.subUserAgent || '';
@@ -4112,7 +4240,7 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
                           if (autoRadio) autoRadio.checked = true;
                           doUpdate();
                       } else {
-                          showUpdateBanner((document.getElementById('cfg-github-repo')?.value || window.nahanConfig?.githubRepo || 'itsyebekhe/nahan').replace('https://github.com/', '').replace('http://github.com/', '').trim(), data.latest);
+                          showUpdateBanner((document.getElementById('cfg-github-repo')?.value || window.nahanConfig?.githubRepo || 'uuxnubv/nahan').replace('https://github.com/', '').replace('http://github.com/', '').trim(), data.latest);
                       }
                   }
                   if (data.success && !data.canDeploy) {
@@ -4199,7 +4327,7 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
                   window._updateData = { latest: CURRENT_VERSION, updateAvailable: false };
               }
 
-              const repo = (document.getElementById('cfg-github-repo')?.value || window.nahanConfig?.githubRepo || 'itsyebekhe/nahan').replace('https://github.com/', '').replace('http://github.com/', '').trim();
+              const repo = (document.getElementById('cfg-github-repo')?.value || window.nahanConfig?.githubRepo || 'uuxnubv/nahan').replace('https://github.com/', '').replace('http://github.com/', '').trim();
 
               showUpdateBanner(repo, CURRENT_VERSION);
 

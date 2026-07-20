@@ -6,7 +6,7 @@
 
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=Cloudflare&logoColor=white)](https://workers.cloudflare.com/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](./LICENSE)
-[![JavaScript](https://img.shields.io/badge/JavaScript-100%25-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://github.com/itsyebekhe/nahan/blob/main/_worker.js)
+[![JavaScript](https://img.shields.io/badge/JavaScript-100%25-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://github.com/uuxnubv/nahan/blob/main/_worker.js)
 
 > 🇮🇷 [نسخه فارسی / Persian Version](./README_FA.md)
 
@@ -115,7 +115,7 @@ Nahan stores all configuration in a Cloudflare D1 SQLite database. You must crea
 4. Click **Deploy** to create the worker with placeholder code.
 5. On the confirmation screen, click **Edit code** to open the online editor.
 6. Select all existing placeholder code and **delete it**.
-7. Open the Nahan repository and go to [`_worker.js`](https://github.com/itsyebekhe/nahan/blob/main/_worker.js).
+7. Open the Nahan repository and go to [`_worker.js`](https://github.com/uuxnubv/nahan/blob/main/_worker.js).
 8. Click **Raw**, then select all and copy the full contents.
 9. Paste the copied code into the Cloudflare editor.
 10. Click **Save and Deploy**.
@@ -372,6 +372,6 @@ This project is licensed under the **MIT License**. See the [LICENSE](./LICENSE)
 
 Made with ❤️ by the Open Source Community
 
-[⭐ Star this repo](https://github.com/itsyebekhe/nahan) · [🐛 Report a bug](https://github.com/itsyebekhe/nahan/issues) · [🇮🇷 نسخه فارسی](./README_FA.md)
+[⭐ Star this repo](https://github.com/uuxnubv/nahan) · [🐛 Report a bug](https://github.com/uuxnubv/nahan/issues) · [🇮🇷 نسخه فارسی](./README_FA.md)
 
 </div>
