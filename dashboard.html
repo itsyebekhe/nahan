@@ -4552,7 +4552,11 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
 
       try {
           const url = baseRoute + '/api/proxy-ips?key=' + encodeURIComponent(sessionKey);
-          const res = await fetch(url);
+          const res = await fetch(url, {
+              headers: {
+                  'Authorization': 'Bearer ' + sessionKey
+              }
+          });
           const data = await res.json();
           if (data.success && Array.isArray(data.sections)) {
               proxyLocationData = data.sections;
