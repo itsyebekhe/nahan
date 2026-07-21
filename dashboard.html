@@ -942,6 +942,43 @@ html.dark select option {
 proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none font-mono text-sm resize-none"></textarea>
                                       </div>
                                       <div class="space-y-1">
+                                       <!-- Location Based Relay Multi-Selector -->
+                                       <div class="p-4 rounded-2xl border border-slate-200 dark:border-darkborder bg-slate-50/50 dark:bg-slate-800/40 space-y-3">
+                                           <div class="flex items-center justify-between flex-wrap gap-2">
+                                               <div class="flex items-center gap-2">
+                                                   <span class="text-base">📍</span>
+                                                   <span class="text-xs font-bold text-slate-700 dark:text-slate-200">Daily Proxy IPs Location Multi-Selector</span>
+                                                   <span id="proxy-location-count-badge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary"></span>
+                                               </div>
+                                               <button type="button" onclick="fetchLocationProxyIps()" id="btn-fetch-proxy-ips" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-primary text-white hover:bg-primary/90 transition-colors flex items-center gap-1.5 shadow-sm">
+                                                   <span>🔄 Fetch Locations</span>
+                                               </button>
+                                           </div>
+
+                                           <div id="proxy-location-loading" class="hidden py-4 text-center text-xs text-slate-500 animate-pulse">
+                                               Fetching latest daily proxy IPs from ProxyIP-Daily.md...
+                                           </div>
+
+                                           <div id="proxy-location-container" class="hidden space-y-3">
+                                               <div class="flex items-center gap-2 flex-wrap">
+                                                   <input type="text" id="proxy-location-search" oninput="filterLocationProxySections()" placeholder="🔍 Filter locations (e.g. United States, Germany)..." class="flex-1 min-w-[180px] px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-darkborder bg-[var(--color-surface)] text-slate-700 dark:text-slate-200 outline-none focus:border-primary">
+                                                   <button type="button" onclick="selectAllLocationProxies(true)" class="px-2.5 py-1.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300 bg-slate-200/60 dark:bg-slate-700/60 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">Select All</button>
+                                                   <button type="button" onclick="selectAllLocationProxies(false)" class="px-2.5 py-1.5 text-[11px] font-semibold text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/40 rounded-lg transition-colors">Clear</button>
+                                                   <button type="button" onclick="applySelectedLocationProxies()" class="px-3 py-1.5 text-xs font-bold bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition-colors shadow-sm flex items-center gap-1">
+                                                       <span>⚡ Apply to Proxy IPs</span>
+                                                   </button>
+                                               </div>
+
+                                               <div id="proxy-location-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 max-h-60 overflow-y-auto p-2 border border-slate-200 dark:border-darkborder/80 rounded-xl bg-[var(--color-surface)] custom-scrollbar">
+                                                   <!-- Location Checkboxes dynamically injected here -->
+                                               </div>
+
+                                               <div class="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 px-1 pt-1">
+                                                   <span id="proxy-location-summary">Selected: 0 locations (0 IPs)</span>
+                                                   <span class="text-[10px] text-slate-400">Source: ProxyIP-Daily.md</span>
+                                               </div>
+                                           </div>
+                                       </div>
                                           <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="lbl_nat64">NAT64 Prefix</label>
                                           <textarea id="cfg-nat64" rows="2" placeholder="64:ff9b::/96
 2001:db8:64::/96" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none font-mono text-sm resize-none"></textarea>
@@ -1365,7 +1402,6 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                                <div id="add-user-mode-wrap" class="flex gap-4 mt-1">
                                                    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="alpha" class="add-mode-cb accent-primary"> <span>Alpha (VLESS)</span></label>
                                                    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="beta" class="add-mode-cb accent-primary"> <span>Beta (Trojan)</span></label>
-                                                   <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="ss" class="add-mode-cb accent-primary"> <span>Shadowsocks</span></label>
                                                </div>
                                            </div>
                                            <div>
@@ -1480,7 +1516,6 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                                <div id="edit-user-mode-wrap" class="flex gap-4 mt-1">
                                                    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="alpha" class="edit-mode-cb accent-primary"> <span>Alpha (VLESS)</span></label>
                                                    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="beta" class="edit-mode-cb accent-primary"> <span>Beta (Trojan)</span></label>
-                                                   <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="ss" class="edit-mode-cb accent-primary"> <span>Shadowsocks</span></label>
                                                </div>
                                            </div>
                                            <div>
@@ -3420,7 +3455,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                       </div>
                       <div class="flex flex-wrap gap-1 mb-3">
                           ${u.isPaused && u.disabledReason ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300">Auto-Disabled</span>` : ''}
-                          ${u.userMode ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300">${u.userMode === 'alpha' ? 'VLESS' : u.userMode === 'beta' ? 'Trojan' : u.userMode === 'ss' || u.userMode === 'shadowsocks' ? 'Shadowsocks' : 'Both'}</span>` : ''}
+                          ${u.userMode ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300">${u.userMode === 'alpha' ? 'VLESS' : u.userMode === 'beta' ? 'Trojan' : 'Both'}</span>` : ''}
                           ${u.userPorts ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-300">${u.userPorts}</span>` : ''}
                            ${u.maxConfigs ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-300">${u.maxConfigs} cfgs</span>` : ''}
                            ${u.connLimit ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-300">${u.connLimit} conn</span>` : ''}
@@ -3645,25 +3680,21 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
               const globalMode = getGlobalMode();
               const alphaAllowed = globalMode === 'alpha' || globalMode === 'both';
               const betaAllowed = globalMode === 'beta' || globalMode === 'both';
-              const ssAllowed = true;
               const selAlpha = userMode === 'alpha' || userMode === 'both' || (!userMode && alphaAllowed);
               const selBeta = userMode === 'beta' || userMode === 'both' || (!userMode && betaAllowed);
-              const selSs = userMode === 'ss' || userMode === 'shadowsocks' || userMode === 'both' || (!userMode && ssAllowed);
               const wrap = document.getElementById(wrapId);
               if (!wrap) return;
               wrap.querySelectorAll('input[type=checkbox]').forEach(cb => {
-                  if (cb.value === 'alpha') { cb.disabled = !alphaAllowed; cb.checked = selAlpha && alphaAllowed; cb.closest('label').style.opacity = alphaAllowed ? '1' : '0.35'; }
-                  if (cb.value === 'beta')  { cb.disabled = !betaAllowed;  cb.checked = selBeta && betaAllowed;  cb.closest('label').style.opacity = betaAllowed  ? '1' : '0.35'; }
-                  if (cb.value === 'ss')    { cb.disabled = !ssAllowed;    cb.checked = selSs && ssAllowed;      cb.closest('label').style.opacity = ssAllowed    ? '1' : '0.35'; }
+                  if (cb.value === 'alpha') { cb.disabled = !alphaAllowed; cb.checked = selAlpha && alphaAllowed; cb.closest			('label').style.opacity = alphaAllowed ? '1' : '0.35'; }
+                  if (cb.value === 'beta')  { cb.disabled = !betaAllowed;  cb.checked = selBeta && betaAllowed;  cb.closest			('label').style.opacity = betaAllowed  ? '1' : '0.35'; }
               });
           }
 
           function readModeFromCheckboxes(cbClass) {
              const cbs = [...document.querySelectorAll('.' + cbClass + ':checked')].map(c=>c.value);
-              if (cbs.length > 1) return 'both';
+              if (cbs.includes('alpha') && cbs.includes('beta')) return 'both';
               if (cbs.includes('alpha')) return 'alpha';
               if (cbs.includes('beta')) return 'beta';
-              if (cbs.includes('ss')) return 'ss';
               return getGlobalMode();
           }
 
@@ -4506,6 +4537,168 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
       document.documentElement.setAttribute('data-theme', val);
       localStorage.setItem('theme_variant', val);
   };
+
+  let proxyLocationData = null;
+  let selectedProxyLocations = new Set();
+
+  async function fetchLocationProxyIps(autoMode = false) {
+      const btn = document.getElementById('btn-fetch-proxy-ips');
+      const loading = document.getElementById('proxy-location-loading');
+      const container = document.getElementById('proxy-location-container');
+
+      if (btn) btn.disabled = true;
+      if (loading) loading.classList.remove('hidden');
+      if (container && !proxyLocationData) container.classList.add('hidden');
+
+      try {
+          const url = baseRoute + '/api/proxy-ips?key=' + encodeURIComponent(sessionKey);
+          const res = await fetch(url);
+          const data = await res.json();
+          if (data.success && Array.isArray(data.sections)) {
+              proxyLocationData = data.sections;
+
+              try {
+                  const saved = localStorage.getItem('nahan_selected_proxy_locations');
+                  if (saved) {
+                      const parsed = JSON.parse(saved);
+                      if (Array.isArray(parsed)) {
+                          selectedProxyLocations = new Set(parsed);
+                      }
+                  }
+              } catch(e){}
+
+              renderLocationProxyGrid();
+              if (container) container.classList.remove('hidden');
+          } else {
+              if (!autoMode) alert('Error loading proxy locations: ' + (data.error || 'Unknown error'));
+          }
+      } catch(e) {
+          if (!autoMode) alert('Failed to connect to worker API for proxy locations.');
+      } finally {
+          if (btn) btn.disabled = false;
+          if (loading) loading.classList.add('hidden');
+      }
+  }
+
+  function filterLocationProxySections() {
+      renderLocationProxyGrid();
+  }
+
+  function renderLocationProxyGrid() {
+      const grid = document.getElementById('proxy-location-grid');
+      if (!grid || !proxyLocationData) return;
+
+      const searchVal = (document.getElementById('proxy-location-search')?.value || '').toLowerCase().trim();
+
+      let html = '';
+      let visibleCount = 0;
+
+      proxyLocationData.forEach((sec) => {
+          if (searchVal && !sec.name.toLowerCase().includes(searchVal)) {
+              return;
+          }
+          visibleCount++;
+          const isChecked = selectedProxyLocations.has(sec.name);
+
+          html += `
+              <label class="flex items-center justify-between p-2 rounded-lg border border-slate-200 dark:border-darkborder bg-slate-50/50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer select-none">
+                  <div class="flex items-center gap-2 min-w-0">
+                      <input type="checkbox" data-sec-name="${sec.name.replace(/"/g, '&quot;')}" onchange="toggleLocationProxySelection(this)" ${isChecked ? 'checked' : ''} class="w-4 h-4 accent-primary rounded cursor-pointer shrink-0">
+                      <span class="text-xs font-medium text-slate-700 dark:text-slate-200 truncate" title="${sec.name.replace(/"/g, '&quot;')}">${sec.name}</span>
+                  </div>
+                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-slate-200/80 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 shrink-0 ms-1">${sec.ips.length}</span>
+              </label>
+          `;
+      });
+
+      if (visibleCount === 0) {
+          grid.innerHTML = '<div class="col-span-full py-4 text-center text-xs text-slate-400">No matching locations found</div>';
+      } else {
+          grid.innerHTML = html;
+      }
+
+      updateLocationProxySummary();
+  }
+
+  function toggleLocationProxySelection(el) {
+      const name = el.getAttribute('data-sec-name');
+      if (!name) return;
+      if (el.checked) {
+          selectedProxyLocations.add(name);
+      } else {
+          selectedProxyLocations.delete(name);
+      }
+      updateLocationProxySummary();
+  }
+
+  function selectAllLocationProxies(select) {
+      if (!proxyLocationData) return;
+      if (select) {
+          proxyLocationData.forEach(sec => selectedProxyLocations.add(sec.name));
+      } else {
+          selectedProxyLocations.clear();
+      }
+      renderLocationProxyGrid();
+  }
+
+  function updateLocationProxySummary() {
+      const summary = document.getElementById('proxy-location-summary');
+      const badge = document.getElementById('proxy-location-count-badge');
+
+      if (!proxyLocationData) return;
+
+      let totalIps = 0;
+      proxyLocationData.forEach(sec => {
+          if (selectedProxyLocations.has(sec.name)) {
+              totalIps += sec.ips.length;
+          }
+      });
+
+      const locCount = selectedProxyLocations.size;
+      if (summary) {
+          summary.textContent = `Selected: ${locCount} locations (${totalIps} IPs)`;
+      }
+      if (badge) {
+          if (locCount > 0) {
+              badge.textContent = `${locCount} Locs (${totalIps} IPs)`;
+              badge.classList.remove('hidden');
+          } else {
+              badge.classList.add('hidden');
+          }
+      }
+
+      try {
+          localStorage.setItem('nahan_selected_proxy_locations', JSON.stringify(Array.from(selectedProxyLocations)));
+      } catch(e){}
+  }
+
+  function applySelectedLocationProxies() {
+      if (!proxyLocationData || selectedProxyLocations.size === 0) {
+          alert('Please select at least one location first.');
+          return;
+      }
+
+      const ipSet = new Set();
+      proxyLocationData.forEach(sec => {
+          if (selectedProxyLocations.has(sec.name)) {
+              sec.ips.forEach(ip => ipSet.add(ip));
+          }
+      });
+
+      const relayEl = document.getElementById('cfg-relay');
+      if (!relayEl) return;
+
+      const existingText = relayEl.value.trim();
+      const existingIps = existingText ? existingText.split(/[\r\n,;]+/).map(s=>s.trim()).filter(Boolean) : [];
+
+      const combined = Array.from(new Set([...existingIps, ...ipSet]));
+      relayEl.value = combined.join('\n');
+
+      relayEl.dispatchEvent(new Event('input', { bubbles: true }));
+      relayEl.dispatchEvent(new Event('change', { bubbles: true }));
+
+      alert(`Applied ${ipSet.size} IPs from ${selectedProxyLocations.size} selected locations into Proxy IPs!`);
+  }
 
   document.addEventListener('DOMContentLoaded', () => {
       const savedVariant = localStorage.getItem('theme_variant') || 'system';
