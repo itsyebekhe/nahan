@@ -324,7 +324,7 @@
                                     <span class="text-xs font-bold" style="color: var(--text-primary);">Raw Configs (Text/URI)</span>
                                     <span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded" style="background: rgba(99, 102, 241, 0.15); color: #6366f1;">RAW</span>
                                 </div>
-                                <div class="flex gap-2">
+                                <div class="flex gap-2" dir="ltr">
                                     <input type="text" id="link-raw-fmt" readonly class="input-field flex-1 px-3 py-2 rounded-lg text-xs font-mono w-full outline-none" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--accent-border);">
                                     <button onclick="copyLink('link-raw-fmt')" class="px-3 py-2 rounded-lg text-xs font-bold bg-indigo-500 text-white flex items-center gap-1 hover:bg-indigo-600 transition-colors">
                                         <span data-i18n="copy">Copy</span>
@@ -341,7 +341,7 @@
                                     <span class="text-xs font-bold" style="color: var(--text-primary);">Base64 Sub (V2Ray / Shadowrocket)</span>
                                     <span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">BASE64</span>
                                 </div>
-                                <div class="flex gap-2">
+                                <div class="flex gap-2" dir="ltr">
                                     <input type="text" id="link-base64-fmt" readonly class="input-field flex-1 px-3 py-2 rounded-lg text-xs font-mono w-full outline-none" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--accent-border);">
                                     <button onclick="copyLink('link-base64-fmt')" class="px-3 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-white flex items-center gap-1 hover:bg-emerald-600 transition-colors">
                                         <span data-i18n="copy">Copy</span>
@@ -358,7 +358,7 @@
                                     <span class="text-xs font-bold" style="color: var(--text-primary);">Sing-box Subscription (JSON)</span>
                                     <span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">SINGBOX</span>
                                 </div>
-                                <div class="flex gap-2">
+                                <div class="flex gap-2" dir="ltr">
                                     <input type="text" id="link-singbox-fmt" readonly class="input-field flex-1 px-3 py-2 rounded-lg text-xs font-mono w-full outline-none" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--accent-border);">
                                     <button onclick="copyLink('link-singbox-fmt')" class="px-3 py-2 rounded-lg text-xs font-bold bg-amber-500 text-white flex items-center gap-1 hover:bg-amber-600 transition-colors">
                                         <span data-i18n="copy">Copy</span>
@@ -375,12 +375,29 @@
                                     <span class="text-xs font-bold" style="color: var(--text-primary);">Clash Subscription (YAML)</span>
                                     <span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">CLASH</span>
                                 </div>
-                                <div class="flex gap-2">
+                                <div class="flex gap-2" dir="ltr">
                                     <input type="text" id="link-clash-fmt" readonly class="input-field flex-1 px-3 py-2 rounded-lg text-xs font-mono w-full outline-none" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--accent-border);">
                                     <button onclick="copyLink('link-clash-fmt')" class="px-3 py-2 rounded-lg text-xs font-bold bg-violet-500 text-white flex items-center gap-1 hover:bg-violet-600 transition-colors">
                                         <span data-i18n="copy">Copy</span>
                                     </button>
                                     <button onclick="showQRModal(document.getElementById('link-clash-fmt').value)" class="p-2 rounded-lg border border-accent-border hover:bg-white/10 flex items-center justify-center" style="border-color: var(--accent-border);">
+                                        <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- v2rayN JSON -->
+                            <div class="p-4 rounded-xl border border-accent-border space-y-2 bg-black/5 dark:bg-white/5" style="border-color: var(--accent-border);">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-xs font-bold" style="color: var(--text-primary);">v2rayN Subscription (JSON)</span>
+                                    <span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">V2RAYN</span>
+                                </div>
+                                <div class="flex gap-2" dir="ltr">
+                                    <input type="text" id="link-v2rayn-fmt" readonly class="input-field flex-1 px-3 py-2 rounded-lg text-xs font-mono w-full outline-none" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--accent-border);">
+                                    <button onclick="copyLink('link-v2rayn-fmt')" class="px-3 py-2 rounded-lg text-xs font-bold bg-pink-500 text-white flex items-center gap-1 hover:bg-pink-600 transition-colors">
+                                        <span data-i18n="copy">Copy</span>
+                                    </button>
+                                    <button onclick="showQRModal(document.getElementById('link-v2rayn-fmt').value)" class="p-2 rounded-lg border border-accent-border hover:bg-white/10 flex items-center justify-center" style="border-color: var(--accent-border);">
                                         <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
                                     </button>
                                 </div>
@@ -687,11 +704,13 @@
             const base64Input = document.getElementById('link-base64-fmt');
             const singboxInput = document.getElementById('link-singbox-fmt');
             const clashInput = document.getElementById('link-clash-fmt');
+            const v2raynInput = document.getElementById('link-v2rayn-fmt');
 
             if (rawInput) rawInput.value = normalLink + (normalLink.includes('?') ? '&flag=raw' : '?flag=raw');
             if (base64Input) base64Input.value = normalLink + (normalLink.includes('?') ? '&flag=base64' : '?flag=base64');
             if (singboxInput) singboxInput.value = normalLink + (normalLink.includes('?') ? '&flag=singbox' : '?flag=singbox');
             if (clashInput) clashInput.value = normalLink + (normalLink.includes('?') ? '&flag=clash' : '?flag=clash');
+            if (v2raynInput) v2raynInput.value = normalLink + (normalLink.includes('?') ? '&flag=vjson' : '?flag=vjson');
         })();
     
 </script>
