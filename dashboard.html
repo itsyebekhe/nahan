@@ -283,6 +283,13 @@ html.dark select option {
     border-color: var(--color-primary) !important;
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 20%, transparent) !important;
 }
+/* Phase 3 Animations */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 500px; } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+.animate-fade-in { animation: fadeIn 0.3s ease-out; }
+.animate-slide-down { animation: slideDown 0.3s ease-out; overflow: hidden; }
+.animate-scale-in { animation: scaleIn 0.2s ease-out; }
 </style></head>
   <body class="text-[var(--color-text)] h-[100dvh] flex flex-col md:flex-row overflow-hidden selection:bg-primary selection:text-white transition-colors duration-300 bg-[var(--color-bg)]">
 
@@ -2938,7 +2945,6 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
               if (!window.nahanConfig || !Array.isArray(window.nahanConfig.linkedPanels)) return;
               window.nahanConfig.linkedPanels.splice(idx, 1);
               renderLinkedNodes();
-              doSaveDirectly();
           }
 
           function renderLinkedNodes() {
@@ -3750,7 +3756,6 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
               }
               // Automatically sync
               renderUsersTable();
-              doSaveDirectly();
           }
 
           function togglePauseUser(uuid) {
@@ -3763,7 +3768,6 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                           usr.disabledAt = null;
                       }
                       renderUsersTable();
-                      doSaveDirectly();
                   }
               }
           }
@@ -3776,6 +3780,24 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
 
           function getGlobalMode() {
               return (window.nahanConfig && window.nahanConfig.mode) ? window.nahanConfig.mode : 'alpha';
+          }
+
+          // Draft Save/Load for Add User form
+          function saveAddUserDraft() {
+              const fields = ['add-user-name','add-user-custom-name','add-user-total-reqs','add-user-daily-reqs','add-user-days','add-user-conn-limit','add-user-custom-clean','add-user-custom-proxy','add-user-custom-nodes','add-user-panel-url','add-user-nat64','add-user-max-configs'];
+              const draft = {};
+              fields.forEach(id => { const el = document.getElementById(id); if (el) draft[id] = el.value; });
+              localStorage.setItem('nahan_add_user_draft', JSON.stringify(draft));
+          }
+          function loadAddUserDraft() {
+              try {
+                  const draft = JSON.parse(localStorage.getItem('nahan_add_user_draft') || '{}');
+                  Object.keys(draft).forEach(id => { const el = document.getElementById(id); if (el && draft[id]) el.value = draft[id]; });
+              } catch(e){}
+          }
+          function clearAddUserDraft() {
+              localStorage.removeItem('nahan_add_user_draft');
+              ['add-user-name','add-user-custom-name','add-user-total-reqs','add-user-daily-reqs','add-user-days','add-user-conn-limit','add-user-custom-clean','add-user-custom-proxy','add-user-custom-nodes','add-user-panel-url','add-user-nat64','add-user-max-configs'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
           }
 
           function openAddUserPage() {
@@ -3791,12 +3813,18 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
               buildIPCheckboxes("add-user-clean-ips-wrap", "", (window.nahanConfig?.cleanIps||"").split(/[\s,;]+/).map(s=>s.trim()).filter(Boolean));
               buildIPCheckboxes("add-user-proxy-ips-wrap", "", (window.nahanConfig?.backupRelay||"").split(/[\s,;]+/).map(s=>s.trim()).filter(Boolean));
               buildNodeCheckboxes("add-user-nodes-wrap", "", getGlobalNodeList());
+              loadAddUserDraft();
+              // Auto-save on input change
+              document.getElementById("view-add-user").querySelectorAll("input, textarea").forEach(el => {
+                  el.addEventListener("input", saveAddUserDraft);
+              });
           }
           function toggleAddUserSection(section) {
               const content = document.getElementById('add-' + section + '-content');
               const arrow = document.getElementById('add-' + section + '-arrow');
               if (content && arrow) {
                   content.classList.toggle('hidden');
+                  content.classList.toggle('animate-slide-down');
                   arrow.classList.toggle('rotate-180');
               }
           }
@@ -3844,6 +3872,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
               const arrow = document.getElementById('edit-' + section + '-arrow');
               if (content && arrow) {
                   content.classList.toggle('hidden');
+                  content.classList.toggle('animate-slide-down');
                   arrow.classList.toggle('rotate-180');
               }
           }
@@ -4080,6 +4109,7 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
 
               renderUsersTable();
               doSaveDirectly();
+              clearAddUserDraft();
               // Show subscription link toast
               const subUrl = `${location.origin}/${newId}`;
               navigator.clipboard.writeText(subUrl).catch(() => {});
@@ -4249,7 +4279,6 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
               sc.classList.remove('flex', 'flex-col');
               sc.firstElementChild.classList.remove('flex-1', 'min-h-0', 'flex', 'flex-col');
               renderUsersTable();
-              doSaveDirectly();
           }
 
           async function loadApiKeys() {
