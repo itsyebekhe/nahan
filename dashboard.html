@@ -1844,6 +1844,23 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
       </div>
       <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 px-5 py-3 text-white rounded-xl text-sm font-bold shadow-xl transition-opacity duration-300 pointer-events-none z-50 opacity-0"></div>
 
+      <!-- Confirm Modal -->
+      <div id="confirm-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+          <div class="bg-[var(--color-surface)] rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-slate-200 dark:border-darkborder relative">
+              <div class="flex flex-col items-center text-center">
+                  <div class="w-16 h-16 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
+                      <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>
+                  </div>
+                  <h3 id="confirm-modal-title" class="text-lg font-bold text-slate-800 dark:text-white mb-2"></h3>
+                  <p id="confirm-modal-msg" class="text-sm text-slate-500 dark:text-slate-400 mb-6"></p>
+                  <div class="flex gap-3 w-full">
+                      <button onclick="confirmModalResolve(false)" class="flex-1 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer">انصراف</button>
+                      <button onclick="confirmModalResolve(true)" class="flex-1 px-4 py-2.5 rounded-xl bg-red-500 text-white font-bold text-sm hover:bg-red-600 transition-colors cursor-pointer">تایید</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
       <!-- QR Code Modal (Enhanced) -->
       <div id="qr-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
           <div class="bg-[var(--color-surface)]  rounded-3xl p-8 max-w-sm w-full shadow-2xl border border-slate-200 dark:border-darkborder relative">
@@ -3704,7 +3721,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
 
           async function resetUserTraffic(uuid) {
               const resetMsg = lang === 'fa' ? 'آیا از بازنشانی وضعیت ترافیک (کل و روزانه) این مشترک مطمئن هستید؟' : 'Are you sure you want to reset all traffic metrics (Total and Daily) for this subscriber?';
-              if(!confirm(resetMsg)) return;
+              if(!(await showConfirm(lang === 'fa' ? 'بازنشانی ترافیک' : 'Reset Traffic', resetMsg))) return;
               try {
                   const res = await fetch(baseRoute + '/api/sync', {
                       method: 'POST',
@@ -3727,7 +3744,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
 
           function deleteUser(uuid) {
               const deleteMsg = lang === 'fa' ? 'آیا از حذف این کاربر مطمئن هستید؟' : 'Are you sure you want to delete this user?';
-              if(!confirm(deleteMsg)) return;
+              if(!(await showConfirm(lang === 'fa' ? 'حذف کاربر' : 'Delete User', deleteMsg))) return;
               if(window.nahanConfig && window.nahanConfig.users) {
                   window.nahanConfig.users = window.nahanConfig.users.filter(u => u.id !== uuid);
               }
@@ -3782,6 +3799,25 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                   content.classList.toggle('hidden');
                   arrow.classList.toggle('rotate-180');
               }
+          }
+
+          // Custom Confirm Modal
+          let _confirmResolve = null;
+          function showConfirm(title, msg) {
+              return new Promise(resolve => {
+                  _confirmResolve = resolve;
+                  document.getElementById('confirm-modal-title').innerText = title;
+                  document.getElementById('confirm-modal-msg').innerText = msg;
+                  const m = document.getElementById('confirm-modal');
+                  m.classList.remove('hidden');
+                  m.classList.add('flex');
+              });
+          }
+          function confirmModalResolve(val) {
+              const m = document.getElementById('confirm-modal');
+              m.classList.add('hidden');
+              m.classList.remove('flex');
+              if (_confirmResolve) { _confirmResolve(val); _confirmResolve = null; }
           }
 
           function showToast(msg, type) {
@@ -4046,7 +4082,9 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
               doSaveDirectly();
               // Show subscription link toast
               const subUrl = `${location.origin}/${newId}`;
-              showToast(lang === 'fa' ? `✅ کاربر "${name}" ذخیره شد!` : `✅ User "${name}" saved!`, 'success');
+              const subUrl = `${location.origin}/${newId}`;
+              navigator.clipboard.writeText(subUrl).catch(() => {});
+              showToast(lang === 'fa' ? `✅ کاربر "${name}" ذخیره شد! لینک ساب کپی شد` : `✅ User "${name}" saved! Sub link copied`, 'success');
           }
 
           function editUser(uuid) {
@@ -4267,7 +4305,7 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
           }
 
           async function revokeApiKey(id) {
-              if (!confirm(i18n[lang]?.confirm_revoke || 'Revoke this API key? The remote panel will lose access.')) return;
+              if (!(await showConfirm(lang === 'fa' ? 'حذف کلید API' : 'Revoke API Key', i18n[lang]?.confirm_revoke || 'Revoke this API key? The remote panel will lose access.'))) return;
               try {
                   const res = await fetch(baseRoute + '/api/keys', {
                       method: 'POST',
@@ -4417,7 +4455,7 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
               const btn = document.getElementById('update-deploy-btn');
               const statusEl = document.getElementById('update-deploy-status');
               if (!btn) return;
-              if (!confirm(lang === 'fa' ? 'آیا از دپلوی نسخه فعلی/جدید اطمینان دارید؟' : 'Deploy the selected version now?')) return;
+              if (!(await showConfirm(lang === 'fa' ? 'دپلوی' : 'Deploy', lang === 'fa' ? 'آیا از دپلوی نسخه فعلی/جدید اطمینان دارید؟' : 'Deploy the selected version now?'))) return;
 
               const formatEl = document.querySelector('input[name="update-format"]:checked');
               const format = formatEl ? formatEl.value : 'normal';
