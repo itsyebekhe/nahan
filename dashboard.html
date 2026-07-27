@@ -4083,7 +4083,7 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
               // Show subscription link toast
               const subUrl = `${location.origin}/${newId}`;
               navigator.clipboard.writeText(subUrl).catch(() => {});
-              showToast(lang === 'fa' ? `✅ کاربر "${name}" ذخیره شد! لینک ساب کپی شد` : `✅ User "${name}" saved! Sub link copied`, 'success');
+              showToast(lang === 'fa' ? `✅ کاربر ${name} ذخیره شد! لینک ساب کپی شد` : `✅ User ${name} saved! Sub link copied`, 'success');
           }
 
           function editUser(uuid) {
