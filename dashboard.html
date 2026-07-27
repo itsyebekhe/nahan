@@ -2452,7 +2452,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                       if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
                           el.placeholder = i18n[lang][key];
                       } else {
-                          if (key.startsWith('html_')) {
+                          if (key.startsWith('html_') || /<[a-z][\s\S]*>/i.test(i18n[lang][key])) {
                               el.innerHTML = i18n[lang][key];
                           } else {
                               el.innerText = i18n[lang][key];
