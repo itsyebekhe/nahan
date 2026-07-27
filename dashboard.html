@@ -3529,7 +3529,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                        <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                        </svg>
-                       <span class="text-[8px] font-bold opacity-70 group-hover:opacity-100 transition-opacity">لینک</span>
+                       <span class="text-[8px] font-bold opacity-70 group-hover:opacity-100 transition-opacity">"${lang === 'fa' ? 'لینک' : 'Link'}</span>
                    </button>`;
 
                    let pauseBtnHtml = `<button onclick="togglePauseUser('${u.id}')" class="native-press flex-1 flex flex-col items-center justify-center gap-0.5 ${u.isPaused ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:hover:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800/30' : 'text-amber-500 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/30 dark:hover:bg-amber-900/30 border border-amber-200 dark:border-amber-800/30'} py-2.5 rounded-xl transition-all duration-200 cursor-pointer group" title="${pauseTitle}">
@@ -3542,7 +3542,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                        <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
                            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
                        </svg>
-                       <span class="text-[8px] font-bold opacity-70 group-hover:opacity-100 transition-opacity">توقف</span>
+                       <span class="text-[8px] font-bold opacity-70 group-hover:opacity-100 transition-opacity">"${lang === 'fa' ? 'توقف' : 'Pause'}</span>
                        `}
                    </button>`;
 
@@ -3550,21 +3550,21 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                        <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                        </svg>
-                       <span class="text-[8px] font-bold opacity-70 group-hover:opacity-100 transition-opacity">ویرایش</span>
+                       <span class="text-[8px] font-bold opacity-70 group-hover:opacity-100 transition-opacity">"${lang === 'fa' ? 'ویرایش' : 'Edit'}</span>
                    </button>`;
 
                    let resetBtnHtml = `<button onclick="resetUserTraffic('${u.id}')" class="native-press flex-1 flex flex-col items-center justify-center gap-0.5 text-slate-500 hover:text-violet-500 bg-slate-100/50 hover:bg-violet-500/10 dark:bg-slate-800/50 dark:hover:bg-violet-500/15 py-2.5 rounded-xl transition-all duration-200 cursor-pointer group" title="${resetTitle}">
                        <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                        </svg>
-                       <span class="text-[8px] font-bold opacity-70 group-hover:opacity-100 transition-opacity">ریست</span>
+                       <span class="text-[8px] font-bold opacity-70 group-hover:opacity-100 transition-opacity">"${lang === 'fa' ? 'ریست' : 'Reset'}</span>
                    </button>`;
 
                    let deleteBtnHtml = `<button onclick="deleteUser('${u.id}')" class="native-press flex-1 flex flex-col items-center justify-center gap-0.5 text-red-500 bg-red-50 hover:bg-red-100 dark:bg-red-950/30 dark:hover:bg-red-900/30 py-2.5 rounded-xl transition-all duration-200 cursor-pointer group" title="${deleteTitle}">
                        <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                        </svg>
-                       <span class="text-[8px] font-bold opacity-70 group-hover:opacity-100 transition-opacity">حذف</span>
+                       <span class="text-[8px] font-bold opacity-70 group-hover:opacity-100 transition-opacity">"${lang === 'fa' ? 'حذف' : 'Delete'}</span>
                    </button>`;
 
                   let disableInfoHtml = '';
