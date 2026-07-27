@@ -1348,12 +1348,12 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                        <div class="space-y-3">
                                            <div>
                                                <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_u_name">نام کاربر</span> <span class="text-red-400">*</span><</label>
-                                               <input type="text" id="add-user-name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="placeholder_user_name" placeholder="مثلاً: علی">
+                                               <input type="text" id="add-user-name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="placeholder_user_name" placeholder="e.g. Ali" data-i18n-placeholder="placeholder_user_name">
                                                <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_user_name">نامی که در لیست کاربران نمایش داده میشه</p>
                                            </div>
                                            <div>
                                                <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_custom_config_name">نام سفارشی کانفیگ</span> <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
-                                               <input type="text" id="add-user-custom-name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="placeholder_config_name" placeholder="خالی = از نام کاربر استفاده بشه">
+                                               <input type="text" id="add-user-custom-name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="placeholder_config_name" placeholder="Leave empty to use user name" data-i18n-placeholder="placeholder_config_name">
                                            </div>
                                        </div>
                                    </div>
@@ -1367,20 +1367,20 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                            <div class="grid grid-cols-2 gap-3">
                                                <div>
                                                    <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_traffic_limit_gb">محدودیت ترافیک (GB)</span> <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
-                                                   <input type="number" id="add-user-total-reqs" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                                   <input type="number" id="add-user-total-reqs" placeholder="Unlimited" data-i18n-placeholder="unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                                </div>
                                                <div>
                                                    <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_daily_limit_gb">محدودیت روزانه (GB)</span> <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
-                                                   <input type="number" id="add-user-daily-reqs" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                                   <input type="number" id="add-user-daily-reqs" placeholder="Unlimited" data-i18n-placeholder="unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                                </div>
                                            </div>
                                            <div>
                                                <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_expiration_days">تعداد روز اعتبار</span> <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
-                                               <input type="number" id="add-user-days" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                               <input type="number" id="add-user-days" placeholder="Unlimited" data-i18n-placeholder="unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                            </div>
                                            <div>
                                                <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_conn_limit">محدودیت اتصال همزمان</span> <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
-                                               <input type="number" id="add-user-conn-limit" placeholder="نامحدود" min="1" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
+                                               <input type="number" id="add-user-conn-limit" placeholder="Unlimited" data-i18n-placeholder="unlimited" min="1" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
                                                <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_conn_limit">حداکثر اتصال همزمان از یک IP. خالی = نامحدود.</p>
                                            </div>
                                        </div>
@@ -1391,7 +1391,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                                                <span class="w-5 h-5 flex items-center justify-center rounded bg-blue-500/10 text-blue-500 text-[10px]">3</span>
                                                <span data-i18n="section_network">شبکه</span>
-                                               <span class="text-[10px] font-normal text-slate-400">(پیشرفته)</span>
+                                               <span class="text-[10px] font-normal text-slate-400" data-i18n="section_advanced_tag">(پیشرفته)</span>
                                            </h4>
                                            <svg id="add-network-arrow" class="w-4 h-4 text-slate-400 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                        </button>
@@ -1433,7 +1433,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                                                <span class="w-5 h-5 flex items-center justify-center rounded bg-amber-500/10 text-amber-500 text-[10px]">4</span>
                                                <span data-i18n="section_advanced">پیشرفته</span>
-                                               <span class="text-[10px] font-normal text-slate-400">(پروتکل و پورت)</span>
+                                               <span class="text-[10px] font-normal text-slate-400" data-i18n="section_advanced_subtag">(پروتکل و پورت)</span>
                                            </h4>
                                            <svg id="add-advanced-arrow" class="w-4 h-4 text-slate-400 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                        </button>
@@ -1452,7 +1452,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                            </div>
                                            <div>
                                                <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_max_configs">حداکثر کانفیگ</span> <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
-                                               <input type="number" id="add-user-max-configs" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
+                                               <input type="number" id="add-user-max-configs" placeholder="Unlimited" data-i18n-placeholder="unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
                                            </div>
                                        </div>
                                    </div>
@@ -1505,20 +1505,20 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                           <div class="grid grid-cols-2 gap-3">
                                               <div>
                                                   <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_traffic_limit_gb">محدودیت ترافیک (GB)</span> <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
-                                                  <input type="number" id="edit-user-total-reqs" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                                  <input type="number" id="edit-user-total-reqs" placeholder="Unlimited" data-i18n-placeholder="unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                               </div>
                                               <div>
                                                   <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_daily_limit_gb">محدودیت روزانه (GB)</span> <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
-                                                  <input type="number" id="edit-user-daily-reqs" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                                  <input type="number" id="edit-user-daily-reqs" placeholder="Unlimited" data-i18n-placeholder="unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                               </div>
                                           </div>
                                           <div>
                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_expiration_days">تعداد روز اعتبار</span> <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
-                                              <input type="number" id="edit-user-days" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                              <input type="number" id="edit-user-days" placeholder="Unlimited" data-i18n-placeholder="unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                           </div>
                                           <div>
                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_conn_limit">محدودیت اتصال همزمان</span> <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
-                                              <input type="number" id="edit-user-conn-limit" placeholder="نامحدود" min="1" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
+                                              <input type="number" id="edit-user-conn-limit" placeholder="Unlimited" data-i18n-placeholder="unlimited" min="1" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
                                               <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_conn_limit">حداکثر اتصال همزمان از یک IP. خالی = نامحدود.</p>
                                           </div>
                                       </div>
@@ -1529,7 +1529,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                                                <span class="w-5 h-5 flex items-center justify-center rounded bg-blue-500/10 text-blue-500 text-[10px]">3</span>
                                                <span data-i18n="section_network">شبکه</span>
-                                               <span class="text-[10px] font-normal text-slate-400">(پیشرفته)</span>
+                                               <span class="text-[10px] font-normal text-slate-400" data-i18n="section_advanced_tag">(پیشرفته)</span>
                                            </h4>
                                            <svg id="edit-network-arrow" class="w-4 h-4 text-slate-400 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                        </button>
@@ -1571,7 +1571,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
                                                <span class="w-5 h-5 flex items-center justify-center rounded bg-amber-500/10 text-amber-500 text-[10px]">4</span>
                                                <span data-i18n="section_advanced">پیشرفته</span>
-                                               <span class="text-[10px] font-normal text-slate-400">(پروتکل و پورت)</span>
+                                               <span class="text-[10px] font-normal text-slate-400" data-i18n="section_advanced_subtag">(پروتکل و پورت)</span>
                                            </h4>
                                            <svg id="edit-advanced-arrow" class="w-4 h-4 text-slate-400 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                        </button>
@@ -1590,7 +1590,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                            </div>
                                            <div>
                                                <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_max_configs">حداکثر کانفیگ</span> <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
-                                               <input type="number" id="edit-user-max-configs" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
+                                               <input type="number" id="edit-user-max-configs" placeholder="Unlimited" data-i18n-placeholder="unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
                                            </div>
                                        </div>
                                    </div>
@@ -2049,6 +2049,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                     no_changelog: "No changelog available for this version.", no_changes: "No changes documented.",
                     update_requires_cf: "Set CF Account ID, API Token, and Worker Name to enable in-panel deploy.",
                     section_basic_info: "Basic Info", section_limits: "Limits", section_network: "Network", section_advanced: "Advanced",
+                    section_advanced_tag: "(Advanced)", section_advanced_subtag: "(Protocol & Ports)", unlimited: "Unlimited", placeholder_user_name: "e.g. Ali", placeholder_config_name: "Leave empty to use user name", desc_user_name: "Name shown in the user list",,
                     placeholder_user_name: "e.g. Ali", placeholder_config_name: "Leave empty to use user name", desc_user_name: "Name shown in the user list",
                     lbl_nat64: "NAT64 Prefix", desc_nat64: "Optional. Converts IPv4 Proxy IPs to NAT64 IPv6 addresses. Supports multiple prefixes.",
                     lbl_direct_configs: "Include Direct Configs", desc_direct_configs: "Generate configs without Proxy IP alongside relay configs",
@@ -2120,6 +2121,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                     no_ips_advanced: "آی‌پی‌ای در بخش پیشرفته اضافه نشده", no_nodes_advanced: "نود فرعی‌ای در بخش پیشرفته اضافه نشده",
                     no_changelog: "گزارش تغییراتی برای این نسخه موجود نیست.", no_changes: "تغییراتی ثبت نشده.",
                     section_basic_info: "اطلاعات پایه", section_limits: "محدودیت‌ها", section_network: "شبکه", section_advanced: "پیشرفته",
+                    section_advanced_tag: "(پیشرفته)", section_advanced_subtag: "(پروتکل و پورت)", unlimited: "نامحدود", placeholder_user_name: "مثلاً: علی", placeholder_config_name: "خالی = از نام کاربر استفاده بشه", desc_user_name: "نامی که در لیست کاربران نمایش داده میشه",,
                     placeholder_user_name: "مثلاً: علی", placeholder_config_name: "خالی = از نام کاربر استفاده بشه", desc_user_name: "نامی که در لیست کاربران نمایش داده میشه",
                     lbl_nat64: "پیشوند NAT64", desc_nat64: "اختیاری. آی‌پی‌های پروکسی IPv4 را به آدرس‌های NAT64 IPv6 تبدیل می‌کند. چند پیشوند پشتیبانی می‌شود.",
                     lbl_direct_configs: "شامل کانفیگ‌های مستقیم", desc_direct_configs: "تولید کانفیگ‌ها بدون آی‌پی پروکسی در کنار کانفیگ‌های رله",
