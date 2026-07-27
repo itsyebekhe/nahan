@@ -1440,9 +1440,23 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                        <div id="add-advanced-content" class="hidden px-4 pb-4 space-y-3">
                                            <div>
                                                <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_protocol_mode">پروتکل</span> <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
-                                               <div id="add-user-mode-wrap" class="flex gap-4 mt-1">
-                                                   <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="alpha" class="add-mode-cb accent-primary"> <span>Alpha (VLESS)</span></label>
-                                                   <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="beta" class="add-mode-cb accent-primary"> <span>Beta (Trojan)</span></label>
+                                               <div id="add-user-mode-wrap" class="flex gap-3 mt-2">
+                                                   <label class="flex items-center gap-2 cursor-pointer group">
+                                                       <div class="relative">
+                                                           <input type="checkbox" value="alpha" class="add-mode-cb sr-only peer">
+                                                           <div class="w-10 h-5 bg-slate-300 dark:bg-slate-600 rounded-full peer peer-checked:bg-indigo-500 transition-colors"></div>
+                                                           <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transform peer-checked:translate-x-5 transition-transform"></div>
+                                                       </div>
+                                                       <span class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-indigo-500 transition-colors">VLESS</span>
+                                                   </label>
+                                                   <label class="flex items-center gap-2 cursor-pointer group">
+                                                       <div class="relative">
+                                                           <input type="checkbox" value="beta" class="add-mode-cb sr-only peer">
+                                                           <div class="w-10 h-5 bg-slate-300 dark:bg-slate-600 rounded-full peer peer-checked:bg-violet-500 transition-colors"></div>
+                                                           <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transform peer-checked:translate-x-5 transition-transform"></div>
+                                                       </div>
+                                                       <span class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-violet-500 transition-colors">Trojan</span>
+                                                   </label>
                                                </div>
                                                <p class="text-[10px] text-slate-400 mt-1">خالی = استفاده از تنظیمات پیش‌فرض</p>
                                            </div>
@@ -1578,9 +1592,23 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                        <div id="edit-advanced-content" class="hidden px-4 pb-4 space-y-3">
                                            <div>
                                                <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_protocol_mode">پروتکل</span> <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
-                                               <div id="edit-user-mode-wrap" class="flex gap-4 mt-1">
-                                                   <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="alpha" class="edit-mode-cb accent-primary"> <span>Alpha (VLESS)</span></label>
-                                                   <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="beta" class="edit-mode-cb accent-primary"> <span>Beta (Trojan)</span></label>
+                                               <div id="edit-user-mode-wrap" class="flex gap-3 mt-2">
+                                                   <label class="flex items-center gap-2 cursor-pointer group">
+                                                       <div class="relative">
+                                                           <input type="checkbox" value="alpha" class="edit-mode-cb sr-only peer">
+                                                           <div class="w-10 h-5 bg-slate-300 dark:bg-slate-600 rounded-full peer peer-checked:bg-indigo-500 transition-colors"></div>
+                                                           <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transform peer-checked:translate-x-5 transition-transform"></div>
+                                                       </div>
+                                                       <span class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-indigo-500 transition-colors">VLESS</span>
+                                                   </label>
+                                                   <label class="flex items-center gap-2 cursor-pointer group">
+                                                       <div class="relative">
+                                                           <input type="checkbox" value="beta" class="edit-mode-cb sr-only peer">
+                                                           <div class="w-10 h-5 bg-slate-300 dark:bg-slate-600 rounded-full peer peer-checked:bg-violet-500 transition-colors"></div>
+                                                           <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transform peer-checked:translate-x-5 transition-transform"></div>
+                                                       </div>
+                                                       <span class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-violet-500 transition-colors">Trojan</span>
+                                                   </label>
                                                </div>
                                                <p class="text-[10px] text-slate-400 mt-1">خالی = استفاده از تنظیمات پیش‌فرض</p>
                                            </div>
@@ -4015,6 +4043,9 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
 
               renderUsersTable();
               doSaveDirectly();
+              // Show subscription link toast
+              const subUrl = `${location.origin}/${newId}`;
+              showToast(lang === 'fa' ? `✅ کاربر "${name}" ذخیره شد!` : `✅ User "${name}" saved!`, 'success');
           }
 
           function editUser(uuid) {
