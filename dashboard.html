@@ -2770,6 +2770,14 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
               setTimeout(() => { toast.style.transform = 'translate(-50%, -5rem)'; toast.style.opacity = '0'; }, 2000);
           }
 
+          function copyToClipboard(text) {
+              navigator.clipboard.writeText(text).then(() => {
+                  showToast(lang === 'fa' ? 'کپی شد!' : 'Copied!', 'success');
+              }).catch(() => {
+                  showToast(lang === 'fa' ? 'خطا در کپی' : 'Copy failed', 'error');
+              });
+          }
+
           function showQR(name, url) {
               document.getElementById('qr-modal-title').innerText = name;
               document.getElementById('qr-modal-img').src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(url);
@@ -3491,6 +3499,19 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                       }
                   }
 
+                  // Status badge
+                  let isAutoDisabled = u.isPaused && u.disabledReason;
+                  let statusBadge = '';
+                  if (isAutoDisabled) {
+                      statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-800/30">${lang === 'fa' ? 'غیرفعال' : 'Disabled'}</span>`;
+                  } else if (u.isPaused) {
+                      statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300 border border-amber-200 dark:border-amber-800/30">${lang === 'fa' ? 'متوقف' : 'Paused'}</span>`;
+                  } else if (isExp) {
+                      statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-800/30">${lang === 'fa' ? 'منقضی' : 'Expired'}</span>`;
+                  } else {
+                      statusBadge = `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/30">${lang === 'fa' ? 'فعال' : 'Active'}</span>`;
+                  }
+
                   const totalLabel = lang === 'fa' ? 'کل:' : 'Total:';
                   const dailyLabel = lang === 'fa' ? 'روزانه:' : 'Daily:';
                   const rLabel = lang === 'fa' ? 'درخواست' : 'r';
@@ -3500,6 +3521,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                   let editTitle = lang === 'fa' ? 'ویرایش کاربر' : 'Edit Subscriber';
                   let resetTitle = lang === 'fa' ? 'بازنشانی مصرف ترافیک' : 'Reset Traffic Metrics';
                   let deleteTitle = lang === 'fa' ? 'حذف کاربر' : 'Delete User';
+                  let copyUuidTitle = lang === 'fa' ? 'کپی شناسه' : 'Copy UUID';
 
                    let linkHtml = `<button onclick="copyData('sync-${u.id}')" class="native-press flex-1 flex items-center justify-center text-slate-500 hover:text-primary bg-slate-100/50 hover:bg-primary/10 dark:bg-slate-800/50 dark:hover:bg-primary/20 border border-slate-200/50 dark:border-slate-700/50 py-2 rounded-lg transition-colors" title="${linkTitle}">
                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -3537,7 +3559,12 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                        </svg>
                    </button>`;
 
-                  let isAutoDisabled = u.isPaused && u.disabledReason;
+                   let copyUuidBtnHtml = `<button onclick="copyToClipboard('${u.id}')" class="native-press flex-1 flex items-center justify-center text-slate-500 hover:text-cyan-500 bg-slate-100/50 hover:bg-cyan-500/10 dark:bg-slate-800/50 dark:hover:bg-cyan-500/20 border border-slate-200/50 dark:border-slate-700/50 py-2 rounded-lg transition-colors" title="${copyUuidTitle}">
+                       <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                           <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                       </svg>
+                   </button>`;
+
                   let disableInfoHtml = '';
                   if (isAutoDisabled) {
                       let reasonLabel = u.disabledReason;
@@ -3547,7 +3574,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                       disableInfoHtml = `
                           <div class="mt-2 p-2 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30">
                               <div class="flex items-center gap-1.5 text-[10px] font-bold text-red-600 dark:text-red-400">
-                                  <span>⚠️</span>
+                                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>
                                   <span>${reasonTitle}:</span>
                               </div>
                               <div class="text-[10px] text-red-500 dark:text-red-300 mt-0.5">${reasonLabel}</div>
@@ -3561,22 +3588,26 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                       rawSync += rawSync.includes('?') ? '&flag=a' : '?flag=a';
                   }
 
-                  tblHtml += `<div class="native-press bg-[var(--color-surface)]  rounded-2xl border border-slate-200 dark:border-darkborder p-4 hover:shadow-md transition-shadow">
-                      <div class="flex items-center justify-between mb-3">
+                  // Short UUID for display
+                  let shortUuid = u.id.substring(0, 8) + '...';
+
+                  tblHtml += `<div class="native-press bg-[var(--color-surface)] rounded-2xl border border-slate-200 dark:border-darkborder p-4 hover:shadow-md transition-shadow">
+                      <!-- Header: Name + Status + UUID -->
+                      <div class="flex items-center justify-between mb-2">
                           <div class="flex items-center gap-2 min-w-0 flex-1">
-                              <span class="w-2 h-2 rounded-full shrink-0 ${u.isPaused ? (isAutoDisabled ? 'bg-red-500' : 'bg-amber-500') : (isExp ? 'bg-red-400' : 'bg-emerald-500')}"></span>
                               <span class="font-bold text-sm text-slate-800 dark:text-white truncate">${u.name}</span>
                               ${u.proxyIpGeo ? `<span class="text-[10px] px-1.5 py-0.5 rounded bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-300 font-semibold shrink-0">${u.proxyIpGeo.flag}</span>` : ''}
                           </div>
-                          <input type="hidden" id="sync-${u.id}" value="${rawSync}">
+                          ${statusBadge}
                       </div>
+                      <!-- UUID row -->
                       <div class="flex items-center gap-1.5 mb-3">
-                          ${linkHtml}
-                          ${pauseBtnHtml}
-                          ${editBtnHtml}
-                          ${resetBtnHtml}
-                          ${deleteBtnHtml}
+                          <span class="text-[10px] text-slate-400 font-mono">${shortUuid}</span>
+                          <button onclick="copyToClipboard('${u.id}')" class="text-slate-400 hover:text-primary transition-colors" title="${copyUuidTitle}">
+                              <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                          </button>
                       </div>
+                      <!-- Badges -->
                       <div class="flex flex-wrap gap-1 mb-3">
                           ${u.isPaused && u.disabledReason ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-300">Auto-Disabled</span>` : ''}
                           ${u.userMode ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-300">${u.userMode === 'alpha' ? 'VLESS' : u.userMode === 'beta' ? 'Trojan' : 'Both'}</span>` : ''}
@@ -3585,6 +3616,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                            ${u.connLimit ? `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-cyan-50 dark:bg-cyan-900/30 text-cyan-600 dark:text-cyan-300">${u.connLimit} conn</span>` : ''}
                       </div>
                       ${disableInfoHtml}
+                      <!-- Traffic Cards -->
                       <div class="grid grid-cols-2 gap-3">
                           <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-2.5">
                               <div class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-1">${totalLabel}</div>
@@ -3613,9 +3645,22 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                               ` : '<div class="text-[9px] text-slate-400 mt-1">' + unlimitedTxt + '</div>'}
                           </div>
                       </div>
+                      <!-- Expiry -->
                       <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                          <span class="text-[10px] text-slate-400">📅 ${expTxt}</span>
+                          <span class="text-[10px] text-slate-400 flex items-center gap-1">
+                              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                              ${expTxt}
+                          </span>
                       </div>
+                      <!-- Action Buttons -->
+                      <div class="flex items-center gap-1.5 mt-3">
+                          ${linkHtml}
+                          ${pauseBtnHtml}
+                          ${editBtnHtml}
+                          ${resetBtnHtml}
+                          ${deleteBtnHtml}
+                      </div>
+                      <input type="hidden" id="sync-${u.id}" value="${rawSync}">
                   `;
                   tblHtml += '</div>';
               });
