@@ -1331,113 +1331,138 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
 
                        <!-- PAGE: Add User -->
                        <div id="view-add-user" class="hidden h-full flex flex-col">
-                           <div class="bg-[var(--color-surface)]  rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 dark:border-darkborder overflow-hidden flex flex-col flex-1 min-h-0">
+                           <div class="bg-[var(--color-surface)] rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 dark:border-darkborder overflow-hidden flex flex-col flex-1 min-h-0">
                                <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-darkborder shrink-0">
                                    <button onclick="closeAddUserPage()" class="native-press p-2 -ms-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                                    </button>
-                                   <h3 class="text-lg font-bold text-slate-800 dark:text-white" data-i18n="modal_add_title">Add User</h3>
+                                   <h3 class="text-lg font-bold text-slate-800 dark:text-white" data-i18n="modal_add_title">افزودن کاربر جدید</h3>
                                </div>
-                               <div class="overflow-y-auto flex-1 min-h-0 p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                   <div class="space-y-4 bg-slate-50/50 dark:bg-slate-800/30 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                                       <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="section_basic_info">Basic Info</h4>
+                               <div class="overflow-y-auto flex-1 min-h-0 p-5 space-y-4">
+                                   <!-- Name + UUID -->
+                                   <div class="bg-slate-50/50 dark:bg-slate-800/30 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                                       <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                           <span class="w-5 h-5 flex items-center justify-center rounded bg-primary/10 text-primary text-[10px]">1</span>
+                                           <span data-i18n="section_basic_info">اطلاعات پایه</span>
+                                       </h4>
                                        <div class="space-y-3">
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_u_name">Name / Identifier</label>
-                                               <input type="text" id="add-user-name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_u_name">نام کاربر <span class="text-red-400">*</span></label>
+                                               <input type="text" id="add-user-name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="placeholder_user_name" placeholder="مثلاً: علی">
+                                               <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_user_name">نامی که در لیست کاربران نمایش داده میشه</p>
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_custom_config_name">Custom Config Name / Prefix</label>
-                                               <input type="text" id="add-user-custom-name" placeholder="Leave empty to use user name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_custom_config_name">نام سفارشی کانفیگ <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                               <input type="text" id="add-user-custom-name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="placeholder_config_name" placeholder="خالی = از نام کاربر استفاده بشه">
                                            </div>
                                        </div>
                                    </div>
-                                   <div class="space-y-4 bg-slate-50/50 dark:bg-slate-800/30 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                                       <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="section_limits">Limits</h4>
+                                   <!-- Limits -->
+                                   <div class="bg-slate-50/50 dark:bg-slate-800/30 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                                       <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                           <span class="w-5 h-5 flex items-center justify-center rounded bg-emerald-500/10 text-emerald-500 text-[10px]">2</span>
+                                           <span data-i18n="section_limits">محدودیت‌ها</span>
+                                       </h4>
                                        <div class="space-y-3">
                                            <div class="grid grid-cols-2 gap-3">
                                                <div>
-                                                   <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_traffic_limit_gb">Traffic (GB) Limit</label>
-                                                   <input type="number" id="add-user-total-reqs" placeholder="Unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                                   <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_traffic_limit_gb">محدودیت ترافیک (GB) <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                                   <input type="number" id="add-user-total-reqs" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                                </div>
                                                <div>
-                                                   <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_daily_limit_gb">Daily Limit (GB)</label>
-                                                   <input type="number" id="add-user-daily-reqs" placeholder="Unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                                   <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_daily_limit_gb">محدودیت روزانه (GB) <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                                   <input type="number" id="add-user-daily-reqs" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                                </div>
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_expiration_days">Expiration (Days)</label>
-                                               <input type="number" id="add-user-days" placeholder="Unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_expiration_days">تعداد روز اعتبار <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                               <input type="number" id="add-user-days" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_conn_limit">IP Connection Limit</label>
-                                               <input type="number" id="add-user-conn-limit" placeholder="Unlimited" min="1" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
-                                               <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_conn_limit">Max simultaneous connections per IP. Leave empty for unlimited.</p>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_conn_limit">محدودیت اتصال همزمان <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                               <input type="number" id="add-user-conn-limit" placeholder="نامحدود" min="1" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
+                                               <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_conn_limit">حداکثر اتصال همزمان از یک IP. خالی = نامحدود.</p>
                                            </div>
                                        </div>
                                    </div>
-                                   <div class="space-y-4 bg-slate-50/50 dark:bg-slate-800/30 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                                       <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="section_network">Network</h4>
-                                       <div class="space-y-3">
+                                   <!-- Network (Collapsible) -->
+                                   <div class="bg-slate-50/50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-700/50 overflow-hidden">
+                                       <button onclick="toggleAddUserSection('network')" class="w-full flex items-center justify-between p-4 hover:bg-slate-100/50 dark:hover:bg-slate-700/30 transition-colors">
+                                           <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                                               <span class="w-5 h-5 flex items-center justify-center rounded bg-blue-500/10 text-blue-500 text-[10px]">3</span>
+                                               <span data-i18n="section_network">شبکه</span>
+                                               <span class="text-[10px] font-normal text-slate-400">(پیشرفته)</span>
+                                           </h4>
+                                           <svg id="add-network-arrow" class="w-4 h-4 text-slate-400 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                       </button>
+                                       <div id="add-network-content" class="hidden px-4 pb-4 space-y-3">
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_clean_ips">Clean IPs</label>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_clean_ips">آی‌پی تمیز <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
                                                <div id="add-user-clean-ips-wrap" class="flex flex-wrap gap-2 mt-1 text-slate-500"></div>
-                                               <label class="block text-[10px] font-bold text-slate-400 mt-2" data-i18n="desc_clean_ips_modal">Custom Clean IPs (comma/newline)</label>
                                                <div class="flex gap-2 mt-1 mb-1">
                                                    <input type="text" id="add-user-helper-ip" placeholder="1.2.3.4" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none text-xs">
-                                                   <input type="text" id="add-user-helper-name" placeholder="Name" class="w-1/3 px-3 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none text-xs">
+                                                   <input type="text" id="add-user-helper-name" placeholder="نام" class="w-1/3 px-3 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none text-xs">
                                                    <button type="button" onclick="addHelperIpToTextarea('add-user-helper-ip', 'add-user-helper-name', 'add-user-custom-clean')" class="px-3 py-2 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover transition-colors">+</button>
                                                </div>
-                                               <textarea id="add-user-custom-clean" rows="2" placeholder="e.g. 1.2.3.4#Germany, 5.6.7.8" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm"></textarea>
+                                               <textarea id="add-user-custom-clean" rows="2" placeholder="1.2.3.4#آلمان, 5.6.7.8" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm"></textarea>
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_proxy_ips">Proxy IPs</label>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_proxy_ips">آی‌پی پروکسی <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
                                                <div id="add-user-proxy-ips-wrap" class="flex flex-wrap gap-2 mt-1 text-slate-500"></div>
-                                               <label class="block text-[10px] font-bold text-slate-400 mt-2" data-i18n="desc_proxy_ips">Custom Proxy IPs (comma/newline)</label>
-                                               <textarea id="add-user-custom-proxy" rows="2" placeholder="e.g. proxy1.com:443" class="w-full mt-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm"></textarea>
+                                               <textarea id="add-user-custom-proxy" rows="2" placeholder="proxy1.com:443" class="w-full mt-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm"></textarea>
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_assigned_nodes">Assigned Nodes</label>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_assigned_nodes">نودهای اختصاصی <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
                                                <div id="add-user-nodes-wrap" class="flex flex-wrap gap-2 mt-1 text-slate-500"></div>
-                                               <label class="block text-[10px] font-bold text-slate-400 mt-2" data-i18n="desc_assigned_nodes">Custom Nodes (comma/newline, empty = all nodes)</label>
                                                <textarea id="add-user-custom-nodes" rows="2" placeholder="node1.example.com" class="w-full mt-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm"></textarea>
+                                               <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_assigned_nodes">خالی = استفاده از همه نودها</p>
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_user_panel_url">Main Panel URL (Custom Nodes)</label>
-                                               <input type="text" id="add-user-panel-url" placeholder="e.g. panel.example.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
-                                               <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_user_panel_url">Main panel domain for custom nodes. If empty, default panel URL is used.</p>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_user_panel_url">آدرس پنل اصلی <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                               <input type="text" id="add-user-panel-url" placeholder="panel.example.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_nat64">NAT64 Prefix</label>
-                                               <input type="text" id="add-user-nat64" placeholder="e.g. 64:ff9b::/96" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm font-mono">
-                                               <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_nat64_user">Optional. Converts IPv4 Proxy IPs to NAT64 IPv6 addresses.</p>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_nat64">پیشوند NAT64 <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                               <input type="text" id="add-user-nat64" placeholder="64:ff9b::/96" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm font-mono">
                                            </div>
                                        </div>
                                    </div>
-                                   <div class="space-y-4 bg-slate-50/50 dark:bg-slate-800/30 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                                       <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="section_advanced">Advanced</h4>
-                                       <div class="space-y-3">
+                                   <!-- Advanced (Collapsible) -->
+                                   <div class="bg-slate-50/50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-700/50 overflow-hidden">
+                                       <button onclick="toggleAddUserSection('advanced')" class="w-full flex items-center justify-between p-4 hover:bg-slate-100/50 dark:hover:bg-slate-700/30 transition-colors">
+                                           <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                                               <span class="w-5 h-5 flex items-center justify-center rounded bg-amber-500/10 text-amber-500 text-[10px]">4</span>
+                                               <span data-i18n="section_advanced">پیشرفته</span>
+                                               <span class="text-[10px] font-normal text-slate-400">(پروتکل و پورت)</span>
+                                           </h4>
+                                           <svg id="add-advanced-arrow" class="w-4 h-4 text-slate-400 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                       </button>
+                                       <div id="add-advanced-content" class="hidden px-4 pb-4 space-y-3">
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_protocol_mode">Protocol Mode</label>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_protocol_mode">پروتکل <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
                                                <div id="add-user-mode-wrap" class="flex gap-4 mt-1">
                                                    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="alpha" class="add-mode-cb accent-primary"> <span>Alpha (VLESS)</span></label>
                                                    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="beta" class="add-mode-cb accent-primary"> <span>Beta (Trojan)</span></label>
                                                </div>
+                                               <p class="text-[10px] text-slate-400 mt-1">خالی = استفاده از تنظیمات پیش‌فرض</p>
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5">Ports</label>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1">پورت‌ها <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
                                                <div id="add-user-ports-wrap" class="flex flex-wrap gap-2 mt-1"></div>
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_max_configs">Max Configs</label>
-                                               <input type="number" id="add-user-max-configs" placeholder="Unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_max_configs">حداکثر کانفیگ <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                               <input type="number" id="add-user-max-configs" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
                                            </div>
                                        </div>
                                    </div>
                                </div>
-                               <div class="px-5 py-4 border-t border-slate-200 dark:border-darkborder bg-[var(--color-surface)]  flex justify-between items-center shrink-0">
-                                   <button onclick="closeAddUserPage()" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm" data-i18n="btn_cancel">Cancel</button>
-                                   <button onclick="commitAddUser()" class="native-press px-6 py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-sm" data-i18n="save_btn_user">Save User</button>
+                               <div class="px-5 py-4 border-t border-slate-200 dark:border-darkborder bg-[var(--color-surface)] flex justify-between items-center shrink-0">
+                                   <button onclick="closeAddUserPage()" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm" data-i18n="btn_cancel">انصراف</button>
+                                   <button onclick="commitAddUser()" class="native-press px-6 py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-sm flex items-center gap-2">
+                                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                       <span data-i18n="save_btn_user">ذخیره کاربر</span>
+                                   </button>
                                </div>
                            </div>
                        </div>
@@ -1449,109 +1474,133 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                                    <button onclick="closeEditUserPage()" class="native-press p-2 -ms-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                                        <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                                    </button>
-                                   <h3 class="text-lg font-bold text-slate-800 dark:text-white" data-i18n="edit_sub">Edit Subscriber</h3>
+                                   <h3 class="text-lg font-bold text-slate-800 dark:text-white" data-i18n="edit_sub">ویرایش کاربر</h3>
                                    <input type="hidden" id="edit-user-id">
                                </div>
-                               <div class="overflow-y-auto flex-1 min-h-0 p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                   <div class="space-y-4 bg-slate-50/50 dark:bg-slate-800/30 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                                       <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="section_basic_info">Basic Info</h4>
-                                       <div class="space-y-3">
+                               <div class="overflow-y-auto flex-1 min-h-0 p-5 space-y-4">
+                                  <!-- Name -->
+                                  <div class="bg-slate-50/50 dark:bg-slate-800/30 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                                      <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                          <span class="w-5 h-5 flex items-center justify-center rounded bg-primary/10 text-primary text-[10px]">1</span>
+                                          <span data-i18n="section_basic_info">اطلاعات پایه</span>
+                                      </h4>
+                                      <div class="space-y-3">
+                                          <div>
+                                              <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_name_ph">نام کاربر <span class="text-red-400">*</span></label>
+                                              <input type="text" id="edit-user-name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                          </div>
+                                          <div>
+                                              <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_custom_config_name">نام سفارشی کانفیگ <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                              <input type="text" id="edit-user-custom-name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                          </div>
+                                      </div>
+                                  </div>
+                                  <!-- Limits -->
+                                  <div class="bg-slate-50/50 dark:bg-slate-800/30 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/50">
+                                      <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                                          <span class="w-5 h-5 flex items-center justify-center rounded bg-emerald-500/10 text-emerald-500 text-[10px]">2</span>
+                                          <span data-i18n="section_limits">محدودیت‌ها</span>
+                                      </h4>
+                                      <div class="space-y-3">
+                                          <div class="grid grid-cols-2 gap-3">
+                                              <div>
+                                                  <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_traffic_limit_gb">محدودیت ترافیک (GB) <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                                  <input type="number" id="edit-user-total-reqs" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                              </div>
+                                              <div>
+                                                  <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_daily_limit_gb">محدودیت روزانه (GB) <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                                  <input type="number" id="edit-user-daily-reqs" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                              </div>
+                                          </div>
+                                          <div>
+                                              <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_expiration_days">تعداد روز اعتبار <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                              <input type="number" id="edit-user-days" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
+                                          </div>
+                                          <div>
+                                              <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_conn_limit">محدودیت اتصال همزمان <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                              <input type="number" id="edit-user-conn-limit" placeholder="نامحدود" min="1" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
+                                              <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_conn_limit">حداکثر اتصال همزمان از یک IP. خالی = نامحدود.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                                   <!-- Network (Collapsible) -->
+                                   <div class="bg-slate-50/50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-700/50 overflow-hidden">
+                                       <button onclick="toggleEditUserSection('network')" class="w-full flex items-center justify-between p-4 hover:bg-slate-100/50 dark:hover:bg-slate-700/30 transition-colors">
+                                           <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                                               <span class="w-5 h-5 flex items-center justify-center rounded bg-blue-500/10 text-blue-500 text-[10px]">3</span>
+                                               <span data-i18n="section_network">شبکه</span>
+                                               <span class="text-[10px] font-normal text-slate-400">(پیشرفته)</span>
+                                           </h4>
+                                           <svg id="edit-network-arrow" class="w-4 h-4 text-slate-400 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                       </button>
+                                       <div id="edit-network-content" class="hidden px-4 pb-4 space-y-3">
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_name_ph">Name / Identifier</label>
-                                               <input type="text" id="edit-user-name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
-                                           </div>
-                                           <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_custom_config_name">Custom Config Name / Prefix</label>
-                                               <input type="text" id="edit-user-custom-name" placeholder="Leave empty to use user name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
-                                           </div>
-                                       </div>
-                                   </div>
-                                   <div class="space-y-4 bg-slate-50/50 dark:bg-slate-800/30 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                                       <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="section_limits">Limits</h4>
-                                       <div class="space-y-3">
-                                           <div class="grid grid-cols-2 gap-3">
-                                               <div>
-                                                   <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_traffic_limit_gb">Traffic Limit (GB)</label>
-                                                   <input type="number" id="edit-user-total-reqs" placeholder="Unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
-                                               </div>
-                                               <div>
-                                                   <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_daily_limit_gb">Daily Limit (GB)</label>
-                                                   <input type="number" id="edit-user-daily-reqs" placeholder="Unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
-                                               </div>
-                                           </div>
-                                           <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_expiration_days">Expiration (Days)</label>
-                                               <input type="number" id="edit-user-days" placeholder="Unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
-                                           </div>
-                                           <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_conn_limit">IP Connection Limit</label>
-                                               <input type="number" id="edit-user-conn-limit" placeholder="Unlimited" min="1" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
-                                               <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_conn_limit">Max simultaneous connections per user. Leave empty for unlimited.</p>
-                                           </div>
-                                       </div>
-                                   </div>
-                                   <div class="space-y-4 bg-slate-50/50 dark:bg-slate-800/30 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                                       <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="section_network">Network</h4>
-                                       <div class="space-y-3">
-                                           <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_clean_ips">Clean IPs</label>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_clean_ips">آی‌پی تمیز <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
                                                <div id="edit-user-clean-ips-wrap" class="flex flex-wrap gap-2 mt-1 text-slate-500"></div>
-                                               <label class="block text-[10px] font-bold text-slate-400 mt-2" data-i18n="desc_clean_ips_modal">Custom Clean IPs (comma/newline)</label>
                                                <div class="flex gap-2 mt-1 mb-1">
                                                    <input type="text" id="edit-user-helper-ip" placeholder="1.2.3.4" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none text-xs">
-                                                   <input type="text" id="edit-user-helper-name" placeholder="Name" class="w-1/3 px-3 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none text-xs">
+                                                   <input type="text" id="edit-user-helper-name" placeholder="نام" class="w-1/3 px-3 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none text-xs">
                                                    <button type="button" onclick="addHelperIpToTextarea('edit-user-helper-ip', 'edit-user-helper-name', 'edit-user-custom-clean')" class="px-3 py-2 bg-primary text-white rounded-xl font-bold hover:bg-primary-hover transition-colors">+</button>
                                                </div>
-                                               <textarea id="edit-user-custom-clean" rows="2" placeholder="e.g. 1.2.3.4#Germany, 5.6.7.8" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm"></textarea>
+                                               <textarea id="edit-user-custom-clean" rows="2" placeholder="1.2.3.4#آلمان, 5.6.7.8" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm"></textarea>
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_proxy_ips">Proxy IPs</label>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_proxy_ips">آی‌پی پروکسی <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
                                                <div id="edit-user-proxy-ips-wrap" class="flex flex-wrap gap-2 mt-1 text-slate-500"></div>
-                                               <label class="block text-[10px] font-bold text-slate-400 mt-2" data-i18n="desc_proxy_ips">Custom Proxy IPs (comma/newline)</label>
-                                               <textarea id="edit-user-custom-proxy" rows="2" placeholder="e.g. proxy1.com:443" class="w-full mt-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm"></textarea>
+                                               <textarea id="edit-user-custom-proxy" rows="2" placeholder="proxy1.com:443" class="w-full mt-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm"></textarea>
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_assigned_nodes">Assigned Nodes</label>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_assigned_nodes">نودهای اختصاصی <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
                                                <div id="edit-user-nodes-wrap" class="flex flex-wrap gap-2 mt-1 text-slate-500"></div>
-                                               <label class="block text-[10px] font-bold text-slate-400 mt-2" data-i18n="desc_assigned_nodes">Custom Nodes (comma/newline, empty = all nodes)</label>
                                                <textarea id="edit-user-custom-nodes" rows="2" placeholder="node1.example.com" class="w-full mt-1 px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm"></textarea>
+                                               <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_assigned_nodes">خالی = استفاده از همه نودها</p>
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_user_panel_url">Main Panel URL (Custom Nodes)</label>
-                                               <input type="text" id="edit-user-panel-url" placeholder="e.g. panel.example.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
-                                               <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_user_panel_url">Main panel domain for custom nodes. If empty, default panel URL is used.</p>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_user_panel_url">آدرس پنل اصلی <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                               <input type="text" id="edit-user-panel-url" placeholder="panel.example.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_nat64">NAT64 Prefix</label>
-                                               <input type="text" id="edit-user-nat64" placeholder="e.g. 64:ff9b::/96" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm font-mono">
-                                               <p class="text-[10px] text-slate-400 mt-1" data-i18n="desc_nat64_user">Optional. Converts IPv4 Proxy IPs to NAT64 IPv6 addresses.</p>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_nat64">پیشوند NAT64 <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                               <input type="text" id="edit-user-nat64" placeholder="64:ff9b::/96" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm font-mono">
                                            </div>
                                        </div>
                                    </div>
-                                   <div class="space-y-4 bg-slate-50/50 dark:bg-slate-800/30 p-5 rounded-2xl border border-slate-100 dark:border-slate-700/50">
-                                       <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider" data-i18n="section_advanced">Advanced</h4>
-                                       <div class="space-y-3">
+                                   <!-- Advanced (Collapsible) -->
+                                   <div class="bg-slate-50/50 dark:bg-slate-800/30 rounded-2xl border border-slate-100 dark:border-slate-700/50 overflow-hidden">
+                                       <button onclick="toggleEditUserSection('advanced')" class="w-full flex items-center justify-between p-4 hover:bg-slate-100/50 dark:hover:bg-slate-700/30 transition-colors">
+                                           <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                                               <span class="w-5 h-5 flex items-center justify-center rounded bg-amber-500/10 text-amber-500 text-[10px]">4</span>
+                                               <span data-i18n="section_advanced">پیشرفته</span>
+                                               <span class="text-[10px] font-normal text-slate-400">(پروتکل و پورت)</span>
+                                           </h4>
+                                           <svg id="edit-advanced-arrow" class="w-4 h-4 text-slate-400 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                       </button>
+                                       <div id="edit-advanced-content" class="hidden px-4 pb-4 space-y-3">
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_protocol_mode">Protocol Mode</label>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_protocol_mode">پروتکل <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
                                                <div id="edit-user-mode-wrap" class="flex gap-4 mt-1">
                                                    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="alpha" class="edit-mode-cb accent-primary"> <span>Alpha (VLESS)</span></label>
                                                    <label class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox" value="beta" class="edit-mode-cb accent-primary"> <span>Beta (Trojan)</span></label>
                                                </div>
+                                               <p class="text-[10px] text-slate-400 mt-1">خالی = استفاده از تنظیمات پیش‌فرض</p>
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5">Ports</label>
+                                               <label class="block text-xs font-bold text-slate-500 mb-1">پورت‌ها <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
                                                <div id="edit-user-ports-wrap" class="flex flex-wrap gap-2 mt-1"></div>
                                            </div>
                                            <div>
-                                               <label class="block text-xs font-bold text-slate-500 mb-1.5" data-i18n="lbl_max_configs">Max Configs</label>
-                                               <input type="number" id="edit-user-max-configs" placeholder="Unlimited" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
+                                               <label class="block text-xs font-bold text-slate-500 mb-1" data-i18n="lbl_max_configs">حداکثر کانفیگ <span class="text-[10px] font-normal text-slate-400">(اختیاری)</span></label>
+                                               <input type="number" id="edit-user-max-configs" placeholder="نامحدود" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm" data-i18n-placeholder="unlimited">
                                            </div>
                                        </div>
                                    </div>
                                </div>
-                               <div class="px-5 py-4 border-t border-slate-200 dark:border-darkborder bg-[var(--color-surface)]  flex justify-between items-center shrink-0">
-                                   <button onclick="closeEditUserPage()" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm" data-i18n="btn_cancel">Cancel</button>
-                                   <button onclick="commitEditUser()" class="native-press px-6 py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-sm" data-i18n="btn_save_changes">Save Changes</button>
+                               <div class="px-5 py-4 border-t border-slate-200 dark:border-darkborder bg-[var(--color-surface)] flex justify-between items-center shrink-0">
+                                   <button onclick="closeEditUserPage()" class="px-5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold text-sm" data-i18n="btn_cancel">انصراف</button>
+                                   <button onclick="commitEditUser()" class="native-press px-6 py-2.5 rounded-xl bg-primary text-white font-bold text-sm shadow-sm flex items-center gap-2">
+                                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                       <span data-i18n="btn_save_changes">ذخیره تغییرات</span>
+                                   </button>
                                </div>
                            </div>
                        </div>
@@ -2000,6 +2049,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                     no_changelog: "No changelog available for this version.", no_changes: "No changes documented.",
                     update_requires_cf: "Set CF Account ID, API Token, and Worker Name to enable in-panel deploy.",
                     section_basic_info: "Basic Info", section_limits: "Limits", section_network: "Network", section_advanced: "Advanced",
+                    placeholder_user_name: "e.g. Ali", placeholder_config_name: "Leave empty to use user name", desc_user_name: "Name shown in the user list",,
                     lbl_nat64: "NAT64 Prefix", desc_nat64: "Optional. Converts IPv4 Proxy IPs to NAT64 IPv6 addresses. Supports multiple prefixes.",
                     lbl_direct_configs: "Include Direct Configs", desc_direct_configs: "Generate configs without Proxy IP alongside relay configs",
                     lbl_sync_api_key: "Sync API Key (Slave Push)", desc_sync_api_key: "API key from a slave panel. Main uses this to push config. Same key must exist on each slave's Panel API Keys.",
@@ -2070,6 +2120,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                     no_ips_advanced: "آی‌پی‌ای در بخش پیشرفته اضافه نشده", no_nodes_advanced: "نود فرعی‌ای در بخش پیشرفته اضافه نشده",
                     no_changelog: "گزارش تغییراتی برای این نسخه موجود نیست.", no_changes: "تغییراتی ثبت نشده.",
                     section_basic_info: "اطلاعات پایه", section_limits: "محدودیت‌ها", section_network: "شبکه", section_advanced: "پیشرفته",
+                    placeholder_user_name: "مثلاً: علی", placeholder_config_name: "خالی = از نام کاربر استفاده بشه", desc_user_name: "نامی که در لیست کاربران نمایش داده میشه",,
                     lbl_nat64: "پیشوند NAT64", desc_nat64: "اختیاری. آی‌پی‌های پروکسی IPv4 را به آدرس‌های NAT64 IPv6 تبدیل می‌کند. چند پیشوند پشتیبانی می‌شود.",
                     lbl_direct_configs: "شامل کانفیگ‌های مستقیم", desc_direct_configs: "تولید کانفیگ‌ها بدون آی‌پی پروکسی در کنار کانفیگ‌های رله",
                     lbl_sync_api_key: "کلید API همگام‌سازی (ارسال به اسلیو)", desc_sync_api_key: "کلید API از پنل اسلیو. پنل اصلی با این کلید کانفیگ را ارسال می‌کند. این کلید باید در کلیدهای API پنل اسلیو وجود داشته باشد.",
@@ -3645,6 +3696,25 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
               buildIPCheckboxes("add-user-proxy-ips-wrap", "", (window.nahanConfig?.backupRelay||"").split(/[\s,;]+/).map(s=>s.trim()).filter(Boolean));
               buildNodeCheckboxes("add-user-nodes-wrap", "", getGlobalNodeList());
           }
+          function toggleAddUserSection(section) {
+              const content = document.getElementById('add-' + section + '-content');
+              const arrow = document.getElementById('add-' + section + '-arrow');
+              if (content && arrow) {
+                  content.classList.toggle('hidden');
+                  arrow.classList.toggle('rotate-180');
+              }
+          }
+
+          function showToast(msg, type) {
+              const toast = document.getElementById('toast');
+              if (!toast) return;
+              const colors = { success: 'bg-emerald-600', error: 'bg-red-600', info: 'bg-primary' };
+              toast.className = 'fixed bottom-10 left-1/2 -translate-x-1/2 px-5 py-3 text-white rounded-xl text-sm font-bold shadow-xl transition-opacity duration-300 pointer-events-none z-50 ' + (colors[type] || colors.info);
+              toast.innerText = msg;
+              toast.style.opacity = '1';
+              setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+          }
+
           function closeAddUserPage() {
               document.getElementById('view-add-user').classList.add('hidden');
               document.getElementById('view-users').classList.remove('hidden');
@@ -3654,6 +3724,15 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
               sc.firstElementChild.classList.remove('flex-1', 'min-h-0', 'flex', 'flex-col');
               updateTitle();
           }
+          function toggleEditUserSection(section) {
+              const content = document.getElementById('edit-' + section + '-content');
+              const arrow = document.getElementById('edit-' + section + '-arrow');
+              if (content && arrow) {
+                  content.classList.toggle('hidden');
+                  arrow.classList.toggle('rotate-180');
+              }
+          }
+
           function closeEditUserPage() {
               document.getElementById('view-edit-user').classList.add('hidden');
               document.getElementById('view-users').classList.remove('hidden');
@@ -3778,6 +3857,13 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
 
           function commitAddUser() {
               const name = document.getElementById('add-user-name').value.trim();
+              if (!name) {
+                  document.getElementById('add-user-name').classList.add('border-red-500', 'ring-2', 'ring-red-500/20');
+                  document.getElementById('add-user-name').focus();
+                  showToast(lang === 'fa' ? 'لطفاً نام کاربر را وارد کنید' : 'Please enter a user name', 'error');
+                  return;
+              }
+              document.getElementById('add-user-name').classList.remove('border-red-500', 'ring-2', 'ring-red-500/20');
               let tReq = document.getElementById('add-user-total-reqs').value;
               tReq = tReq? Math.floor(parseFloat(tReq) * 6000): null;
               let dReq = document.getElementById('add-user-daily-reqs').value;
@@ -3959,6 +4045,13 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
           function commitEditUser() {
               const uuid = document.getElementById('edit-user-id').value;
               const name = document.getElementById('edit-user-name').value.trim();
+              if (!name) {
+                  document.getElementById('edit-user-name').classList.add('border-red-500', 'ring-2', 'ring-red-500/20');
+                  document.getElementById('edit-user-name').focus();
+                  showToast(lang === 'fa' ? 'لطفاً نام کاربر را وارد کنید' : 'Please enter a user name', 'error');
+                  return;
+              }
+              document.getElementById('edit-user-name').classList.remove('border-red-500', 'ring-2', 'ring-red-500/20');
               let tReq = document.getElementById('edit-user-total-reqs').value;
               tReq = tReq? Math.floor(parseFloat(tReq) * 6000): null;
               let dReq = document.getElementById('edit-user-daily-reqs').value;
