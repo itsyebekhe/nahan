@@ -988,23 +988,53 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                           <!-- Section: Upstream VLESS -->
                           <div class="bg-[var(--color-surface)]  rounded-2xl border border-slate-200 dark:border-darkborder overflow-hidden" data-accordion="">
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                  <div class="flex items-center items-center gap-3">
+                                  <div class="flex items-center gap-3">
                                       <span class="text-lg">🔗</span>
-                                      <span class="text-sm font-bold text-slate-700 dark:text-white">Upstream VLESS</span>
-                                      <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">Sing-Box / Clash</span>
+                                      <span class="text-sm font-bold text-slate-700 dark:text-white" data-i18n="adv_upstream_title">Upstream VLESS</span>
+                                      <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800" data-i18n="adv_upstream_badge">Sing-Box / Clash</span>
                                   </div>
                                   <svg class="w-4 h-4 text-slate-400 transform transition-transform duration-200 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                               </button>
                               <div data-accordion-content="" class="transition-all duration-300" style="max-height:0;overflow:hidden;visibility:hidden">
                                   <div class="space-y-4 px-5 pb-5 pt-1">
+                                      <!-- Explanation box -->
+                                      <div class="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/30 text-xs text-indigo-700 dark:text-indigo-300 leading-relaxed font-sans space-y-2">
+                                          <p data-i18n="adv_upstream_desc1"><strong>این بخش چیکار میکنه؟</strong><br>یه سرور رایگان VLESS (مثلاً از سایت‌هایی مثل RaceVPN یا SSHMax) به پنل معرفی می‌کنی تا تمام ترافیکت از اون سوراخ رد بشه. یعنی IP خروجیت میشه IP اون سرور.</p>
+                                          <p data-i18n="adv_upstream_desc2"><strong>چرا لازمه؟</strong><br>بعضی وقتا به IP یه کشور خاص (مثلاً آلمان یا آمریکا) نیاز داری ولی نمی‌خوای سرور بخری. با این بخش می‌تونی رایگان از IP اون کشور استفاده کنی.</p>
+                                          <p data-i18n="adv_upstream_desc3"><strong>چطوری استفاده کنم؟</strong><br>۱. از یکی از سایت‌های زیر یه لینک VLESS بگیر<br>۲. لینک رو اینجا paste کن<br>۳. Save کن<br>۴. از لینک سابسکریپشن (فرمت Sing-Box یا Clash) استفاده کن</p>
+                                      </div>
                                       <div class="space-y-1">
-                                          <label class="block text-sm font-bold text-slate-600 dark:text-slate-300">Upstream VLESS Config URI</label>
+                                          <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="adv_upstream_label">لینک سرور VLESS</label>
                                           <textarea id="cfg-upstream" rows="3" placeholder="vless://uuid@server:port?type=ws&amp;security=tls&amp;sni=example.com&amp;path=/ws#Upstream-Name" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none font-mono text-xs resize-none"></textarea>
-                                          <p class="text-xs text-slate-400 mt-1">Paste a VLESS URI from services like RaceVPN, SSHMax, etc. Configs will be chained through this upstream.</p>
-                                          <div class="mt-2 p-3 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/30 text-xs text-blue-700 dark:text-blue-300 leading-relaxed font-sans flex gap-2">
-                                              <span>ℹ️</span>
-                                              <span><strong>Note:</strong> Only works with Sing-Box, Clash/Mihomo, and v2rayN JSON subscription formats. Normal Base64 URI output will include the upstream link as the first entry.</span>
+                                          <p class="text-xs text-slate-400 mt-1" data-i18n="adv_upstream_hint">لینک VLESS رو از سایت‌های زیر کپی کن و اینجا بذار:</p>
+                                      </div>
+                                      <!-- Free VLESS providers -->
+                                      <div class="space-y-2">
+                                          <p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="adv_upstream_providers">سایت‌های دریافت لینک رایگان:</p>
+                                          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                              <a href="https://sshmax.net" target="_blank" class="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkborder text-xs text-slate-600 dark:text-slate-300 hover:border-primary transition-colors">
+                                                  <span>🌐</span><span>SSHMax</span>
+                                              </a>
+                                              <a href="https://sshocean.com" target="_blank" class="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkborder text-xs text-slate-600 dark:text-slate-300 hover:border-primary transition-colors">
+                                                  <span>🌐</span><span>SSHOcean</span>
+                                              </a>
+                                              <a href="https://vpnjantit.com" target="_blank" class="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkborder text-xs text-slate-600 dark:text-slate-300 hover:border-primary transition-colors">
+                                                  <span>🌐</span><span>VPNJantit</span>
+                                              </a>
+                                              <a href="https://fcbind.com" target="_blank" class="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkborder text-xs text-slate-600 dark:text-slate-300 hover:border-primary transition-colors">
+                                                  <span>🌐</span><span>FCBind</span>
+                                              </a>
+                                              <a href="https://sslvpn.buzz" target="_blank" class="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkborder text-xs text-slate-600 dark:text-slate-300 hover:border-primary transition-colors">
+                                                  <span>🌐</span><span>SslVpn</span>
+                                              </a>
+                                              <a href="https://cloudv2ray.com" target="_blank" class="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-darkborder text-xs text-slate-600 dark:text-slate-300 hover:border-primary transition-colors">
+                                                  <span>🌐</span><span>CloudV2ray</span>
+                                              </a>
                                           </div>
+                                      </div>
+                                      <div class="mt-2 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-xs text-amber-700 dark:text-amber-300 leading-relaxed font-sans flex gap-2">
+                                          <span>⚠️</span>
+                                          <span data-i18n="adv_upstream_warning">کانفیگ‌های رایگان معمولاً چند روز بیشتر دوام ندارن. اگه اتصال قطع شد، لینک جدید بگیر و جایگزین کن. همچنین فقط با فرمت‌های Sing-Box و Clash کار می‌کنه.</span>
                                       </div>
                                   </div>
                               </div>
@@ -1921,6 +1951,12 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                     format_obfuscated: "Obfuscated (UTF-8 + XOR)",
                      btn_redeploy_force: "Force Redeploy / Switch Format",
                     adv_network_dns: "Network & DNS", adv_proxy_relay: "Proxy & Relay", adv_subscription: "Subscription",
+                    adv_upstream_title: "Upstream VLESS", adv_upstream_badge: "Sing-Box / Clash",
+                    adv_upstream_desc1: "<strong>What does this do?</strong><br>It lets you use a free VLESS server (from sites like RaceVPN or SSHMax) so all your traffic goes through that server. Your exit IP becomes the server's IP.",
+                    adv_upstream_desc2: "<strong>Why is it useful?</strong><br>Sometimes you need an IP from a specific country (like Germany or USA) but don't want to buy a server. This lets you use that country's IP for free.",
+                    adv_upstream_desc3: "<strong>How to use?</strong><br>1. Get a VLESS link from one of the sites below<br>2. Paste it here<br>3. Click Save<br>4. Use the subscription link (Sing-Box or Clash format)",
+                    adv_upstream_label: "VLESS Server Link", adv_upstream_hint: "Copy a VLESS link from one of these sites and paste it here:",
+                    adv_upstream_providers: "Free VLESS Providers:", adv_upstream_warning: "Free configs usually expire after a few days. If the connection drops, get a new link and replace it. Also only works with Sing-Box and Clash formats.",
                     adv_protocol: "Protocol", adv_telegram: "Telegram Bot", adv_cloudflare: "Cloudflare",
                     stat_datetime: "Date Time",
                     desc_custom_panel_url: "Optionally specify a custom domain/URL to be used for subscription/sync links. If empty, the default Worker address will be used.",
@@ -1985,6 +2021,12 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                     format_obfuscated: "مبهم‌سازی شده (UTF-8 + XOR)",
                     btn_redeploy_force: "تفویض مجدد / تغییر قالب پنل",
                     adv_network_dns: "شبکه و DNS", adv_proxy_relay: "پروکسی و رله", adv_subscription: "اشتراک",
+                    adv_upstream_title: "آپ‌استریم VLESS", adv_upstream_badge: "Sing-Box / Clash",
+                    adv_upstream_desc1: "<strong>این بخش چیکار میکنه؟</strong><br>یه سرور رایگان VLESS (مثلاً از سایت‌هایی مثل RaceVPN یا SSHMax) به پنل معرفی می‌کنی تا تمام ترافیکت از اون سوراخ رد بشه. یعنی IP خروجیت میشه IP اون سرور.",
+                    adv_upstream_desc2: "<strong>چرا لازمه؟</strong><br>بعضی وقتا به IP یه کشور خاص (مثلاً آلمان یا آمریکا) نیاز داری ولی نمی‌خوای سرور بخری. با این بخش می‌تونی رایگان از IP اون کشور استفاده کنی.",
+                    adv_upstream_desc3: "<strong>چطوری استفاده کنم؟</strong><br>۱. از یکی از سایت‌های زیر یه لینک VLESS بگیر<br>۲. لینک رو اینجا paste کن<br>۳. Save کن<br>۴. از لینک سابسکریپشن (فرمت Sing-Box یا Clash) استفاده کن",
+                    adv_upstream_label: "لینک سرور VLESS", adv_upstream_hint: "لینک VLESS رو از سایت‌های زیر کپی کن و اینجا بذار:",
+                    adv_upstream_providers: "سایت‌های دریافت لینک رایگان:", adv_upstream_warning: "کانفیگ‌های رایگان معمولاً چند روز بیشتر دوام ندارن. اگه اتصال قطع شد، لینک جدید بگیر و جایگزین کن. همچنین فقط با فرمت‌های Sing-Box و Clash کار می‌کنه.",
                     adv_protocol: "پروتکل", adv_telegram: "ربات تلگرام", adv_cloudflare: "کلودفلر",
                     stat_datetime: "تاریخ و زمان",
                     desc_custom_panel_url: "اختیاری. یک دامنه/آدرس سفارشی برای لینک‌های ساب/همگام‌سازی وارد کنید. اگر خالی باشد، آدرس پیش‌فرض ورکر استفاده می‌شود.",
