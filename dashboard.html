@@ -967,19 +967,22 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                               <button onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                                   <div class="flex items-center gap-3">
                                       <span class="text-lg">🔀</span>
-                                      <span class="text-sm font-bold text-slate-700 dark:text-white">Custom Routing</span>
+                                      <span class="text-sm font-bold text-slate-700 dark:text-white" data-i18n="adv_routing_title">Custom Routing</span>
                                   </div>
                                   <svg class="w-4 h-4 text-slate-400 transform transition-transform duration-200 accordion-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                               </button>
                               <div data-accordion-content="" class="transition-all duration-300" style="max-height:0;overflow:hidden;visibility:hidden">
                                   <div class="space-y-4 px-5 pb-5 pt-1">
+                                      <div class="p-3 rounded-xl bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/30 text-xs text-indigo-700 dark:text-indigo-300 leading-relaxed font-sans">
+                                          <p data-i18n="adv_routing_desc"><strong>این بخش چیکار میکنه؟</strong><br>بعضی سایت‌ها یا آدرس‌ها رو می‌خوای بدون پروکسی باز کنی (مستقیم وصل بشی). اینجا آدرس‌ها رو بنویس تا ترافیکشون از مسیر عادی رد بشه و از پروکسی رد نشه.</p>
+                                      </div>
                                       <div class="space-y-1">
-                                          <label class="block text-sm font-bold text-slate-600 dark:text-slate-300">Custom Direct Routing (Domains / IPs / GeoIP / GeoSite)</label>
+                                          <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="adv_routing_label">مسیریابی مستقیم سفارشی</label>
                                           <textarea id="cfg-custom-routing" rows="4" placeholder="example.com&#10;1.2.3.4&#10;geoip:ir&#10;geosite:ir" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 outline-none font-mono text-sm resize-none"></textarea>
-                                          <p class="text-xs text-slate-400 mt-1">One domain, IP, geoip (e.g., geoip:ir) or geosite (e.g., geosite:ir) per line to route to DIRECT.</p>
+                                          <p class="text-xs text-slate-400 mt-1" data-i18n="adv_routing_hint">هر خط یه آدرس، IP، geoip (مثلاً geoip:ir) یا geosite (مثلاً geosite:ir) باشه.</p>
                                            <div class="mt-2 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-xs text-amber-700 dark:text-amber-300 leading-relaxed font-sans flex gap-2">
                                                <span>⚠️</span>
-                                               <span><strong>Important Note:</strong> Any incorrect entry, typo, or misformatted routing rule in this section can cause connection failures or subscription import problems. Please double check all syntax before saving.</span>
+                                               <span data-i18n="adv_routing_warning">اگه آدرس اشتباه بنویسی یا فرمت درست نباشه، اتصال قطع میشه. قبل از ذخیره حتماً چک کن.</span>
                                            </div>
                                       </div>
                                   </div>
@@ -1981,6 +1984,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                     adv_upstream_desc3: "<strong>How to use?</strong><br>1. Get a VLESS link from one of the sites below<br>2. Paste it here<br>3. Click Save<br>4. Use the subscription link (Sing-Box or Clash format)",
                     adv_upstream_label: "VLESS Server Link", adv_upstream_hint: "Copy a VLESS link from one of these sites and paste it here:",
                     adv_upstream_providers: "Free VLESS Providers:", adv_upstream_warning: "Free configs usually expire after a few days. If the connection drops, get a new link and replace it. Also only works with Sing-Box and Clash formats.",
+                    adv_routing_title: "Custom Routing", adv_routing_desc: "<strong>What does this do?</strong><br>Some sites or addresses you want to access directly without proxy. Add them here so their traffic goes through the normal path instead of the proxy.", adv_routing_label: "Custom Direct Routing", adv_routing_hint: "One domain, IP, geoip (e.g., geoip:ir) or geosite (e.g., geosite:ir) per line.", adv_routing_warning: "Wrong entries or bad formatting can break connections. Double check before saving.",
                     adv_protocol: "Protocol", adv_telegram: "Telegram Bot", adv_cloudflare: "Cloudflare",
                     stat_datetime: "Date Time",
                     desc_custom_panel_url: "Optionally specify a custom domain/URL to be used for subscription/sync links. If empty, the default Worker address will be used.",
@@ -2051,6 +2055,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                     adv_upstream_desc3: "<strong>چطوری استفاده کنم؟</strong><br>۱. از یکی از سایت‌های زیر یه لینک VLESS بگیر<br>۲. لینک رو اینجا paste کن<br>۳. Save کن<br>۴. از لینک سابسکریپشن (فرمت Sing-Box یا Clash) استفاده کن",
                     adv_upstream_label: "لینک سرور VLESS", adv_upstream_hint: "لینک VLESS رو از سایت‌های زیر کپی کن و اینجا بذار:",
                     adv_upstream_providers: "سایت‌های دریافت لینک رایگان:", adv_upstream_warning: "کانفیگ‌های رایگان معمولاً چند روز بیشتر دوام ندارن. اگه اتصال قطع شد، لینک جدید بگیر و جایگزین کن. همچنین فقط با فرمت‌های Sing-Box و Clash کار می‌کنه.",
+                    adv_routing_title: "مسیریابی سفارشی", adv_routing_desc: "<strong>این بخش چیکار میکنه؟</strong><br>بعضی سایت‌ها یا آدرس‌ها رو می‌خوای بدون پروکسی باز کنی (مستقیم وصل بشی). اینجا آدرس‌ها رو بنویس تا ترافیکشون از مسیر عادی رد بشه.", adv_routing_label: "مسیریابی مستقیم سفارشی", adv_routing_hint: "هر خط یه آدرس، IP، geoip (مثلاً geoip:ir) یا geosite (مثلاً geosite:ir) باشه.", adv_routing_warning: "اگه آدرس اشتباه بنویسی یا فرمت درست نباشه، اتصال قطع میشه. قبل از ذخیره حتماً چک کن.",
                     adv_protocol: "پروتکل", adv_telegram: "ربات تلگرام", adv_cloudflare: "کلودفلر",
                     stat_datetime: "تاریخ و زمان",
                     desc_custom_panel_url: "اختیاری. یک دامنه/آدرس سفارشی برای لینک‌های ساب/همگام‌سازی وارد کنید. اگر خالی باشد، آدرس پیش‌فرض ورکر استفاده می‌شود.",
