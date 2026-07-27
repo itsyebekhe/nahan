@@ -2568,6 +2568,9 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                       renderChangelog(CURRENT_VERSION);
                   }
               } catch(e){}
+              try { renderUsersTable(); } catch(e){}
+              try { renderLinkedNodes(); } catch(e){}
+              try { renderFakeConfigs(window._fakeConfigs); } catch(e){}
           }
           applyLang();
 
