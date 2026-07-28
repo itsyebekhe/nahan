@@ -8,6 +8,74 @@ All notable changes to Project Nahan will be documented in this file.
 <!-- LANG:EN -->
 
 
+## [3.0.0] - ۱۴۰۵-۰۵-۰۶ (2026-07-27)
+
+<!-- LANG:FA -->
+### اضافه شده (Added)
+- **Upstream VLESS / پروکسی زنجیره‌ای**: قابلیت اتصال پنل به یه سرور VLESS دیگه به عنوان upstream تا ترافیک از مسیر اون سرور رد بشه و محدودیت‌ها دور زده بشه.
+- **توضیحات ساده Upstream VLESS**: بخشی با توضیحات فارسی ساده و لینک سایت‌های دریافت کانفیگ رایگان.
+- **فرمت v2rayN JSON**: اضافه شدن فرمت سابسکریپشن v2rayN JSON (`?flag=vjson`) به صفحه ساب.
+- **توضیحات دوزبانه Custom Routing**: بخش مسیریابی سفارشی حالا توضیحات فارسی و انگلیسی داره.
+- **مودال تأیید سفارشی**: به جای دیالوگ‌های پیش‌فرض مرورگر، یه مودال زیبا و سفارشی اضافه شد.
+- **ذخیره خودکار پیش‌نویس**: فرم اضافه کردن کاربر حالا اطلاعات رو خودکار ذخیره می‌کنه. اگه صفحه رو ببندی و برگردی، اطلاعات باقی می‌مونه.
+- **کپی خودکار لینک ساب**: بعد از ساخت کاربر جدید، لینک سابسکریپشن خودکار کپی میشه.
+- **اعلان‌های Toast**: پیام‌های موفقیت و خطا به صورت اعلان ظاهر میشن.
+
+### رفع شده (Fixed)
+- **تغییر زبان فوری**: حالا وقتی زبان رو عوض می‌کنی، همه متن‌ها فوری آپدیت میشن بدون نیاز به رفرش صفحه.
+- **کنتراست FAQ**: متن‌های بخش سؤالات متداول در حالت تاریک بهتر شد.
+- **لایوت RTL صفحه ساب**: باکس‌ها و دکمه‌ها دیگه با تغییر زبان برعکس نمیشن.
+- **FAQ انگلیسی**: باکس‌های پاسخ انگلیسی حالا درست از چپ به راست نمایش داده میشن.
+- **هاور سایدبار**: رنگ هاور آیتم‌های سایدبار در حالت تاریک حالا سفید هست.
+- **آیکون نودها**: آیکون تب نودها در موبایل با بقیه آیتم‌ها هم‌تراز شد.
+- **تب Settings**: بخش تنظیمات حالا تمام عرض صفحه رو اشغال می‌کنه.
+
+### بهبود یافته (Improved)
+- **بازطراحی فرم اضافه/ویرایش کاربر**: فرم‌ها به ۴ بخش شماره‌گذاری شده تقسیم شدن با بخش‌های پیشرفته جمع‌شونده (Accordion).
+- **سوئیچ پروتکل**: به جای چک‌باکس‌های ساده، حالا toggle switch مدرن برای انتخاب VLESS/Trojan هست.
+- **بازطراحی کارت کاربران**: کارت‌ها حالا بج وضعیت (فعال/متوقف/منقضی)، UUID با دکمه کپی، و دکمه‌های عملیات با لیبل دارن.
+- **دوزبانه بودن کامل**: همه لیبل‌ها، placeholder ها و دکمه‌ها حالا فارسی و انگلیسی هستن.
+- **اعتبارسنجی فرم**: فیلد نام کاربر الزامی شده و در صورت خطا حاشیه قرمز نمایش داده میشه.
+- **انیمیشن‌ها**: انیمیشن‌های نرم CSS برای باز/بسته شدن بخش‌ها و انتقال‌های UI.
+
+### تغییرات (Changed)
+- **ارتقای ورژن**: از ۲.۹.۴ به ۳.۰.۰ ارتقا یافت.
+<!-- LANG:FA -->
+
+<!-- LANG:EN -->
+### Added
+- **Upstream VLESS / Proxy Chaining**: You can now connect your panel to another VLESS server as an upstream so traffic routes through that server and restrictions can be bypassed.
+- **Upstream VLESS Explanations**: A dedicated section with simple Farsi explanations and links to free config provider websites.
+- **v2rayN JSON Format**: Added `?flag=vjson` subscription format to the subscription page.
+- **Bilingual Custom Routing**: The custom routing section now has both Farsi and English descriptions.
+- **Custom Confirm Modal**: Replaced browser's default alert/confirm dialogs with a styled custom modal.
+- **Draft Auto-Save**: The Add User form now auto-saves your input. If you close the page and come back, your data is still there.
+- **Auto-Copy Subscription Link**: After creating a new user, the subscription link is automatically copied to your clipboard.
+- **Toast Notifications**: Success and error messages now appear as toast notifications.
+
+### Fixed
+- **Instant Language Switching**: Switching language now updates all text immediately without needing to refresh the page.
+- **FAQ Text Contrast**: Improved text contrast in the FAQ section for dark mode.
+- **Subscription Page RTL Layout**: Boxes and buttons no longer flip when switching languages.
+- **FAQ English Boxes**: English answer boxes now display correctly left-to-right.
+- **Sidebar Hover Color**: Hover color on sidebar items is now white in dark mode.
+- **Nodes Tab Alignment**: The mobile Nodes tab icon is now aligned with other sidebar items.
+- **Settings Tab Width**: The Settings section now takes full width instead of half-empty layout.
+
+### Improved
+- **Redesigned Add/Edit User Forms**: Forms split into 4 numbered sections with collapsible advanced settings.
+- **Modern Protocol Toggle**: Plain checkboxes replaced with toggle switches for VLESS/Trojan selection.
+- **Redesigned User Cards**: Cards now show status badges (Active/Paused/Expired), UUID with copy button, and labeled action buttons.
+- **Full Bilingual Support**: All labels, placeholders, and buttons are now in both Farsi and English.
+- **Form Validation**: User name field is now required with visual error feedback (red border).
+- **Smooth Animations**: CSS animations for accordion sections and UI transitions.
+
+### Changed
+- **Version Bump**: Upgraded from 2.9.4 to 3.0.0.
+<!-- LANG:EN -->
+
+---
+
 ## [2.9.4] - 2026-07-06
 
 <!-- LANG:FA -->
