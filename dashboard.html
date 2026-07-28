@@ -2234,6 +2234,42 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
 
           const CHANGELOG_DATA = {
 
+              "3.0.0": {
+                  headline: { en: "Upstream VLESS, Redesigned User Management & Better UX", fa: "Upstream VLESS، بازطراحی مدیریت کاربران و تجربه کاربری بهتر" },
+                  added: [
+                      { en: "Upstream VLESS / Proxy Chaining — you can now chain your panel with another VLESS server to bypass restrictions", fa: "قابلیت Upstream VLESS / پروکسی زنجیره‌ای — حالا می‌تونی پنلت رو با یه سرور VLESS دیگه زنجیره کنی تا محدودیت‌ها دور زده بشه" },
+                      { en: "Upstream VLESS section with simple explanations and links to free config providers", fa: "بخش Upstream VLESS با توضیحات ساده و لینک سایت‌های دریافت کانفیگ رایگان" },
+                      { en: "v2rayN JSON subscription format (?flag=vjson) added to subscription page", fa: "فرمت سابسکریپشن v2rayN JSON (?flag=vjson) به صفحه سابسکریپشن اضافه شد" },
+                      { en: "Custom Routing section now has bilingual descriptions (Farsi + English)", fa: "بخش مسیریابی سفارشی حالا توضیحات دوزبانه داره (فارسی + انگلیسی)" },
+                      { en: "Custom confirm modal instead of browser's default alert/confirm dialogs", fa: "مودال تأیید سفارشی به جای دیالوگ‌های پیش‌فرض مرورگر" },
+                      { en: "Draft save for Add User form — if you close the page, your data won't be lost", fa: "ذخیره خودکار پیش‌نویس فرم اضافه کردن کاربر — اگه صفحه رو ببندی، اطلاعاتت از بین نمیره" },
+                      { en: "Auto-copy subscription link after creating a new user", fa: "کپی خودکار لینک سابسکریپشن بعد از ساخت کاربر جدید" },
+                      { en: "Toast notifications for actions like save, copy, and delete", fa: "اعلان‌های Toast برای اعمالی مثل ذخیره، کپی و حذف" }
+                  ],
+                  fixed: [
+                      { en: "Language switching now updates all text instantly without page refresh", fa: "تغییر زبان حالا همه متن‌ها رو فوری آپدیت می‌کنه بدون نیاز به رفرش صفحه" },
+                      { en: "FAQ section text contrast improved in dark mode", fa: "کنتراست متن‌های بخش سؤالات متداول در حالت تاریک بهتر شد" },
+                      { en: "Fixed RTL layout issues on subscription page — boxes and buttons stay in correct position", fa: "رفع مشکل لایوت RTL در صفحه سابسکریپشن — باکس‌ها و دکمه‌ها در جای درست خودشون میمونن" },
+                      { en: "Fixed FAQ English answer boxes now display LTR correctly", fa: "رفع مشکل نمایش باکس‌های پاسخ انگلیسی FAQ که حالا درست از چپ به راست نمایش داده میشن" },
+                      { en: "Fixed sidebar hover color — now white in dark mode", fa: "رفع رنگ هاور سایدبار — حالا در حالت تاریک سفید میشه" },
+                      { en: "Fixed mobile Nodes tab icon alignment with other sidebar items", fa: "رفع هم‌تراشی آیکون تب نودها در موبایل با بقیه آیتم‌های سایدبار" },
+                      { en: "Settings tab now uses full width instead of half-empty layout", fa: "تب تنظیمات حالا تمام عرض صفحه رو اشغال میکنه به جای لایوت نصفه" }
+                  ],
+                  improved: [
+                      { en: "Redesigned Add/Edit User forms — numbered sections with collapsible advanced settings", fa: "بازطراحی فرم‌های اضافه/ویرایش کاربر — بخش‌های شماره‌گذاری شده با تنظیمات پیشرفته جمع‌شونده" },
+                      { en: "Modern toggle switches for protocol selection (VLESS/Trojan) instead of plain checkboxes", fa: "سوئیچ‌های مدرن برای انتخاب پروتکل (VLESS/Trojan) به جای چک‌باکس‌های ساده" },
+                      { en: "Redesigned user cards with status badges (Active/Paused/Expired), UUID display, and action buttons with labels", fa: "بازطراحی کارت‌های کاربر با بج وضعیت (فعال/متوقف/منقضی)، نمایش UUID و دکمه‌های عملیات با لیبل" },
+                      { en: "Improved user card action buttons with hover effects and Farsi/English labels", fa: "بهبود دکمه‌های عملیات کارت کاربر با افکت‌های Hover و لیبل‌های فارسی/انگلیسی" },
+                      { en: "All form labels and placeholders are now fully bilingual (Farsi + English)", fa: "همه لیبل‌ها و placeholder های فرم حالا کاملاً دوزبانه هستن (فارسی + انگلیسی)" },
+                      { en: "Form field validation with visual feedback (red border on error)", fa: "اعتبارسنجی فیلدهای فرم با بازخورد بصری (حاشیه قرمز در صورت خطا)" },
+                      { en: "Smooth CSS animations for accordion sections and UI transitions", fa: "انیمیشن‌های CSS نرم برای بخش‌های آکاردئون و انتقال‌های رابط کاربری" }
+                  ],
+                  changed: [
+                      { en: "Version upgraded from 2.9.4 to 3.0.0", fa: "ارتقای ورژن از ۲.۹.۴ به ۳.۰.۰" }
+                  ],
+                  notes: []
+              },
+
               "2.9.4": {
                   headline: { en: "Live Active Connections, Auto-Update Cron & v2rayN JSON", fa: "اتصالات زنده، کرون‌جاب آپدیت خودکار و خروجی v2rayN JSON" },
                   added: [
