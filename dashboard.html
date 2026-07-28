@@ -3792,6 +3792,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
               }
               // Automatically sync
               renderUsersTable();
+              doSaveDirectly();
           }
 
           function togglePauseUser(uuid) {
@@ -3804,6 +3805,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                           usr.disabledAt = null;
                       }
                       renderUsersTable();
+                      doSaveDirectly();
                   }
               }
           }
@@ -4270,7 +4272,7 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
                if (nodesCheckbox) nodesArray.push(...nodesCheckbox.split(','));
                if (nodesCustom) nodesArray.push(...nodesCustom.split(/[\s,;]+/).map(s=>s.trim()).filter(Boolean));
                const userNodes = nodesArray.length ? nodesArray.join(',') : null;
-                const nat64 = document.getElementById('add-user-nat64').value.trim() || null;
+                const nat64 = document.getElementById('edit-user-nat64').value.trim() || null;
                 let connLimit = document.getElementById('edit-user-conn-limit').value;
                 connLimit = connLimit ? parseInt(connLimit) : null;
                 const userPanelUrl = document.getElementById('edit-user-panel-url').value.trim() || null;
@@ -4315,6 +4317,7 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
               sc.classList.remove('flex', 'flex-col');
               sc.firstElementChild.classList.remove('flex-1', 'min-h-0', 'flex', 'flex-col');
               renderUsersTable();
+              doSaveDirectly();
           }
 
           async function loadApiKeys() {
