@@ -4391,7 +4391,7 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
 
           async function doSaveDirectly() {
               const btn = document.querySelector('button[onclick="doSave()"]');
-              const origText = btn.innerText; btn.innerText = "...";
+              const origText = btn?.innerText; if (btn) btn.innerText = "...";
               try {
                   const res = await fetch(baseRoute + '/api/sync', {
                       method: 'POST',
@@ -4400,11 +4400,11 @@ function buildPortCheckboxes(wrapId, selectedPorts) {
                   });
                   if(res.ok) {
                        const stat = document.getElementById('save-status');
-                       stat.textContent = i18n[lang]?.msg_saved || "Saved!";
-                       setTimeout(() => { doLogin(true); stat.textContent = ""; }, 1000);
+                       if (stat) stat.textContent = i18n[lang]?.msg_saved || "Saved!";
+                       setTimeout(() => { doLogin(true); if (stat) stat.textContent = ""; }, 1000);
                   }
               } catch(e) {}
-              btn.innerText = origText;
+              if (btn) btn.innerText = origText;
           }
 
           async function resolveSmartCleanIps() {
