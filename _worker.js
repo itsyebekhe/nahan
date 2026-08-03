@@ -769,7 +769,9 @@ async function handleLogs(request, env) {
             let logs = [];
             if (env.IOT_DB) {
                 const stored = await d1Get(env, "sys_logs");
-                if (stored) logs = JSON.parse(stored);
+                if (stored) {
+                    try { logs = JSON.parse(stored); } catch(e) { logs = []; }
+                }
             }
             return new Response(JSON.stringify({ success: true, logs }), { status: 200 });
         }
