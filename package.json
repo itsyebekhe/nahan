@@ -1,0 +1,14 @@
+{
+  "name": "nahan",
+  "version": "3.0.0",
+  "description": "Project Nahan - IoT Device Telemetry Gateway (Cloudflare Worker)",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "node build.js",
+    "check": "node --check _worker.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.1"
+  }
+}
