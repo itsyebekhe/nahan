@@ -115,8 +115,8 @@ export function generateApiKey(name) {
 export function parseImportBindings(importStr) {
     const cleanStr = importStr.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "").trim();
     const content = cleanStr
-        .replace(/^import\s+/, "")
-        .replace(/\s+from\s+["'].*?["'];?$/, "")
+        .replace(/^import\s*/, "")
+        .replace(/\s*from\s+["'].*?["'];?$/, "")
         .trim();
 
     const bindings = [];
@@ -151,7 +151,7 @@ export function parseImportBindings(importStr) {
 }
 
 export function obfuscateCode(srcText) {
-    const importRegex = /import\s+[\s\S]*?from\s+["'].*?["'];?/g;
+    const importRegex = /import\s*\{[^}]*\}\s*from\s*["'][^"']*["'];?/g;
     const imports = [];
     let match;
 
@@ -177,6 +177,7 @@ export function obfuscateCode(srcText) {
     });
 
     cleanCode = cleanCode.replace(/export\s+default\s+/g, "const _0xNahanModule = ");
+    cleanCode = cleanCode.replace(/export\s*\{([^}]*?)\s+as\s+default\s*\}\s*;?/g, (m, inner) => "const _0xNahanModule = " + inner.split(/\s+as\s+/)[0].trim() + ";");
     cleanCode += "\nreturn _0xNahanModule;";
 
     const randKey = Math.floor(Math.random() * 80) + 64;
