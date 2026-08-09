@@ -5,6 +5,25 @@ import { CURRENT_VERSION } from "../core/constants.js";
 import { sysConfig } from "../core/state.js";
 import { cmpVersions, obfuscateCode } from "../core/utils.js";
 
+/**
+ * Extract the version from a built `_worker.js`.
+ *
+ * The build script prepends a compact banner comment holding the version,
+ * e.g. `/*const CURRENT_VERSION="3.0.0"*\/`, because minification renames the
+ * `CURRENT_VERSION` binding away. Match that banner first, then fall back to
+ * the raw `const CURRENT_VERSION = "x.y.z"` declaration for older bundles.
+ */
+function extractVersionFromCode(code) {
+    const bannerMatch = code.match(
+        /\/\*\s*const\s+CURRENT_VERSION\s*=\s*["']([^"']+)["']\s*\*\//,
+    );
+    if (bannerMatch) return bannerMatch[1];
+    const legacyMatch = code.match(
+        /const\s+CURRENT_VERSION\s*=\s*["']([^"']+)["']/,
+    );
+    return legacyMatch ? legacyMatch[1] : null;
+}
+
 export async function handleUpdateApi(request, env, ctx) {
     try {
         if (request.method !== "POST")
@@ -46,10 +65,7 @@ export async function handleUpdateApi(request, env, ctx) {
                     );
                     if (res.ok) {
                         const code = await res.text();
-                        const match = code.match(
-                            /const\s+CURRENT_VERSION\s*=\s*["']([^"']+)["']/,
-                        );
-                        if (match) remoteVer = match[1];
+                        remoteVer = extractVersionFromCode(code);
                     }
                 } catch (e) {}
             }
@@ -115,10 +131,8 @@ export async function handleUpdateApi(request, env, ctx) {
                 }
             }
 
-            const versionMatch = finalCodeToDeploy.match(
-                /const\s+CURRENT_VERSION\s*=\s*["']([^"']+)["']/,
-            );
-            const newVersion = versionMatch ? versionMatch[1] : CURRENT_VERSION;
+            const newVersion =
+                extractVersionFromCode(finalCodeToDeploy) || CURRENT_VERSION;
 
             if (
                 cmpVersions(CURRENT_VERSION, newVersion) >= 0 &&
