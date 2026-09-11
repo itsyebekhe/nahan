@@ -136,15 +136,16 @@ async function deployWorkerToCloudflare(accountId, apiToken, workerName, code) {
     );
 }
 
+let d1Initialized = false;
 async function d1Init(env) {
-    if (env.IOT_DB && !env.IOT_DB_INITIALIZED) {
+    if (env.IOT_DB && !d1Initialized) {
         try {
             await env.IOT_DB.prepare(
                 "CREATE TABLE IF NOT EXISTS kv_store (key TEXT PRIMARY KEY, value TEXT)",
             ).run();
-            env.IOT_DB_INITIALIZED = true;
+            d1Initialized = true;
         } catch (e) {
-            env.IOT_DB_INITIALIZED = true;
+            d1Initialized = true;
         }
     }
 }
