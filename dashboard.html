@@ -916,7 +916,7 @@ html.dark select option {
                                           <div class="space-y-1">
                                               <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="lbl_fp">TLS Signature</label>
                                               <select id="cfg-fp" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none appearance-none">
-                                                  <option value="chrome">Chrome</option><option value="firefox">Firefox</option><option value="safari">Safari</option>
+                                                  <option value="chrome">Chrome</option><option value="unsafe">unsafe</option><option value="firefox">Firefox</option><option value="safari">Safari</option><option value="random">random</option>
                                               </select>
                                           </div>
                                           <div class="space-y-1">
@@ -927,6 +927,19 @@ html.dark select option {
                                               <label class="block text-sm font-bold text-slate-600 dark:text-slate-300" data-i18n="lbl_doh">Custom DNS (DoH Provider)</label>
                                               <input type="text" id="cfg-custom-dns" placeholder="https://cloudflare-dns.com/dns-query" class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none text-sm">
                                           </div>
+
+                                          <!-- Fragment & Cipher Suites -->
+                                          <div class="space-y-1 md:col-span-2">
+                                              <label class="block text-sm font-bold text-slate-600 dark:text-slate-300">Final Mask (fm)</label>
+                                              <textarea id="cfg-fm" rows="3" placeholder='{"tcp": [{"type": "fragment", "settings": {"packets": "tlshello", "lengths": ["5", "94", "1"], "delays": ["0"], "maxSplit": "0"}},{"type": "fragment", "settings": {"packets": "1-1", "lengths": ["109", "1"], "delays": ["1"], "maxSplit": "355"}}]}' class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none font-mono text-xs resize-none"></textarea>
+                                              <p class="text-[10px] text-slate-400 mt-1">در صورت خالی بودن نادیده گرفته می‌شود.</p>
+                                          </div>
+                                          <div class="space-y-1 md:col-span-2">
+                                              <label class="block text-sm font-bold text-slate-600 dark:text-slate-300">Cipher Suites (cs)</label>
+                                              <textarea id="cfg-cs" rows="3" placeholder="TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:..." class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-darkborder bg-slate-50 dark:bg-slate-800 focus:border-primary outline-none font-mono text-xs resize-none"></textarea>
+                                              <p class="text-[10px] text-slate-400 mt-1">در صورت خالی بودن نادیده گرفته می‌شود.</p>
+                                          </div>
+
                                       </div>
                                   </div>
                               </div>
@@ -3083,6 +3096,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
               const payload = {
                   mode: el('cfg-proto').value, socketPorts: Array.from(el('cfg-port').selectedOptions).map(o=>o.value).join(','), deviceId: el('cfg-uuid').value,
                   apiRoute: el('cfg-path').value, masterKey: el('cfg-pass').value, agent: el('cfg-fp').value,
+                  fragmentMask: el('cfg-fm') ? el('cfg-fm').value : '', cipherSuites: el('cfg-cs') ? el('cfg-cs').value : '',
                    resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns').value ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, maintenanceHost: el('cfg-fake') ? el('cfg-fake').value : '', backupRelay: el('cfg-relay').value, customRouting: el('cfg-custom-routing') ? el('cfg-custom-routing').value : '', upstreamUri: el('cfg-upstream') ? el('cfg-upstream').value.trim() : '', nat64Prefix: el('cfg-nat64') ? el('cfg-nat64').value : '', enableDirectConfigs: el('cfg-direct-configs') ? el('cfg-direct-configs').checked : false, syncApiKey: el('cf...ey') ? el('cfg-sync-api-key').value.trim() : '', autoUpdate: el('cfg-auto-update') ? el('cfg-auto-update').checked : false, autoUpdateFormat: document.querySelector('input[name="auto-update-format"]:checked')?.value || 'normal',
                    enableOpt1: el('cfg-tfo').checked, enableOpt2: el('cfg-ech').checked,
                    tgToken: el('cfg-tg-token').value, tgChatId: el('cfg-tg-chat').value, tgAdminId: el('cfg-tg-admin').value,
@@ -3120,6 +3134,8 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                       mapId('cfg-path', conf.apiRoute);
                       mapId('cfg-pass', conf.masterKey);
                       mapId('cfg-fp', conf.agent);
+                      mapId('cfg-fm', conf.fragmentMask);
+                      mapId('cfg-cs', conf.cipherSuites);
                       mapId('cfg-dns', conf.resolveIp);
                       mapId('cfg-custom-dns', conf.customDns);
                       mapId('cfg-ips', conf.cleanIps);
@@ -3270,6 +3286,8 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                       document.getElementById('cfg-path').value = conf.apiRoute || '';
                       document.getElementById('cfg-pass').value = conf.masterKey || '';
                       document.getElementById('cfg-fp').value = conf.agent || 'chrome';
+                      if (document.getElementById('cfg-fm')) document.getElementById('cfg-fm').value = conf.fragmentMask || '';
+                      if (document.getElementById('cfg-cs')) document.getElementById('cfg-cs').value = conf.cipherSuites || '';
                       document.getElementById('cfg-dns').value = conf.resolveIp || '';
                       document.getElementById('cfg-custom-dns').value = conf.customDns || 'https://cloudflare-dns.com/dns-query';
                       document.getElementById('cfg-ips').value = conf.cleanIps || '';
@@ -3319,7 +3337,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                       try { checkUpdate(); } catch(ue) { console.error(ue); }
                        if (!silent) switchTab('overview');
 
-                      ['cfg-proto','cfg-port','cfg-fp','cfg-ips','cfg-path', 'cfg-relay', 'cfg-custom-routing', 'cfg-name-strategy', 'cfg-name-prefix', 'cfg-sub-ua', 'cfg-custom-panel-url'].forEach(id => {
+                      ['cfg-proto','cfg-port','cfg-fp','cfg-fm','cfg-cs','cfg-ips','cfg-path', 'cfg-relay', 'cfg-custom-routing', 'cfg-name-strategy', 'cfg-name-prefix', 'cfg-sub-ua', 'cfg-custom-panel-url'].forEach(id => {
                           const el = document.getElementById(id);
                           if(el) { el.addEventListener('input', updateUI); el.addEventListener('change', updateUI); }
                       });
@@ -3414,6 +3432,7 @@ proxyip.cmliussss.net" class="w-full px-4 py-3 rounded-xl border border-slate-20
                   config: {
                       mode: el('cfg-proto').value, socketPorts: Array.from(el('cfg-port').selectedOptions).map(o=>o.value).join(','), deviceId: el('cfg-uuid').value,
                       apiRoute: el('cfg-path').value, masterKey: el('cfg-pass').value, agent: el('cfg-fp').value,
+                      fragmentMask: el('cfg-fm') ? el('cfg-fm').value : '', cipherSuites: el('cfg-cs') ? el('cfg-cs').value : '',
                       resolveIp: el('cfg-dns').value, customDns: el('cfg-custom-dns') ? el('cfg-custom-dns').value : 'https://cloudflare-dns.com/dns-query', cleanIps: el('cfg-ips').value, maintenanceHost: el('cfg-fake') ? el('cfg-fake').value : '', backupRelay: el('cfg-relay').value, customRouting: el('cfg-custom-routing') ? el('cfg-custom-routing').value : '', upstreamUri: el('cfg-upstream') ? el('cfg-upstream').value.trim() : '', nat64Prefix: el('cfg-nat64') ? el('cfg-nat64').value : '', enableDirectConfigs: el('cfg-direct-configs') ? el('cfg-direct-configs').checked : false, syncApiKey: el('cfg-sync-api-key') ? el('cfg-sync-api-key').value.trim() : '', autoUpdate: el('cfg-auto-update') ? el('cfg-auto-update').checked : false, autoUpdateFormat: document.querySelector('input[name="auto-update-format"]:checked')?.value || 'normal',
                                             enableOpt1: el('cfg-tfo').checked, enableOpt2: el('cfg-ech').checked,
                                             tgToken: el('cfg-tg-token').value, tgChatId: el('cfg-tg-chat').value, tgAdminId: el('cfg-tg-admin').value,
