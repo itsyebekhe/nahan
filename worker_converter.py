@@ -150,12 +150,12 @@ def main():
 
     # Encode command
     encode_parser = subparsers.add_parser("encode", help="Turn normal worker.js into coded/obfuscated worker.js")
-    encode_parser.add_argument("-i", "--input", default="worker.js", help="Path to input normal worker.js")
+    encode_parser.add_argument("-i", "--input", default="_worker.js", help="Path to input normal worker.js")
     encode_parser.add_argument("-o", "--output", default="worker.encoded.js", help="Path to output encoded worker.js")
 
     # Decode command
     decode_parser = subparsers.add_parser("decode", help="Turn encoded worker.js back to normal readable worker.js")
-    decode_parser.add_argument("-i", "--input", default="worker.js", help="Path to input encoded worker.js")
+    decode_parser.add_argument("-i", "--input", default="_worker.js", help="Path to input encoded worker.js")
     decode_parser.add_argument("-o", "--output", default="worker.decoded.js", help="Path to output normal worker.js")
 
     args = parser.parse_args()
