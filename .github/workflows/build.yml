@@ -1,0 +1,58 @@
+name: Build & Bundle Worker
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'dashboard/**'
+      - 'scripts/**'
+      - 'package.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun Runtime
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Build Dashboard from Modular Sections
+        run: |
+          node scripts/build_dashboard.js
+
+      - name: Compile Modular src/ to _worker.js
+        run: |
+          node scripts/build.js
+
+      - name: Generate Encoded Worker
+        run: |
+          if [ -f "worker_converter.py" ]; then
+            python3 worker_converter.py encode || true
+          fi
+
+      - name: Commit & Push Compiled Bundles
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add _worker.js _worker.encode.js _worker.encoded.js dashboard.html 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit in compiled bundles."
+          else
+            git commit -m "chore(build): recompile modular worker and dashboard [skip ci]"
+            git push
+          fi
