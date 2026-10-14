@@ -1,0 +1,68 @@
+name: Deploy Web Installer to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'installer/**'
+      - 'templates/**'
+      - 'scripts/**'
+      - 'dashboard.html'
+      - 'subscription.html'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  deploy-pages:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun Runtime
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Compile Modular Worker
+        run: |
+          node scripts/build.js
+
+      - name: Prepare GitHub Pages Static Site
+        run: |
+          mkdir -p _site
+          cp installer/web/index.html _site/index.html
+          cp _worker.js _site/_worker.js
+          cp dashboard.html _site/dashboard.html 2>/dev/null || true
+          cp subscription.html _site/subscription.html 2>/dev/null || true
+          cp clash.yml _site/clash.yml 2>/dev/null || true
+          cp singbox.json _site/singbox.json 2>/dev/null || true
+          cp v.json _site/v.json 2>/dev/null || true
+          cp assets.json _site/assets.json 2>/dev/null || true
+          mkdir -p _site/download
+          cp _worker.js _site/download/_worker.js
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '_site'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
