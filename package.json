@@ -1,0 +1,27 @@
+{
+  "name": "nahan-gateway",
+  "version": "3.0.4",
+  "description": "Modular Cloudflare Worker Gateway with automated Wrangler CLI installer and interactive Web Installer",
+  "type": "module",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build:dashboard": "node scripts/build_dashboard.js",
+    "build": "node scripts/build_dashboard.js && node scripts/build.js",
+    "lint": "node --check server.js installer/cli.js scripts/build.js scripts/build_dashboard.js",
+    "install:wrangler": "node installer/cli.js",
+    "installer:web": "node server.js",
+    "deploy": "npx wrangler deploy",
+    "bundle": "node scripts/build.js"
+  },
+  "keywords": [
+    "cloudflare-workers",
+    "edge-tunnel",
+    "network-gateway",
+    "gateway",
+    "wrangler",
+    "web-installer"
+  ],
+  "author": "itsyebekhe",
+  "license": "MIT"
+}

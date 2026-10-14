@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#090d16">
+    <meta name="apple-mobile-web-app-title" content="Nahan">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%236366f1'/><text x='50' y='62' font-size='40' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>N</text></svg>">
+    <title>Nahan Gateway</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="tailwindcss.js"></script>
+    <script>
+        if (!window.tailwind) {
+            document.write('<script src="https://cdn.jsdelivr.net/gh/itsyebekhe/nahan@main/tailwindcss.js"><\/script>');
+        }
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                        fa: ['Vazirmatn', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+                    },
+                    colors: {
+                        primary: 'var(--color-primary)',
+                        'primary-hover': 'var(--color-primary-hover)',
+                        darkbg: 'var(--color-bg)',
+                        darkcard: 'var(--color-surface)',
+                        darkborder: 'var(--color-border)',
+                    }
+                }
+            }
+        };
+    </script>
+    <style>
+        :root {
+            --color-primary: #6366f1;
+            --color-primary-hover: #4f46e5;
+            --color-bg: #f8fafc;
+            --color-surface: #ffffff;
+            --color-surface-muted: #f1f5f9;
+            --color-border: #e2e8f0;
+            --color-border-subtle: #edf2f7;
+            --color-text: #0f172a;
+            --color-text-muted: #64748b;
+            --color-text-subtle: #94a3b8;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-500: #64748b;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+        }
+
+        html.dark {
+            --color-primary: #818cf8;
+            --color-primary-hover: #6366f1;
+            --color-bg: #090d16;
+            --color-surface: #111726;
+            --color-surface-muted: #182032;
+            --color-border: rgba(255, 255, 255, 0.08);
+            --color-border-subtle: rgba(255, 255, 255, 0.04);
+            --color-text: #f8fafc;
+            --color-text-muted: #94a3b8;
+            --color-text-subtle: #64748b;
+            --slate-50: #182032;
+            --slate-100: #1f293d;
+            --slate-200: #2d3b55;
+            --slate-300: #94a3b8;
+            --slate-400: #cbd5e1;
+            --slate-500: #94a3b8;
+            --slate-600: #cbd5e1;
+            --slate-700: #e2e8f0;
+            --slate-800: #f1f5f9;
+            --slate-900: #f8fafc;
+            --darkbg: #090d16;
+            --darkcard: #111726;
+            --darkborder: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Clean theme accent variants */
+        html[data-theme="ocean"] {
+            --color-primary: #0ea5e9;
+            --color-primary-hover: #0284c7;
+        }
+        html[data-theme="forest"] {
+            --color-primary: #10b981;
+            --color-primary-hover: #059669;
+        }
+        html[data-theme="sunset"] {
+            --color-primary: #f43f5e;
+            --color-primary-hover: #e11d48;
+        }
+        html[data-theme="dracula"] {
+            --color-primary: #bd93f9;
+            --color-primary-hover: #a855f7;
+        }
+
+        html[lang="fa"] body, html[lang="fa"] body *:not(.font-mono) {
+            font-family: 'Vazirmatn', sans-serif !important;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Minimalist, high-contrast form controls */
+        input[type="text"], input[type="password"], input[type="search"], select, textarea {
+            background-color: var(--color-surface-muted) !important;
+            color: var(--color-text) !important;
+            border: 1px solid var(--color-border) !important;
+            border-radius: 0.75rem !important;
+            font-size: 0.875rem !important;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, input[type="search"]:focus, select:focus, textarea:focus {
+            outline: none !important;
+            border-color: var(--color-primary) !important;
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent) !important;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: var(--color-text-subtle) !important;
+            opacity: 0.8;
+        }
+
+        select option {
+            background-color: var(--color-surface) !important;
+            color: var(--color-text) !important;
+        }
+
+        .login-input {
+            background-color: var(--color-surface-muted) !important;
+            color: var(--color-text) !important;
+            border: 1px solid var(--color-border) !important;
+        }
+        .login-input:focus {
+            border-color: var(--color-primary) !important;
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent) !important;
+        }
+
+        /* Minimalist Navigation Pills */
+        .nav-item {
+            transition: all 0.15s ease;
+            border-radius: 0.75rem;
+            color: var(--color-text-muted);
+        }
+        .nav-item:hover {
+            color: var(--color-text);
+            background-color: var(--color-surface-muted);
+        }
+        .nav-item.active {
+            background-color: color-mix(in srgb, var(--color-primary) 12%, transparent) !important;
+            color: var(--color-primary) !important;
+            font-weight: 600 !important;
+        }
+        .mobile-nav-item.active {
+            color: var(--color-primary) !important;
+        }
+
+        /* Clean micro scrollbars */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-text-subtle); }
+
+        [data-accordion-content] {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.25s ease;
+        }
+
+        .native-press:active {
+            transform: scale(0.98);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.15s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+  <body class="text-[var(--color-text)] h-[100dvh] flex flex-col md:flex-row overflow-hidden selection:bg-primary selection:text-white transition-colors duration-300 bg-[var(--color-bg)]">
+
+      <!-- Global Controls -->
+      <div class="fixed top-4 end-4 md:top-5 md:end-5 flex items-center gap-2 z-50">
+          <span id="top-version-badge" class="hidden md:inline-block px-3 py-1.5 rounded-xl text-[11px] font-mono font-bold" style="background: color-mix(in srgb, var(--color-primary) 12%, transparent); border: 1px solid color-mix(in srgb, var(--color-primary) 25%, transparent); color: var(--color-primary);">v__CURRENT_VERSION__</span>
+          <a href="https://github.com/itsyebekhe/nahan" id="github-link-btn" target="_blank" class="hidden md:inline-flex btn-top-bar p-2 rounded-xl transition-all" style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text-muted);">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
+          </a>
+          <button onclick="toggleLang()" id="lang-toggle" class="btn-top-bar px-3 py-1.5 rounded-xl text-sm font-bold transition-all" style="background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text);">EN</button>
+          <button onclick="toggleTheme()" class="btn-top-bar p-2 rounded-xl transition-all" style="background: var(--color-surface); border: 1px solid var(--color-border); color: #f59e0b;">
+              <svg class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+              <svg class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          </button>
+          <button onclick="logout()" id="btn-logout-mob" class="hidden md:hidden p-2 rounded-xl transition-all" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#f87171;">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+          </button>
+      </div>
+
+      <!-- LOGIN SCREEN -->

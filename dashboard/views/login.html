@@ -1,0 +1,45 @@
+      <div id="login-box" class="absolute inset-0 flex items-center justify-center p-4 z-40 bg-[var(--color-bg)]">
+          
+          
+          <div class="relative w-full max-w-sm">
+              
+              <div class="text-center mb-8">
+                  <div class="relative inline-flex items-center justify-center mb-5">
+                      <div class="lock-pulse relative w-20 h-20 rounded-3xl flex items-center justify-center" style="background: linear-gradient(145deg, color-mix(in srgb, var(--color-primary) 25%, transparent), color-mix(in srgb, var(--color-primary) 8%, transparent)); border: 1px solid color-mix(in srgb, var(--color-primary) 45%, transparent); box-shadow: 0 0 40px color-mix(in srgb, var(--color-primary) 25%, transparent), inset 0 1px 0 rgba(255,255,255,0.08);">
+                          <svg class="w-9 h-9 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                      </div>
+                  </div>
+                  <h2 class="text-3xl font-black" style="color: var(--color-text);" data-i18n="title">Nahan Gateway</h2>
+                  <p class="text-sm mt-2" style="color: var(--color-text-muted);">Sign in to manage your gateway</p>
+              </div>
+              <div class="rounded-3xl p-px" style="background: linear-gradient(145deg, color-mix(in srgb, var(--color-primary) 45%, transparent), color-mix(in srgb, var(--color-primary) 8%, transparent) 50%, color-mix(in srgb, var(--color-primary) 30%, transparent)); box-shadow: 0 25px 60px rgba(0,0,0,0.15);">
+                  <div class="rounded-3xl p-8" style="background: var(--color-surface);">
+                      <div class="flex items-center gap-2 mb-7 pb-6" style="border-bottom: 1px solid var(--color-border);">
+                          <span class="w-2 h-2 rounded-full flex-shrink-0" style="background:#22c55e;box-shadow:0 0 8px #22c55e;"></span>
+                          <span class="text-xs text-emerald-500 font-semibold" data-i18n="system_online">System online</span>
+                          <span class="flex-1"></span>
+                          <span class="text-xs" style="color: var(--color-text-muted); opacity: 0.8;">🔒 Secure connection</span>
+                      </div>
+                      __HAS_DB_WARNING__
+                      <div class="mb-5">
+                          <label class="block text-sm font-semibold mb-2.5" style="color: var(--color-text-muted);" data-i18n="login_password">Password</label>
+                          <div class="relative">
+                              <div class="absolute inset-y-0 start-0 flex items-center ps-4 text-primary">
+                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+                              </div>
+                              <input type="password" id="pwd" data-i18n="pass_ph" placeholder="Enter your password" class="login-input w-full ps-11 pe-12 py-3.5 text-sm rounded-2xl outline-none transition-all">
+                              <button type="button" onclick="const n=document.getElementById('pwd');n.type=n.type==='password'?'text':'password'" class="eye-btn absolute inset-y-0 end-0 flex items-center px-4 transition-colors" style="color: var(--color-primary); opacity: 0.6;">
+                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                              </button>
+                          </div>
+                      </div>
+                      <p id="err-msg" class="hidden text-sm mb-4 flex items-center gap-2 px-3 py-2.5 rounded-xl" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#f87171;"><span>⚠️</span><span data-i18n="err_pass">Wrong password, please try again.</span></p>
+                      <button onclick="doLogin()" class="login-btn btn-shimmer w-full py-3.5 rounded-2xl font-bold text-sm relative overflow-hidden transition-all" style="background: linear-gradient(135deg, var(--color-primary), color-mix(in srgb, var(--color-primary) 80%, black)); color: white; box-shadow: 0 4px 24px color-mix(in srgb, var(--color-primary) 35%, transparent), inset 0 1px 0 rgba(255,255,255,0.1);" data-i18n="login_btn">
+                          Sign In
+                      </button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- DASHBOARD CONTAINER -->

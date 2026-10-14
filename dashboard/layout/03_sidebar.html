@@ -1,0 +1,75 @@
+          <aside class="hidden md:flex w-64 bg-[var(--color-surface)]  border-e border-slate-200 dark:border-darkborder flex-col z-20 shrink-0">
+              <div class="flex items-center p-6 border-b border-slate-100 dark:border-darkborder/50">
+                  <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-primary flex items-center justify-center me-3 shrink-0"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+                  <div class="flex flex-col">
+                      <h1 class="font-black text-xl leading-none" data-i18n="title">Nahan</h1>
+                      <span id="app-version" class="text-[10px] font-mono text-slate-400 mt-1 font-semibold">v__CURRENT_VERSION__</span>
+                  </div>
+              </div>
+              <nav class="flex-1 p-3.5 space-y-4 overflow-y-auto">
+                  <!-- PRIMARY SECTION -->
+                  <div class="space-y-1">
+                      <div class="px-3 pb-1 text-[10px] font-black uppercase tracking-wider text-slate-400/80" data-i18n="nav_sec_main">Main Control</div>
+                      <button onclick="switchTab('overview')" id="tab-overview" class="nav-item active flex items-center w-full px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all group font-semibold text-sm">
+                          <svg class="w-5 h-5 me-3 text-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                          <span class="truncate" data-i18n="tab_overview">Dashboard</span>
+                      </button>
+                      <button onclick="switchTab('users')" id="tab-users" class="nav-item flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all group font-semibold text-sm">
+                          <div class="flex items-center min-w-0">
+                              <svg class="w-5 h-5 me-3 text-indigo-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                              <span class="truncate" data-i18n="tab_users">Clients</span>
+                          </div>
+                          <span id="sidebar-user-limit-badge" class="ms-2 px-2 py-0.5 text-[10px] font-bold rounded-full bg-indigo-500/10 text-indigo-500 border border-indigo-500/20">0/5</span>
+                      </button>
+                      <button onclick="switchTab('optimiser')" id="tab-optimiser" class="nav-item flex items-center justify-between w-full px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all group font-semibold text-sm">
+                          <div class="flex items-center min-w-0">
+                              <svg class="w-5 h-5 me-3 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polygon></svg>
+                              <span class="truncate" data-i18n="tab_optimiser">CF Optimizer</span>
+                          </div>
+                          <span class="ms-2 px-2 py-0.5 text-[10px] font-black rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 uppercase tracking-wider">ECH</span>
+                      </button>
+                  </div>
+
+                  <!-- CONNECTIVITY SECTION -->
+                  <div class="space-y-1">
+                      <div class="px-3 pb-1 text-[10px] font-black uppercase tracking-wider text-slate-400/80" data-i18n="nav_sec_connect">Connectivity</div>
+                      <button onclick="switchTab('info')" id="tab-info" class="nav-item flex items-center w-full px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all group font-semibold text-sm">
+                          <svg class="w-5 h-5 me-3 text-cyan-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>
+                          <span class="truncate" data-i18n="tab_info">Endpoints</span>
+                      </button>
+                      <button onclick="switchTab('network')" id="tab-network" class="nav-item flex items-center w-full px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all group font-semibold text-sm">
+                          <svg class="w-5 h-5 me-3 text-blue-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                          <span class="truncate" data-i18n="tab_status">Metrics & Latency</span>
+                      </button>
+                  </div>
+
+                  <!-- SYSTEM MANAGEMENT -->
+                  <div class="space-y-1">
+                      <div class="px-3 pb-1 text-[10px] font-black uppercase tracking-wider text-slate-400/80" data-i18n="nav_sec_mgmt">System & Rules</div>
+                      <button onclick="switchTab('settings')" id="tab-settings" class="nav-item flex items-center w-full px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all group font-semibold text-sm">
+                          <svg class="w-5 h-5 me-3 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                          <span class="truncate" data-i18n="tab_settings">System Settings</span>
+                      </button>
+                      <button onclick="switchTab('advanced')" id="tab-advanced" class="nav-item flex items-center w-full px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all group font-semibold text-sm">
+                          <svg class="w-5 h-5 me-3 text-purple-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                          <span class="truncate" data-i18n="tab_adv">Advanced & Rules</span>
+                      </button>
+                      <button onclick="switchTab('logs')" id="tab-logs" class="nav-item flex items-center w-full px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all group font-semibold text-sm">
+                          <svg class="w-5 h-5 me-3 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                          <span class="truncate" data-i18n="tab_logs">Activity Logs</span>
+                      </button>
+                      <button onclick="switchTab('help')" id="tab-help" class="nav-item flex items-center w-full px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all group font-semibold text-sm">
+                          <svg class="w-5 h-5 me-3 text-teal-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                          <span class="truncate" data-i18n="tab_help">Help & Client Setup</span>
+                      </button>
+                  </div>
+              </nav>
+              <div class="p-4 border-t border-slate-100 dark:border-darkborder/50">
+                  <button onclick="logout()" class="flex items-center justify-center w-full px-4 py-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 font-semibold transition-colors">
+                      <svg class="w-5 h-5 me-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                      <span data-i18n="logout">Disconnect</span>
+                  </button>
+              </div>
+          </aside>
+
+          <!-- MAIN CONTENT AREA -->

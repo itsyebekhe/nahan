@@ -1,0 +1,146 @@
+                      <div id="view-help" class="hidden space-y-6">
+                          <div class="bg-[var(--color-surface)]/70 backdrop-blur-xl rounded-3xl p-6 shadow-lg border border-slate-200 dark:border-darkborder/50 relative overflow-hidden">
+                              <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                                  <div>
+                                      <h3 class="text-lg font-black text-slate-800 dark:text-white" data-i18n="help_title">Help & Common Questions</h3>
+                                      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="help_desc">Learn about fields, features, and troubleshooting on your Nahan Gateway.</p>
+                                  </div>
+                                  <!-- Search bar -->
+                                  <div class="relative w-full md:w-72">
+                                      <input type="text" id="faq-search" oninput="filterFAQs()" placeholder="Search FAQ / جستجو در راهنما..." class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-darkborder rounded-xl text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary">
+                                  </div>
+                              </div>
+
+                              <div class="space-y-4" id="faq-list">
+                                  <!-- Item 1 -->
+                                  <div class="faq-item bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl border border-slate-100 dark:border-darkborder/50 p-4 transition-all duration-200">
+                                      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between text-start focus:outline-none font-bold text-slate-800 dark:text-white hover:text-primary transition-colors">
+                                          <span class="flex items-center gap-2">
+                                              <span class="text-primary text-sm">❓</span>
+                                              <span class="text-sm md:text-base">What is Nahan Gateway? / دروازه نهان چیست؟</span>
+                                          </span>
+                                          <svg class="w-5 h-5 transform transition-transform duration-200 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                      </button>
+                                      <div class="faq-content hidden mt-3 space-y-3 text-xs md:text-sm leading-relaxed">
+                                          <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/30" dir="ltr">
+                                              <div class="flex items-center gap-1.5 mb-2"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-500 text-white">EN</span><span class="text-[10px] text-blue-600 dark:text-blue-400 font-semibold">English</span></div>
+                                              <p class="text-slate-700 dark:text-blue-200/80 text-left" dir="ltr">Nahan Gateway is an advanced, high-performance, single-file subscription and proxy manager built directly for Cloudflare Workers. It acts as a gateway to securely distribute configurations (Clash, Sing-box, Trojan, VMess) to clients while concealing the main panel's backend server behind Cloudflare's global edge network.</p>
+                                          </div>
+                                          <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30">
+                                              <div class="flex items-center gap-1.5 mb-2"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500 text-white">FA</span><span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">فارسی</span></div>
+                                              <p class="text-slate-700 dark:text-emerald-200/80">دروازه نهان یک سیستم مدیریت اشتراک و پروکسی پیشرفته و تک‌فایلی است که برای کلودفلر ورکرز توسعه یافته است. این سیستم به عنوان یک دروازه عمل می‌کند تا کانفیگ‌ها (Clash, Sing-box, Trojan, VMess) را به صورت امن توزیع کند و سرور اصلی شما را پشت شبکه جهانی کلودفلر پنهان کند.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <!-- Item 2 -->
+                                  <div class="faq-item bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl border border-slate-100 dark:border-darkborder/50 p-4 transition-all duration-200">
+                                      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between text-start focus:outline-none font-bold text-slate-800 dark:text-white hover:text-primary transition-colors">
+                                          <span class="flex items-center gap-2">
+                                              <span class="text-primary text-sm">❓</span>
+                                              <span class="text-sm md:text-base">How does "Auto-Update" work? / قابلیت «آپدیت خودکار» چطور کار می‌کند؟</span>
+                                          </span>
+                                          <svg class="w-5 h-5 transform transition-transform duration-200 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                      </button>
+                                      <div class="faq-content hidden mt-3 space-y-3 text-xs md:text-sm leading-relaxed">
+                                          <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/30" dir="ltr">
+                                              <div class="flex items-center gap-1.5 mb-2"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-500 text-white">EN</span><span class="text-[10px] text-blue-600 dark:text-blue-400 font-semibold">English</span></div>
+                                              <p class="text-slate-700 dark:text-blue-200/80 text-left" dir="ltr">When Auto-Update is enabled in System settings, a Cron Trigger runs on the background periodically checking the GitHub repository for updates. If a newer version is released, the worker automatically pulls the fresh code, applies the selected format (Normal or Obfuscated), deploys itself directly, and triggers updates across all linked panels/nodes.</p>
+                                          </div>
+                                          <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30">
+                                              <div class="flex items-center gap-1.5 mb-2"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500 text-white">FA</span><span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">فارسی</span></div>
+                                              <p class="text-slate-700 dark:text-emerald-200/80">وقتی آپدیت خودکار در تنظیمات فعال باشد، یک کرون جاب به صورت دوره‌ای در پس‌زمینه نسخه مخزن گیت‌هاب را بررسی می‌کند. در صورت وجود نسخه جدیدتر، ورکر به صورت خودکار کد جدید را دریافت کرده، قالب انتخابی (معمولی یا مبهم‌سازی‌شده) را اعمال می‌کند، خود را مستقیماً دپلوی کرده و تمام نودها/پنل‌های متصل را همگام‌سازی می‌کند.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <!-- Item 3 -->
+                                  <div class="faq-item bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl border border-slate-100 dark:border-darkborder/50 p-4 transition-all duration-200">
+                                      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between text-start focus:outline-none font-bold text-slate-800 dark:text-white hover:text-primary transition-colors">
+                                          <span class="flex items-center gap-2">
+                                              <span class="text-primary text-sm">❓</span>
+                                              <span class="text-sm md:text-base">What is the difference between Normal and Obfuscated formats? / تفاوت فرمت معمولی و مبهم‌سازی چیست؟</span>
+                                          </span>
+                                          <svg class="w-5 h-5 transform transition-transform duration-200 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                      </button>
+                                      <div class="faq-content hidden mt-3 space-y-3 text-xs md:text-sm leading-relaxed">
+                                          <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/30" dir="ltr">
+                                              <div class="flex items-center gap-1.5 mb-2"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-500 text-white">EN</span><span class="text-[10px] text-blue-600 dark:text-blue-400 font-semibold">English</span></div>
+                                              <p class="text-slate-700 dark:text-blue-200/80 text-left" dir="ltr"><strong>Normal:</strong> Deploys raw JS code. Easily readable, but prone to traffic analysis/firewall scanning.<br><strong>Obfuscated:</strong> Uses XOR byte-shifting to obscure the source code. The Cloudflare Edge compiles it at runtime using high-speed dynamic decoders, preventing third-party scanning.</p>
+                                          </div>
+                                          <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30">
+                                              <div class="flex items-center gap-1.5 mb-2"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500 text-white">FA</span><span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">فارسی</span></div>
+                                              <p class="text-slate-700 dark:text-emerald-200/80"><strong>معمولی:</strong> کد خام جاوااسکریپت دپلوی می‌شود. خوانایی آسانی دارد اما در معرض آنالیز ترافیک فایروال‌ها است.<br><strong>مبهم‌سازی‌شده:</strong> از شیفت بایت XOR برای پنهان‌سازی کد استفاده می‌کند. کلودفلر در زمان اجرا آن را به سرعت رمزگشایی می‌کند.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <!-- Item 4 -->
+                                  <div class="faq-item bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl border border-slate-100 dark:border-darkborder/50 p-4 transition-all duration-200">
+                                      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between text-start focus:outline-none font-bold text-slate-800 dark:text-white hover:text-primary transition-colors">
+                                          <span class="flex items-center gap-2">
+                                              <span class="text-primary text-sm">❓</span>
+                                              <span class="text-sm md:text-base">What are "Clients" & "Subscription Fake Entries"? / کاربران و ورودی‌های اطلاعاتی اشتراک چیست؟</span>
+                                          </span>
+                                          <svg class="w-5 h-5 transform transition-transform duration-200 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                      </button>
+                                      <div class="faq-content hidden mt-3 space-y-3 text-xs md:text-sm leading-relaxed">
+                                          <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/30" dir="ltr">
+                                              <div class="flex items-center gap-1.5 mb-2"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-500 text-white">EN</span><span class="text-[10px] text-blue-600 dark:text-blue-400 font-semibold">English</span></div>
+                                              <p class="text-slate-700 dark:text-blue-200/80 text-left" dir="ltr">The <strong>Clients</strong> tab lets you provision individual subscriber tokens with specific limits (Quota, Expiry, IP connection count limits). <strong>Subscription Fake Entries</strong> customize what gets shown in the subscription profile UI inside the client app, such as remaining traffic or days left using placeholder patterns like <code>{usage}</code> and <code>{expiry}</code>.</p>
+                                          </div>
+                                          <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30">
+                                              <div class="flex items-center gap-1.5 mb-2"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500 text-white">FA</span><span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">فارسی</span></div>
+                                              <p class="text-slate-700 dark:text-emerald-200/80">تب <strong>کاربران</strong> به شما اجازه می‌دهد اشتراک‌های یکتا با محدودیت‌های ترافیک، تاریخ انقضا و تعداد اتصالات همزمان بسازید. <strong>ورودی‌های اطلاعاتی اشتراک</strong> مشخص می‌کند چه پیام‌هایی با کدهای پویایی مانند <code>{usage}</code> و <code>{expiry}</code> درون نرم‌افزار کاربر نمایش داده شوند.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <!-- Item 5 -->
+                                  <div class="faq-item bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl border border-slate-100 dark:border-darkborder/50 p-4 transition-all duration-200">
+                                      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between text-start focus:outline-none font-bold text-slate-800 dark:text-white hover:text-primary transition-colors">
+                                          <span class="flex items-center gap-2">
+                                              <span class="text-primary text-sm">❓</span>
+                                              <span class="text-sm md:text-base">What are "Other Nodes" / linked panels? / «سایر نودها» (پنل‌های متصل) چیست؟</span>
+                                          </span>
+                                          <svg class="w-5 h-5 transform transition-transform duration-200 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                      </button>
+                                      <div class="faq-content hidden mt-3 space-y-3 text-xs md:text-sm leading-relaxed">
+                                          <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/30" dir="ltr">
+                                              <div class="flex items-center gap-1.5 mb-2"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-500 text-white">EN</span><span class="text-[10px] text-blue-600 dark:text-blue-400 font-semibold">English</span></div>
+                                              <p class="text-slate-700 dark:text-blue-200/80 text-left" dir="ltr">"Other Nodes" represents external linked panels. By generating a Panel API Key and registering the child node's URL, the main panel automatically synchronizes, updates, and deploys the identical worker code to all linked nodes whenever an update is triggered on the main panel.</p>
+                                          </div>
+                                          <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30">
+                                              <div class="flex items-center gap-1.5 mb-2"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500 text-white">FA</span><span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">فارسی</span></div>
+                                              <p class="text-slate-700 dark:text-emerald-200/80">«سایر نودها» پنل‌های فرعی متصل هستند. با ساخت یک کلید دسترسی پنل (API Key) و ثبت آدرس نود فرعی، پنل اصلی با هر بروزرسانی به صورت خودکار نسخه جدید را برای تمام نودهای متصل ارسال و دپلوی می‌کند.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <!-- Item 6 -->
+                                  <div class="faq-item bg-slate-50/50 dark:bg-slate-900/30 rounded-2xl border border-slate-100 dark:border-darkborder/50 p-4 transition-all duration-200">
+                                      <button onclick="toggleFAQ(this)" class="w-full flex items-center justify-between text-start focus:outline-none font-bold text-slate-800 dark:text-white hover:text-primary transition-colors">
+                                          <span class="flex items-center gap-2">
+                                              <span class="text-primary text-sm">❓</span>
+                                              <span class="text-sm md:text-base">Explain critical fields like Clean IPs and Proxy IPs / توضیح فیلدهای آی‌پی تمیز و پروکسی آی‌پی</span>
+                                          </span>
+                                          <svg class="w-5 h-5 transform transition-transform duration-200 shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                      </button>
+                                      <div class="faq-content hidden mt-3 space-y-3 text-xs md:text-sm leading-relaxed">
+                                          <div class="p-3 rounded-xl bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/30" dir="ltr">
+                                              <div class="flex items-center gap-1.5 mb-2"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-500 text-white">EN</span><span class="text-[10px] text-blue-600 dark:text-blue-400 font-semibold">English</span></div>
+                                              <p class="text-slate-700 dark:text-blue-200/80 text-left" dir="ltr"><strong>Clean IPs:</strong> Clean non-filtered Cloudflare IPs. The gateway generates unique config sets multiplied for each clean IP added here, giving users redundancy.<br><strong>Proxy IPs:</strong> Behind-the-scene IPv4/IPv6 transit nodes to fetch data from blocking target sites.</p>
+                                          </div>
+                                          <div class="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/30">
+                                              <div class="flex items-center gap-1.5 mb-2"><span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500 text-white">FA</span><span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">فارسی</span></div>
+                                              <p class="text-slate-700 dark:text-emerald-200/80"><strong>آی‌پی‌های تمیز:</strong> آی‌پی‌های بدون فیلتر کلودفلر. این سیستم برای تک‌تک آی‌پی‌های ثبت شده در این بخش خروجی‌های مجزا می‌سازد تا اتصالی پایدار ارائه شود.<br><strong>آی‌پی‌های پروکسی:</strong> آی‌پی‌های ترانزیت پشت‌صحنه برای برقراری ارتباط با سایت‌های هدف فیلترشده.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+                                    <!-- CF OPTIMISER & ECH ENGINE MODULE -->

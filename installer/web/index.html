@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nahan - Cloudflare Edge Gateway & Installer</title>
+    <meta name="description" content="Modular Cloudflare Worker Gateway with automated Wrangler CLI installer and interactive Web Installer for seamless edge deployment.">
+    <meta property="og:title" content="Nahan - Cloudflare Edge Gateway & Installer">
+    <meta property="og:description" content="Modular Cloudflare Worker Gateway with automated Wrangler CLI installer and interactive Web Installer for seamless edge deployment.">
+    <meta property="og:type" content="website">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Vazirmatn', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                        fa: ['Vazirmatn', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        },
+                        edge: {
+                            50: '#f8fafc',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#080c16'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .font-mono-code { font-family: 'JetBrains Mono', monospace; direction: ltr; text-align: left; }
+        [dir="rtl"] .rtl-flip { transform: scaleX(-1); }
+        .gradient-border {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.4), rgba(99, 102, 241, 0.2));
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-edge-950 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-200">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-edge-950/80 border-b border-slate-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-sky-500/20 text-white font-black text-lg">
+                    N
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-extrabold text-slate-900 dark:text-white tracking-tight text-lg">NAHAN</span>
+                        <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-950 dark:text-sky-300 border border-sky-200 dark:border-sky-800">v3.0.4 Modular</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block" id="app-tagline">Cloudflare Edge Gateway & Deployment Hub</p>
+                </div>
+            </div>
+
+            <!-- Quick Links & Controls -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="/dashboard" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span id="nav-dashboard">Panel Preview</span>
+                </a>
+                <a href="/subscription" class="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                    <span id="nav-sub">Subscription</span>
+                </a>
+                <a href="/docs" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <span id="nav-docs">Docs</span>
+                </a>
+
+                <!-- Language Toggle -->
+                <button id="lang-toggle" onclick="toggleLanguage()" class="px-2.5 py-1.5 text-xs font-bold rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-edge-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition flex items-center gap-1">
+                    <span id="lang-flag">🇮🇷</span>
+                    <span id="lang-label">فارسی</span>
+                </button>
+
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" onclick="toggleTheme()" class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-edge-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition" aria-label="Toggle theme">
+                    <svg id="theme-icon-dark" class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    <svg id="theme-icon-light" class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        
+        <!-- Hero Header -->
+        <div class="text-center max-w-3xl mx-auto mb-10">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 dark:bg-sky-950/60 border border-sky-200 dark:border-sky-800/80 text-sky-600 dark:text-sky-300 text-xs font-semibold mb-4">
+                <span class="w-2 h-2 rounded-full bg-sky-500 animate-ping"></span>
+                <span id="hero-badge">Zero Server Cost • Cloudflare Edge • D1 SQLite</span>
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4" id="hero-title">
+                Deploy Nahan to Cloudflare in Seconds
+            </h1>
+            <p class="text-sm sm:text-base text-slate-600 dark:text-slate-400" id="hero-desc">
+                High-performance serverless reverse gateway with modular ES code, dual protocols (VLESS/Trojan), automated D1 database state, and stealth origin masquerading.
+            </p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="flex items-center justify-center mb-8">
+            <div class="p-1 rounded-2xl bg-slate-200/80 dark:bg-slate-900 border border-slate-300/80 dark:border-slate-800 flex flex-wrap gap-1 shadow-inner">
+                <button onclick="switchTab('web-installer')" id="tab-btn-web-installer" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition shadow bg-white dark:bg-sky-600 text-slate-900 dark:text-white">
+                    🚀 <span id="tab-label-web">Web Installer (1-Click)</span>
+                </button>
+                <button onclick="switchTab('wrangler-cli')" id="tab-btn-wrangler-cli" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                    💻 <span id="tab-label-wrangler">Wrangler CLI Wizard</span>
+                </button>
+                <button onclick="switchTab('manual-paste')" id="tab-btn-manual-paste" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                    📋 <span id="tab-label-manual">Dashboard Manual Paste</span>
+                </button>
+                <button onclick="switchTab('modular-arch')" id="tab-btn-modular-arch" class="tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white">
+                    📂 <span id="tab-label-arch">Modular Codebase</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== TAB 1: WEB INSTALLER ==================== -->
+        <section id="tab-web-installer" class="tab-content block">
+            <div class="max-w-3xl mx-auto bg-white dark:bg-edge-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
+                
+                <!-- Wizard Steps Tracker -->
+                <div class="p-6 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-edge-950/50">
+                    <div class="grid grid-cols-4 gap-2 text-center text-xs font-bold">
+                        <div id="step-ind-1" class="step-indicator flex flex-col items-center gap-1.5 text-sky-500">
+                            <span class="w-7 h-7 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold">1</span>
+                            <span id="step-title-1">Cloudflare Token</span>
+                        </div>
+                        <div id="step-ind-2" class="step-indicator flex flex-col items-center gap-1.5 text-slate-400">
+                            <span class="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold">2</span>
+                            <span id="step-title-2">Gateway Config</span>
+                        </div>
+                        <div id="step-ind-3" class="step-indicator flex flex-col items-center gap-1.5 text-slate-400">
+                            <span class="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold">3</span>
+                            <span id="step-title-3">D1 Database</span>
+                        </div>
+                        <div id="step-ind-4" class="step-indicator flex flex-col items-center gap-1.5 text-slate-400">
+                            <span class="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold">4</span>
+                            <span id="step-title-4">Deploy & Launch</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 sm:p-8 space-y-8">
+
+                    <!-- STEP 1: Cloudflare Credentials -->
+                    <div id="wizard-step-1" class="wizard-pane block space-y-5">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white" id="w1-heading">Step 1: Authenticate with Cloudflare API</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="w1-subheading">
+                                Nahan needs an API Token with permissions to deploy Workers and create D1 Databases on your account.
+                            </p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1" id="label-cf-token">Cloudflare API Token</label>
+                                <div class="relative">
+                                    <input type="password" id="cf-api-token" placeholder="Paste your Cloudflare API Token here..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-sm focus:ring-2 focus:ring-sky-500 font-mono-code">
+                                    <button type="button" onclick="togglePasswordVisibility('cf-api-token')" class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-200 text-xs">👁️</button>
+                                </div>
+                                <div class="flex items-center justify-between mt-1.5 text-[11px] text-slate-500">
+                                    <a href="https://dash.cloudflare.com/profile/api-tokens" target="_blank" class="text-sky-500 hover:underline flex items-center gap-1" id="link-create-token">
+                                        🔗 Create API Token in Cloudflare Dashboard &rarr;
+                                    </a>
+                                    <span class="text-slate-400">Permissions: Workers (Edit), D1 (Edit)</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <button type="button" id="btn-verify-token" onclick="verifyCloudflareToken()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition flex items-center gap-2">
+                                    <span>🔍 Verify Token & Fetch Accounts</span>
+                                </button>
+                                <div id="token-status" class="hidden mt-2 p-3 rounded-xl text-xs font-medium"></div>
+                            </div>
+
+                            <div id="account-select-container" class="hidden space-y-1.5">
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300" id="label-cf-account">Select Cloudflare Account</label>
+                                <select id="cf-account-id" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-sm">
+                                    <option value="">Loading accounts...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-end pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <button type="button" onclick="goToStep(2)" class="px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm shadow-lg shadow-sky-500/20 transition flex items-center gap-2">
+                                <span id="btn-next-step">Next: Gateway Settings</span> &rarr;
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Gateway Configuration -->
+                    <div id="wizard-step-2" class="wizard-pane hidden space-y-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white" id="w2-heading">Step 2: Gateway & Camouflage Parameters</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="w2-subheading">
+                                Customize your worker node name, secret admin route, and stealth origin mask.
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1" id="label-worker-name">Worker Script Name</label>
+                                <input type="text" id="cfg-worker-name" value="nahan" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-sm font-mono-code">
+                                <span class="text-[10px] text-slate-400">Deployed to <span class="text-sky-400 font-mono" id="preview-subdomain-url">https://nahan.&lt;sub&gt;.workers.dev</span></span>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1" id="label-admin-route">Camouflage Secret Path</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="cfg-api-route" value="nahan-gate" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-sm font-mono-code">
+                                    <button type="button" onclick="randomizeSecret()" class="px-3 py-2 text-xs rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-semibold" title="Generate Random">🎲</button>
+                                </div>
+                                <span class="text-[10px] text-slate-400">Admin dashboard will be at <span class="text-emerald-400 font-mono">/&lt;path&gt;/dash</span></span>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1" id="label-admin-key">Master Admin Password</label>
+                                <div class="flex gap-2">
+                                    <input type="text" id="cfg-master-key" value="admin" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-sm font-mono-code">
+                                    <button type="button" onclick="randomizeMasterKey()" class="px-3 py-2 text-xs rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 text-slate-700 dark:text-slate-200 font-semibold" title="Generate Random">🎲</button>
+                                </div>
+                                <span class="text-[10px] text-amber-500 font-medium">Recommended: Change from default 'admin'</span>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1" id="label-decoy">Camouflage Decoy Domain</label>
+                                <input type="text" id="cfg-decoy-domain" value="ubuntu.com" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 text-sm font-mono-code">
+                                <div class="flex gap-1.5 mt-1.5">
+                                    <button type="button" onclick="setDecoy('ubuntu.com')" class="px-2 py-0.5 rounded text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Ubuntu</button>
+                                    <button type="button" onclick="setDecoy('docker.com')" class="px-2 py-0.5 rounded text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Docker</button>
+                                    <button type="button" onclick="setDecoy('kernel.org')" class="px-2 py-0.5 rounded text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">Kernel</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2" id="label-protocols">Active Protocols</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 cursor-pointer hover:border-sky-500 transition">
+                                    <input type="radio" name="protocol_mode" value="both" checked class="text-sky-500 focus:ring-sky-500">
+                                    <div>
+                                        <div class="text-xs font-bold text-slate-900 dark:text-white">Both (Dual)</div>
+                                        <div class="text-[10px] text-slate-500">VLESS + Trojan</div>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 cursor-pointer hover:border-sky-500 transition">
+                                    <input type="radio" name="protocol_mode" value="vless" class="text-sky-500 focus:ring-sky-500">
+                                    <div>
+                                        <div class="text-xs font-bold text-slate-900 dark:text-white">VLESS Only</div>
+                                        <div class="text-[10px] text-slate-500">Alpha protocol</div>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-2.5 p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 cursor-pointer hover:border-sky-500 transition">
+                                    <input type="radio" name="protocol_mode" value="trojan" class="text-sky-500 focus:ring-sky-500">
+                                    <div>
+                                        <div class="text-xs font-bold text-slate-900 dark:text-white">Trojan Only</div>
+                                        <div class="text-[10px] text-slate-500">Beta protocol</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <button type="button" onclick="goToStep(1)" class="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs transition">
+                                &larr; Back
+                            </button>
+                            <button type="button" onclick="goToStep(3)" class="px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm shadow-lg shadow-sky-500/20 transition flex items-center gap-2">
+                                <span>Next: D1 Database</span> &rarr;
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: D1 Database Setup -->
+                    <div id="wizard-step-3" class="wizard-pane hidden space-y-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white" id="w3-heading">Step 3: D1 Database Storage Binding</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="w3-subheading">
+                                Nahan requires a Cloudflare D1 database (binding name: <code class="text-sky-400 font-mono font-bold">IOT_DB</code>) to store users, limits, and settings.
+                            </p>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-edge-950/70 space-y-3">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="d1_mode" value="create" checked onchange="toggleD1Mode()" class="text-sky-500 focus:ring-sky-500">
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white">Automatically create new D1 database</span>
+                                </label>
+                                <div id="d1-create-fields" class="pl-6 space-y-2">
+                                    <input type="text" id="d1-new-name" value="nahan-db" placeholder="Database Name" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-mono-code">
+                                    <p class="text-[11px] text-slate-500">We will call the Cloudflare D1 API to create this database and extract its unique database ID.</p>
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-edge-950/70 space-y-3">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" name="d1_mode" value="existing" onchange="toggleD1Mode()" class="text-sky-500 focus:ring-sky-500">
+                                    <span class="text-xs font-bold text-slate-900 dark:text-white">Use an existing D1 database ID</span>
+                                </label>
+                                <div id="d1-existing-fields" class="pl-6 hidden space-y-2">
+                                    <input type="text" id="d1-existing-id" placeholder="e.g. 7f9a12bc-34de-56fa-78bc-90abcdef1234" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-mono-code">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+                            <button type="button" onclick="goToStep(2)" class="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs transition">
+                                &larr; Back
+                            </button>
+                            <button type="button" onclick="goToStep(4)" class="px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm shadow-lg shadow-sky-500/20 transition flex items-center gap-2">
+                                <span>Next: Review & Deploy</span> &rarr;
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: Review, Deploy & Status -->
+                    <div id="wizard-step-4" class="wizard-pane hidden space-y-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white" id="w4-heading">Step 4: Deploy Worker to Cloudflare Edge</h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" id="w4-subheading">
+                                Review your configuration summary below and initiate deployment.
+                            </p>
+                        </div>
+
+                        <!-- Config Summary Card -->
+                        <div class="p-4 rounded-2xl bg-slate-50 dark:bg-edge-950 border border-slate-200 dark:border-slate-800 text-xs space-y-2 font-mono-code">
+                            <div class="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-800">
+                                <span class="text-slate-500">Worker Script:</span>
+                                <span class="font-bold text-sky-400" id="sum-worker-name">nahan</span>
+                            </div>
+                            <div class="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-800">
+                                <span class="text-slate-500">Secret Admin Route:</span>
+                                <span class="font-bold text-emerald-400" id="sum-api-route">nahan-gate</span>
+                            </div>
+                            <div class="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-800">
+                                <span class="text-slate-500">Admin Master Password:</span>
+                                <span class="font-bold text-yellow-400" id="sum-master-key">admin</span>
+                            </div>
+                            <div class="flex justify-between py-1 border-b border-slate-200/60 dark:border-slate-800">
+                                <span class="text-slate-500">Decoy Origin:</span>
+                                <span class="text-slate-300" id="sum-decoy">ubuntu.com</span>
+                            </div>
+                            <div class="flex justify-between py-1">
+                                <span class="text-slate-500">D1 Database Binding:</span>
+                                <span class="text-slate-300 font-bold">IOT_DB</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Button -->
+                        <div>
+                            <button type="button" id="btn-start-deploy" onclick="executeDeployment()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white font-extrabold text-base shadow-xl shadow-sky-500/25 transition flex items-center justify-center gap-2">
+                                <span>🚀 Deploy Nahan to Cloudflare Edge</span>
+                            </button>
+                        </div>
+
+                        <!-- Deployment Terminal / Logs -->
+                        <div id="deploy-logs-container" class="hidden space-y-2">
+                            <div class="flex items-center justify-between text-xs font-bold text-slate-500">
+                                <span>Deployment Progress</span>
+                                <span id="deploy-spinner" class="animate-spin text-sky-400">⚡</span>
+                            </div>
+                            <div id="deploy-logs" class="p-4 rounded-xl bg-slate-900 border border-slate-800 text-xs font-mono-code text-slate-300 space-y-1.5 max-h-56 overflow-y-auto">
+                            </div>
+                        </div>
+
+                        <!-- Success Launch Card -->
+                        <div id="deploy-success-card" class="hidden p-6 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-200 space-y-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xl">✓</div>
+                                <div>
+                                    <h4 class="font-extrabold text-base text-white">Nahan is Live on Cloudflare!</h4>
+                                    <p class="text-xs text-emerald-300">Your edge gateway has been deployed and bound to D1 database successfully.</p>
+                                </div>
+                            </div>
+
+                            <div class="p-3 rounded-xl bg-black/40 border border-emerald-900/50 space-y-2 font-mono-code text-xs">
+                                <div>
+                                    <span class="text-slate-400">Admin Dashboard:</span>
+                                    <a id="success-dash-link" href="#" target="_blank" class="block text-emerald-400 hover:underline font-bold text-sm truncate"></a>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-400">Password:</span>
+                                    <span id="success-dash-key" class="text-yellow-300 font-bold"></span>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap gap-2 pt-2">
+                                <a id="btn-open-panel" href="#" target="_blank" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition">
+                                    Open Admin Panel &rarr;
+                                </a>
+                                <button type="button" onclick="downloadDeploymentJson()" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition">
+                                    💾 Save Credentials (.json)
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-start pt-2">
+                            <button type="button" onclick="goToStep(3)" class="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-semibold text-xs transition">
+                                &larr; Back to Settings
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 2: WRANGLER CLI ==================== -->
+        <section id="tab-wrangler-cli" class="tab-content hidden max-w-4xl mx-auto space-y-6">
+            <div class="bg-white dark:bg-edge-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">Wrangler CLI Automated Installer</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Prefer deploying from your local terminal using the official Cloudflare Wrangler tool? Follow these simple automated commands:
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-400">
+                            <span>Option A: Run Interactive CLI Installer</span>
+                            <button onclick="copyToClipboard('npm run install:wrangler')" class="text-sky-400 hover:text-sky-300">Copy</button>
+                        </div>
+                        <pre class="font-mono-code text-xs text-sky-300">npm run install:wrangler</pre>
+                        <p class="text-[11px] text-slate-500">Guides you step-by-step in terminal, creates D1 database automatically, updates wrangler.toml, and deploys.</p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-400">
+                            <span>Option B: Standard Wrangler Commands</span>
+                            <button onclick="copyToClipboard('npx wrangler d1 create nahan-db\nnpx wrangler deploy')" class="text-sky-400 hover:text-sky-300">Copy</button>
+                        </div>
+                        <pre class="font-mono-code text-xs text-emerald-400"># 1. Create D1 SQLite database
+npx wrangler d1 create nahan-db
+
+# 2. Deploy directly to Cloudflare
+npx wrangler deploy</pre>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Generated wrangler.toml Configuration</span>
+                            <button onclick="copyWranglerToml()" class="text-xs text-sky-500 hover:underline">Copy Configuration</button>
+                        </div>
+                        <textarea id="wrangler-toml-preview" readonly class="w-full h-48 px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-xs font-mono-code text-slate-300 focus:outline-none"></textarea>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 3: MANUAL DASHBOARD PASTE ==================== -->
+        <section id="tab-manual-paste" class="tab-content hidden max-w-4xl mx-auto space-y-6">
+            <div class="bg-white dark:bg-edge-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">Cloudflare Web Editor (Zero CLI)</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        Deploy directly by copying the single bundled worker script into Cloudflare's online code editor.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-edge-950 border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+                        <span class="w-6 h-6 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold text-xs">1</span>
+                        <h4 class="font-bold text-slate-900 dark:text-white">Create D1 Database</h4>
+                        <p class="text-slate-500">Go to Cloudflare Dashboard &rarr; <b>Storage & databases</b> &rarr; <b>D1 SQLite</b>. Click <b>Create database</b> with name <code class="text-sky-400">nahan-db</code>.</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-50 dark:bg-edge-950 border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+                        <span class="w-6 h-6 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold text-xs">2</span>
+                        <h4 class="font-bold text-slate-900 dark:text-white">Create Worker & Bind D1</h4>
+                        <p class="text-slate-500">Go to <b>Workers & Pages</b> &rarr; <b>Create application</b> &rarr; <b>Create Worker</b>. Under Settings &rarr; Variables &rarr; D1 Database Bindings, add variable name: <code class="text-sky-400">IOT_DB</code>.</p>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 text-center">
+                    <h4 class="text-sm font-bold text-white">Download or Copy Bundled Worker Script</h4>
+                    <p class="text-xs text-slate-400">The bundled <code class="text-sky-300">_worker.js</code> contains the complete modular system in a single standalone file ready for pasting.</p>
+                    <div class="flex justify-center gap-3">
+                        <a href="/download/_worker.js" download="_worker.js" class="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-xs transition">
+                            📥 Download _worker.js
+                        </a>
+                        <button onclick="copyWorkerCode()" id="btn-copy-worker" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs transition">
+                            📋 Copy Full Code to Clipboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== TAB 4: MODULAR ARCHITECTURE ==================== -->
+        <section id="tab-modular-arch" class="tab-content hidden max-w-4xl mx-auto space-y-6">
+            <div class="bg-white dark:bg-edge-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-6 sm:p-8 space-y-6">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">Modular Architecture Overview</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                        The 11,000-line monolithic <code class="text-sky-400">_worker.js</code> has been thoroughly refactored into high-performance ES modules located in <code class="text-sky-400 font-bold">src/</code>:
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
+                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-edge-950 border border-slate-200 dark:border-slate-800 space-y-1">
+                        <span class="font-bold text-sky-400">src/core/</span>
+                        <ul class="text-slate-500 space-y-0.5 text-[11px] font-mono">
+                            <li>• constants.js</li>
+                            <li>• state.js (Memory Caches)</li>
+                            <li>• utils.js (Timeouts & Helpers)</li>
+                            <li>• d1.js (SQLite DB Engine)</li>
+                            <li>• auth.js (Keys & Rate Limit)</li>
+                            <li>• config.js (Sync & Failover)</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-edge-950 border border-slate-200 dark:border-slate-800 space-y-1">
+                        <span class="font-bold text-indigo-400">src/protocols/</span>
+                        <ul class="text-slate-500 space-y-0.5 text-[11px] font-mono">
+                            <li>• stream.js (Sockets & Tunnels)</li>
+                            <li>• trojan.js (Auth & UUID Map)</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-edge-950 border border-slate-200 dark:border-slate-800 space-y-1">
+                        <span class="font-bold text-emerald-400">src/relays/</span>
+                        <ul class="text-slate-500 space-y-0.5 text-[11px] font-mono">
+                            <li>• health.js (Relay Probing)</li>
+                            <li>• Graveyard Auto-Recovery</li>
+                            <li>• AI SNI Domain Quarantine</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-edge-950 border border-slate-200 dark:border-slate-800 space-y-1">
+                        <span class="font-bold text-amber-400">src/api/</span>
+                        <ul class="text-slate-500 space-y-0.5 text-[11px] font-mono">
+                            <li>• auth.js & keys.js</li>
+                            <li>• users.js (Quota Tracker)</li>
+                            <li>• logs.js & stats.js</li>
+                            <li>• sync.js (Linked Nodes)</li>
+                            <li>• telegram.js (Bot Webhook)</li>
+                            <li>• update.js (Edge Deploy)</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-edge-950 border border-slate-200 dark:border-slate-800 space-y-1">
+                        <span class="font-bold text-fuchsia-400">src/converters/</span>
+                        <ul class="text-slate-500 space-y-0.5 text-[11px] font-mono">
+                            <li>• geo.js (IP Flags & Geolocation)</li>
+                            <li>• fragment.js (TLS Masking)</li>
+                            <li>• upstream.js (Detour Chains)</li>
+                            <li>• sub.js (Clash / Singbox / V2Ray)</li>
+                        </ul>
+                    </div>
+
+                    <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-edge-950 border border-slate-200 dark:border-slate-800 space-y-1">
+                        <span class="font-bold text-rose-400">src/index.js</span>
+                        <ul class="text-slate-500 space-y-0.5 text-[11px] font-mono">
+                            <li>• fetch() Entry Point Router</li>
+                            <li>• scheduled() Background Cron</li>
+                            <li>• Wrangler main entry</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-slate-900 border border-slate-800 space-y-2 text-xs">
+                    <span class="font-bold text-slate-300">Native Bun & Wrangler Compilation:</span>
+                    <p class="text-slate-400">
+                        Run <code class="text-sky-300 font-mono">npm run build</code> (or <code class="text-sky-300 font-mono">node scripts/build.js</code>) to compile all 22 ES modules into the unified <code class="text-sky-300 font-mono">_worker.js</code> in under 20 milliseconds!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 dark:border-slate-800/80 py-8 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>© 2026 Project Nahan • Open Source Edge Gateway</p>
+            <div class="flex items-center gap-4">
+                <a href="https://github.com/itsyebekhe/nahan" target="_blank" class="hover:text-sky-500 transition">GitHub</a>
+                <a href="/docs" class="hover:text-sky-500 transition">Documentation</a>
+                <a href="/dashboard" class="hover:text-sky-500 transition">Admin Dashboard</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Web Installer Logic -->
+    <script>
+        let currentStep = 1;
+        let isPersian = false;
+        let verifiedAccountId = "";
+        let verifiedAccountName = "";
+        let lastCreatedD1Id = "";
+
+        const translations = {
+            en: {
+                flag: "🇮🇷",
+                langLabel: "فارسی",
+                tagline: "Cloudflare Edge Gateway & Deployment Hub",
+                badge: "Zero Server Cost • Cloudflare Edge • D1 SQLite",
+                title: "Deploy Nahan to Cloudflare in Seconds",
+                desc: "High-performance serverless reverse gateway with modular ES code, dual protocols (VLESS/Trojan), automated D1 database state, and stealth origin masquerading."
+            },
+            fa: {
+                flag: "🇺🇸",
+                langLabel: "English",
+                tagline: "گیت‌وی لبه کلودفلر و هاب استقرار آسان",
+                badge: "هزینه سرور صفر • لبه کلودفلر • دیتابیس D1 SQLite",
+                title: "استقرار نهان بر روی کلودفلر در چند ثانیه",
+                desc: "گیت‌وی معکوس سرورلس پرسرعت با ساختار ماژولار، پروتکل‌های دوگانه (VLESS و Trojan)، ماندگاری ابری با D1 و استتار هوشمند سرور مبدا."
+            }
+        };
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function toggleLanguage() {
+            isPersian = !isPersian;
+            const t = isPersian ? translations.fa : translations.en;
+            document.documentElement.dir = isPersian ? "rtl" : "ltr";
+            document.documentElement.lang = isPersian ? "fa" : "en";
+            
+            document.getElementById("lang-flag").innerText = t.flag;
+            document.getElementById("lang-label").innerText = t.langLabel;
+            document.getElementById("app-tagline").innerText = t.tagline;
+            document.getElementById("hero-badge").innerText = t.badge;
+            document.getElementById("hero-title").innerText = t.title;
+            document.getElementById("hero-desc").innerText = t.desc;
+
+            updateWranglerTomlPreview();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+            document.querySelectorAll(".tab-btn").forEach(el => {
+                el.classList.remove("bg-white", "dark:bg-sky-600", "text-slate-900", "dark:text-white", "shadow");
+                el.classList.add("text-slate-600", "dark:text-slate-400");
+            });
+
+            const activeContent = document.getElementById("tab-" + tabId);
+            const activeBtn = document.getElementById("tab-btn-" + tabId);
+
+            if (activeContent) activeContent.classList.remove("hidden");
+            if (activeBtn) {
+                activeBtn.classList.add("bg-white", "dark:bg-sky-600", "text-slate-900", "dark:text-white", "shadow");
+                activeBtn.classList.remove("text-slate-600", "dark:text-slate-400");
+            }
+        }
+
+        function goToStep(step) {
+            currentStep = step;
+            for (let i = 1; i <= 4; i++) {
+                const pane = document.getElementById(`wizard-step-${i}`);
+                const ind = document.getElementById(`step-ind-${i}`);
+                if (pane) pane.classList.toggle("hidden", i !== step);
+                if (ind) {
+                    if (i === step) {
+                        ind.classList.remove("text-slate-400");
+                        ind.classList.add("text-sky-500");
+                        ind.querySelector("span").className = "w-7 h-7 rounded-full bg-sky-500 text-white flex items-center justify-center font-bold";
+                    } else if (i < step) {
+                        ind.classList.remove("text-slate-400");
+                        ind.classList.add("text-emerald-500");
+                        ind.querySelector("span").className = "w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold";
+                        ind.querySelector("span").innerText = "✓";
+                    } else {
+                        ind.classList.remove("text-sky-500", "text-emerald-500");
+                        ind.classList.add("text-slate-400");
+                        ind.querySelector("span").className = "w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center font-bold";
+                        ind.querySelector("span").innerText = String(i);
+                    }
+                }
+            }
+
+            if (step === 4) {
+                // Update summary
+                document.getElementById("sum-worker-name").innerText = document.getElementById("cfg-worker-name").value || "nahan";
+                document.getElementById("sum-api-route").innerText = document.getElementById("cfg-api-route").value || "nahan-gate";
+                document.getElementById("sum-master-key").innerText = document.getElementById("cfg-master-key").value || "admin";
+                document.getElementById("sum-decoy").innerText = document.getElementById("cfg-decoy-domain").value || "ubuntu.com";
+            }
+        }
+
+        function togglePasswordVisibility(id) {
+            const input = document.getElementById(id);
+            if (input) input.type = input.type === "password" ? "text" : "password";
+        }
+
+        function randomizeSecret() {
+            document.getElementById("cfg-api-route").value = "nahan_" + Math.random().toString(36).substring(2, 9);
+            updateWranglerTomlPreview();
+        }
+
+        function randomizeMasterKey() {
+            document.getElementById("cfg-master-key").value = "key_" + Math.random().toString(36).substring(2, 10);
+            updateWranglerTomlPreview();
+        }
+
+        function setDecoy(d) {
+            document.getElementById("cfg-decoy-domain").value = d;
+            updateWranglerTomlPreview();
+        }
+
+        function toggleD1Mode() {
+            const isCreate = document.querySelector('input[name="d1_mode"]:checked').value === "create";
+            document.getElementById("d1-create-fields").classList.toggle("hidden", !isCreate);
+            document.getElementById("d1-existing-fields").classList.toggle("hidden", isCreate);
+        }
+
+        // Cloudflare API Helper that works on both GitHub Pages and Local Dev Server
+        async function callCfApi(endpoint, token, method = "GET", body = null) {
+            const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+            const directUrl = `https://api.cloudflare.com/client/v4${endpoint}`;
+            const proxyUrl = `/api/cf-proxy${endpoint}`;
+
+            const headers = {
+                "Authorization": `Bearer ${token}`
+            };
+            if (body && !(body instanceof FormData)) {
+                headers["Content-Type"] = "application/json";
+            }
+
+            // On local development, prefer the local proxy to bypass any CORS restrictions
+            if (isLocal) {
+                try {
+                    const res = await fetch(proxyUrl, {
+                        method,
+                        headers,
+                        body: body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined
+                    });
+                    if (res.ok || res.status < 500) {
+                        return await res.json();
+                    }
+                } catch (err) {
+                    // fall through to direct call
+                }
+            }
+
+            // Direct call to Cloudflare API
+            try {
+                const res = await fetch(directUrl, {
+                    method,
+                    headers,
+                    body: body ? (body instanceof FormData ? body : JSON.stringify(body)) : undefined
+                });
+                return await res.json();
+            } catch (err) {
+                throw new Error(`Cloudflare API connection failed: ${err.message}. If blocked by browser CORS, please use the local server (npm run installer:web) or Wrangler CLI.`);
+            }
+        }
+
+        async function verifyCloudflareToken() {
+            const token = document.getElementById("cf-api-token").value.trim();
+            const statusEl = document.getElementById("token-status");
+            const btn = document.getElementById("btn-verify-token");
+
+            if (!token) {
+                statusEl.className = "mt-2 p-3 rounded-xl text-xs font-medium bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-300 block";
+                statusEl.innerText = "Please enter an API Token first.";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<span class="animate-spin">⚡</span> Verifying...`;
+
+            try {
+                // 1. Verify token
+                const verifyData = await callCfApi("/user/tokens/verify", token);
+                if (!verifyData.success) {
+                    throw new Error(verifyData.errors?.[0]?.message || "Invalid API token or insufficient permissions");
+                }
+
+                // 2. Fetch accounts
+                const accountsData = await callCfApi("/accounts", token);
+                if (!accountsData.success || !accountsData.result || accountsData.result.length === 0) {
+                    throw new Error("Token is valid, but no Cloudflare Accounts found.");
+                }
+
+                const select = document.getElementById("cf-account-id");
+                select.innerHTML = "";
+                accountsData.result.forEach(acc => {
+                    const opt = document.createElement("option");
+                    opt.value = acc.id;
+                    opt.innerText = `${acc.name} (${acc.id})`;
+                    select.appendChild(opt);
+                });
+
+                verifiedAccountId = accountsData.result[0].id;
+                verifiedAccountName = accountsData.result[0].name;
+
+                document.getElementById("account-select-container").classList.remove("hidden");
+                statusEl.className = "mt-2 p-3 rounded-xl text-xs font-medium bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 block";
+                statusEl.innerHTML = `✓ Token Verified! Found account <b>${verifiedAccountName}</b>.`;
+
+            } catch (err) {
+                statusEl.className = "mt-2 p-3 rounded-xl text-xs font-medium bg-red-100 dark:bg-red-950/50 text-red-600 dark:text-red-300 block";
+                statusEl.innerText = `Error: ${err.message}`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>🔍 Verify Token & Fetch Accounts</span>`;
+            }
+        }
+
+        function logDeploy(msg, type = "info") {
+            const container = document.getElementById("deploy-logs-container");
+            const logs = document.getElementById("deploy-logs");
+            container.classList.remove("hidden");
+
+            const line = document.createElement("div");
+            const colors = {
+                info: "text-slate-300",
+                success: "text-emerald-400 font-bold",
+                warn: "text-yellow-400",
+                error: "text-rose-400 font-bold"
+            };
+            line.className = colors[type] || "text-slate-300";
+            line.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            logs.appendChild(line);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        async function executeDeployment() {
+            const token = document.getElementById("cf-api-token").value.trim();
+            const accountSelect = document.getElementById("cf-account-id");
+            const accountId = accountSelect.value || verifiedAccountId;
+            const workerName = document.getElementById("cfg-worker-name").value.trim() || "nahan";
+            const apiRoute = document.getElementById("cfg-api-route").value.trim() || "nahan-gate";
+            const masterKey = document.getElementById("cfg-master-key").value.trim() || "admin";
+            const decoyDomain = document.getElementById("cfg-decoy-domain").value.trim() || "ubuntu.com";
+
+            if (!token) {
+                alert("Please provide a Cloudflare API Token in Step 1.");
+                goToStep(1);
+                return;
+            }
+
+            if (!accountId) {
+                alert("Please select a Cloudflare Account in Step 1.");
+                goToStep(1);
+                return;
+            }
+
+            const btn = document.getElementById("btn-start-deploy");
+            btn.disabled = true;
+            btn.innerHTML = `<span class="animate-spin">⚡</span> Deploying to Cloudflare...`;
+
+            document.getElementById("deploy-logs").innerHTML = "";
+            document.getElementById("deploy-success-card").classList.add("hidden");
+
+            try {
+                logDeploy("🚀 Initiating deployment to Cloudflare Edge...");
+                logDeploy(`Checking account ID: ${accountId}...`);
+
+                // Step 1: D1 Database Provisioning
+                let d1Id = "";
+                const d1Mode = document.querySelector('input[name="d1_mode"]:checked').value;
+                if (d1Mode === "create") {
+                    const dbName = document.getElementById("d1-new-name").value.trim() || `${workerName}-db`;
+                    logDeploy(`Creating D1 database "${dbName}" via Cloudflare REST API...`);
+                    
+                    const createDbRes = await callCfApi(`/accounts/${accountId}/d1/database`, token, "POST", { name: dbName });
+                    if (createDbRes.success && createDbRes.result) {
+                        d1Id = createDbRes.result.uuid || createDbRes.result.id;
+                        logDeploy(`✓ Created D1 Database: ${dbName} (${d1Id})`, "success");
+                    } else {
+                        // Check if database already exists
+                        logDeploy(`Notice: Checking if database already exists...`, "warn");
+                        const listDbRes = await callCfApi(`/accounts/${accountId}/d1/database`, token, "GET");
+                        if (listDbRes.success && listDbRes.result) {
+                            const found = listDbRes.result.find(d => d.name === dbName);
+                            if (found) {
+                                d1Id = found.uuid || found.id;
+                                logDeploy(`✓ Using existing D1 Database: ${dbName} (${d1Id})`, "success");
+                            }
+                        }
+                    }
+                } else {
+                    d1Id = document.getElementById("d1-existing-id").value.trim();
+                    logDeploy(`Using provided D1 Database ID: ${d1Id}`);
+                }
+
+                if (!d1Id) {
+                    throw new Error("Unable to obtain D1 Database ID. Ensure D1 permissions are granted.");
+                }
+                lastCreatedD1Id = d1Id;
+
+                // Step 2: Fetch compiled worker code from server, static assets, or GitHub Raw
+                logDeploy("Fetching latest compiled _worker.js bundle...");
+                let workerCode = "";
+                
+                // Try 1: Local relative path (works on GitHub Pages and local server)
+                try {
+                    const codeRes = await fetch("./_worker.js");
+                    if (codeRes.ok) {
+                        workerCode = await codeRes.text();
+                        logDeploy(`✓ Loaded worker script (${(workerCode.length / 1024).toFixed(1)} KB)`);
+                    }
+                } catch (e) {}
+
+                // Try 2: Server download route
+                if (!workerCode) {
+                    try {
+                        const codeRes = await fetch("/download/_worker.js");
+                        if (codeRes.ok) {
+                            workerCode = await codeRes.text();
+                            logDeploy(`✓ Loaded worker script from server (${(workerCode.length / 1024).toFixed(1)} KB)`);
+                        }
+                    } catch (e) {}
+                }
+
+                // Try 3: GitHub Raw fallback
+                if (!workerCode) {
+                    try {
+                        const repo = "itsyebekhe/nahan";
+                        const codeRes = await fetch(`https://raw.githubusercontent.com/${repo}/main/_worker.js`);
+                        if (codeRes.ok) {
+                            workerCode = await codeRes.text();
+                            logDeploy(`✓ Loaded worker script from GitHub Raw (${(workerCode.length / 1024).toFixed(1)} KB)`);
+                        }
+                    } catch (e) {}
+                }
+
+                if (!workerCode) {
+                    throw new Error("Unable to load _worker.js code bundle. Please run 'npm run build' first.");
+                }
+
+                // Step 3: Prepare Multipart Form Data for Cloudflare Workers Upload
+                logDeploy(`Uploading Worker script "${workerName}" with IOT_DB binding to Cloudflare...`);
+
+                const metadata = {
+                    main_module: "_worker.js",
+                    bindings: [
+                        {
+                            type: "d1",
+                            name: "IOT_DB",
+                            id: d1Id
+                        },
+                        {
+                            type: "plain_text",
+                            name: "API_ROUTE",
+                            text: apiRoute
+                        },
+                        {
+                            type: "plain_text",
+                            name: "DECOY_DOMAIN",
+                            text: decoyDomain
+                        }
+                    ],
+                    compatibility_date: "2024-03-01"
+                };
+
+                const formData = new FormData();
+                formData.append("metadata", new Blob([JSON.stringify(metadata)], { type: "application/json" }));
+                formData.append("_worker.js", new Blob([workerCode], { type: "application/javascript+module" }), "_worker.js");
+
+                const uploadRes = await callCfApi(`/accounts/${accountId}/workers/scripts/${workerName}`, token, "PUT", formData);
+                if (!uploadRes.success) {
+                    throw new Error(uploadRes.errors?.[0]?.message || "Failed to upload worker script to Cloudflare.");
+                }
+                logDeploy(`✓ Worker script "${workerName}" successfully uploaded!`, "success");
+
+                // Step 4: Enable workers.dev subdomain route
+                logDeploy("Enabling workers.dev subdomain route...");
+                try {
+                    await callCfApi(`/accounts/${accountId}/workers/scripts/${workerName}/subdomain`, token, "POST", { enabled: true });
+                    logDeploy("✓ Subdomain routing activated!", "success");
+                } catch (e) {
+                    logDeploy("Notice: Subdomain routing may already be enabled.", "warn");
+                }
+
+                // Step 5: Determine Deployed URL
+                let deployedUrl = `https://${workerName}.workers.dev`;
+                try {
+                    const subRes = await callCfApi(`/accounts/${accountId}/workers/subdomain`, token, "GET");
+                    if (subRes.success && subRes.result && subRes.result.subdomain) {
+                        deployedUrl = `https://${workerName}.${subRes.result.subdomain}.workers.dev`;
+                    }
+                } catch (e) {}
+
+                const dashUrl = `${deployedUrl}/${encodeURI(apiRoute)}/dash`;
+                logDeploy(`🎉 SUCCESS! Gateway is live at: ${deployedUrl}`, "success");
+                logDeploy(`Dashboard: ${dashUrl}`, "success");
+
+                // Show success card
+                const successCard = document.getElementById("deploy-success-card");
+                successCard.classList.remove("hidden");
+                const dashLink = document.getElementById("success-dash-link");
+                dashLink.href = dashUrl;
+                dashLink.innerText = dashUrl;
+                document.getElementById("success-dash-key").innerText = masterKey;
+                document.getElementById("btn-open-panel").href = dashUrl;
+
+            } catch (err) {
+                logDeploy(`❌ Deployment Failed: ${err.message}`, "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<span>🚀 Deploy Nahan to Cloudflare Edge</span>`;
+                document.getElementById("deploy-spinner").classList.add("hidden");
+            }
+        }
+
+        function downloadDeploymentJson() {
+            const workerName = document.getElementById("cfg-worker-name").value.trim() || "nahan";
+            const apiRoute = document.getElementById("cfg-api-route").value.trim() || "nahan-gate";
+            const masterKey = document.getElementById("cfg-master-key").value.trim() || "admin";
+            const decoyDomain = document.getElementById("cfg-decoy-domain").value.trim() || "ubuntu.com";
+            
+            const data = {
+                gateway: "Project Nahan",
+                version: "3.0.4",
+                workerName,
+                apiRoute,
+                masterKey,
+                decoyDomain,
+                d1DatabaseId: lastCreatedD1Id,
+                dashboardPath: `/${apiRoute}/dash`,
+                deployedAt: new Date().toISOString()
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `nahan-${workerName}-credentials.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Copied to clipboard!");
+            });
+        }
+
+        async function copyWorkerCode() {
+            try {
+                const res = await fetch("/download/_worker.js");
+                const code = await res.text();
+                await navigator.clipboard.writeText(code);
+                const btn = document.getElementById("btn-copy-worker");
+                btn.innerText = "✓ Copied 280 KB!";
+                setTimeout(() => { btn.innerText = "📋 Copy Full Code to Clipboard"; }, 3000);
+            } catch (e) {
+                alert("Failed to copy worker code: " + e.message);
+            }
+        }
+
+        function updateWranglerTomlPreview() {
+            const workerName = document.getElementById("cfg-worker-name")?.value.trim() || "nahan";
+            const apiRoute = document.getElementById("cfg-api-route")?.value.trim() || "nahan-gate";
+            const decoy = document.getElementById("cfg-decoy-domain")?.value.trim() || "ubuntu.com";
+            const d1Id = lastCreatedD1Id || "YOUR_D1_DATABASE_ID_HERE";
+
+            const toml = `# Wrangler Configuration for Nahan Gateway Node
+name = "${workerName}"
+main = "src/index.js"
+compatibility_date = "2024-03-01"
+
+[dev]
+port = 8787
+
+[[d1_databases]]
+binding = "IOT_DB"
+database_name = "${workerName}-db"
+database_id = "${d1Id}"
+
+[vars]
+API_ROUTE = "${apiRoute}"
+DECOY_DOMAIN = "${decoy}"
+`;
+            const el = document.getElementById("wrangler-toml-preview");
+            if (el) el.value = toml;
+        }
+
+        function copyWranglerToml() {
+            const el = document.getElementById("wrangler-toml-preview");
+            if (el) copyToClipboard(el.value);
+        }
+
+        // Initialize preview
+        window.addEventListener("DOMContentLoaded", () => {
+            updateWranglerTomlPreview();
+        });
+    </script>
+</body>
+</html>

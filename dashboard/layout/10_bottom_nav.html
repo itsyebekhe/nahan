@@ -1,0 +1,68 @@
+          <nav class="md:hidden w-full mobile-bottom-nav flex justify-around items-center z-30 shrink-0 border-t border-[var(--color-border)] bg-[var(--color-surface)]/95 backdrop-blur-xl" style="height:calc(4.25rem + env(safe-area-inset-bottom, 0px));padding-bottom:env(safe-area-inset-bottom, 0px);">
+              <button onclick="switchTab('overview')" id="mob-tab-overview" class="mobile-tab-item mobile-nav-item active flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors">
+                  <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                  <span class="text-[10px] font-bold" data-i18n="tab_overview">Dashboard</span>
+              </button>
+              <button onclick="switchTab('users')" id="mob-tab-users" class="mobile-tab-item mobile-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 relative transition-colors">
+                  <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                  <span class="text-[10px] font-bold" data-i18n="tab_users">Clients</span>
+                  <span id="mob-user-badge" class="absolute top-1.5 end-4 w-4 h-4 bg-indigo-500 text-white rounded-full text-[9px] font-bold flex items-center justify-center">0</span>
+              </button>
+              <button onclick="switchTab('optimiser')" id="mob-tab-optimiser" class="mobile-tab-item mobile-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors">
+                  <div class="p-1 rounded-lg bg-emerald-500/10 text-emerald-500 mb-0.5">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polygon></svg>
+                  </div>
+                  <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400" data-i18n="tab_optimiser">Optimizer</span>
+              </button>
+              <button onclick="switchTab('info')" id="mob-tab-info" class="mobile-tab-item mobile-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors">
+                  <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"></path></svg>
+                  <span class="text-[10px] font-bold" data-i18n="tab_info">Endpoints</span>
+              </button>
+              <button onclick="toggleMobileNavDrawer()" id="mob-tab-more" class="mobile-tab-item mobile-nav-item flex flex-col items-center justify-center w-full h-full text-slate-400 transition-colors">
+                  <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                  <span class="text-[10px] font-bold" data-i18n="tab_more">More</span>
+              </button>
+          </nav>
+
+          <!-- MOBILE SLIDE-UP DRAWER MODAL -->
+          <div id="mobile-nav-drawer" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex-col justify-end transition-opacity">
+              <div onclick="toggleMobileNavDrawer()" class="flex-1"></div>
+              <div class="bg-[var(--color-surface)] border-t border-[var(--color-border)] rounded-t-3xl p-6 shadow-2xl space-y-4 max-h-[80vh] overflow-y-auto animate-slide-up">
+                  <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-darkborder/50">
+                      <div class="flex items-center gap-2">
+                          <span class="w-2 h-2 rounded-full bg-primary"></span>
+                          <h4 class="font-bold text-base text-slate-800 dark:text-white" data-i18n="drawer_title">Navigation & Tools</h4>
+                      </div>
+                      <button onclick="toggleMobileNavDrawer()" class="p-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500">
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                      </button>
+                  </div>
+                  <div class="grid grid-cols-2 gap-2.5">
+                      <button onclick="switchTab('network');toggleMobileNavDrawer()" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3 text-start">
+                          <div class="p-2 rounded-xl bg-blue-500/10 text-blue-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg></div>
+                          <div><div class="text-xs font-bold" data-i18n="tab_status">Metrics</div><div class="text-[10px] text-slate-400">Ping & Latency</div></div>
+                      </button>
+                      <button onclick="switchTab('settings');toggleMobileNavDrawer()" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3 text-start">
+                          <div class="p-2 rounded-xl bg-amber-500/10 text-amber-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
+                          <div><div class="text-xs font-bold" data-i18n="tab_settings">System</div><div class="text-[10px] text-slate-400">Settings & Keys</div></div>
+                      </button>
+                      <button onclick="switchTab('advanced');toggleMobileNavDrawer()" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3 text-start">
+                          <div class="p-2 rounded-xl bg-purple-500/10 text-purple-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg></div>
+                          <div><div class="text-xs font-bold" data-i18n="tab_adv">Advanced</div><div class="text-[10px] text-slate-400">Routing & Clean IPs</div></div>
+                      </button>
+                      <button onclick="switchTab('logs');toggleMobileNavDrawer()" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3 text-start">
+                          <div class="p-2 rounded-xl bg-slate-500/10 text-slate-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div>
+                          <div><div class="text-xs font-bold" data-i18n="tab_logs">Logs</div><div class="text-[10px] text-slate-400">Live Traffic Logs</div></div>
+                      </button>
+                      <button onclick="switchTab('help');toggleMobileNavDrawer()" class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-3 text-start">
+                          <div class="p-2 rounded-xl bg-teal-500/10 text-teal-500"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
+                          <div><div class="text-xs font-bold" data-i18n="tab_help">Help & FAQ</div><div class="text-[10px] text-slate-400">Setup Tutorials</div></div>
+                      </button>
+                      <button onclick="logout()" class="p-3.5 rounded-2xl bg-red-500/10 hover:bg-red-500/20 text-red-500 flex items-center gap-3 text-start">
+                          <div class="p-2 rounded-xl bg-red-500/20"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg></div>
+                          <div><div class="text-xs font-bold" data-i18n="logout">Disconnect</div><div class="text-[10px] text-red-400">Sign Out</div></div>
+                      </button>
+                  </div>
+              </div>
+          </div>
+      </div>

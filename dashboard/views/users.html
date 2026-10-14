@@ -1,0 +1,79 @@
+                      <div id="view-users" class="hidden space-y-4">
+                          <!-- Compact Stats Bar -->
+                          <div class="bg-[var(--color-surface)]  rounded-2xl border border-slate-200 dark:border-darkborder p-4 flex flex-wrap items-center gap-4 md:gap-6">
+                              <div class="flex items-center gap-2">
+                                  <div class="p-1.5 bg-primary/10 text-primary rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
+                                  <div><span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="stat_total_subscribers">Total</span><span id="stat-total-users" class="ms-1.5 text-sm font-black text-slate-800 dark:text-white">0</span></div>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                  <div class="p-1.5 bg-emerald-500/10 text-emerald-500 rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                                  <div><span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="stat_active_paused">Active/Paused</span><span id="stat-active-users" class="ms-1.5 text-sm font-black text-slate-800 dark:text-white">0 / 0</span></div>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                  <div class="p-1.5 bg-violet-500/10 text-violet-500 rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg></div>
+                                  <div><span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="stat_cumulative_traffic">Traffic</span><span id="stat-total-traffic" class="ms-1.5 text-sm font-black text-slate-800 dark:text-white">0 GB</span></div>
+                              </div>
+                              <div class="flex items-center gap-2">
+                                  <div class="p-1.5 bg-red-500/10 text-red-500 rounded-lg"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg></div>
+                                  <div><span class="text-[10px] font-bold text-slate-400 uppercase" data-i18n="stat_auto_disabled">Disabled</span><span id="stat-auto-disabled" class="ms-1.5 text-sm font-black text-slate-800 dark:text-white">0</span></div>
+                              </div>
+                          </div>
+
+                          <!-- Recently Disabled Users Panel -->
+                          <div id="disabled-users-panel" class="hidden">
+                              <div class="bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/30 dark:to-orange-950/30 rounded-3xl p-6 shadow-sm border border-red-200 dark:border-red-800/40 relative overflow-hidden">
+                                  <div class="flex items-center justify-between mb-4">
+                                      <div class="flex items-center gap-3">
+                                          <div class="p-2.5 bg-red-100 dark:bg-red-900/40 rounded-xl">
+                                              <svg class="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path></svg>
+                                          </div>
+                                          <div>
+                                              <h3 class="text-sm font-bold text-red-700 dark:text-red-300" data-i18n="disabled_panel_title">Recently Disabled Users</h3>
+                                              <p class="text-[11px] text-red-500/70 dark:text-red-400/60" data-i18n="disabled_panel_desc">Users automatically disabled due to quota or expiration limits</p>
+                                          </div>
+                                      </div>
+                                      <span id="disabled-panel-badge" class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full shadow-sm">0</span>
+                                  </div>
+                                  <div id="disabled-users-list" class="space-y-2.5 max-h-64 overflow-y-auto pr-1">
+                                  </div>
+                              </div>
+                          </div>
+
+                          <div class="bg-[var(--color-surface)]  rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 dark:border-darkborder relative overflow-hidden">
+                              <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-4 md:mb-6 gap-3">
+                                   <!-- Capacity Banner & Directory Controls -->
+                               <div class="mb-4 p-4 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-200/50 dark:border-indigo-900/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                                   <div class="space-y-1">
+                                       <div class="flex items-center gap-2">
+                                           <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                                           <span class="text-xs font-extrabold uppercase tracking-wider text-indigo-700 dark:text-indigo-400" data-i18n="user_cap_quota">Subscriber Capacity Limit</span>
+                                           <span id="users-quota-pill" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500 text-white">0 / 5 Slots</span>
+                                       </div>
+                                       <p class="text-[11px] text-slate-500 dark:text-slate-400" data-i18n="user_cap_desc">Up to 5 active client subscriptions are allowed per gateway instance for optimal edge isolation.</p>
+                                   </div>
+                                   <div class="w-full sm:w-44 bg-slate-200 dark:bg-slate-700/60 h-2.5 rounded-full overflow-hidden">
+                                       <div id="users-quota-bar" class="bg-indigo-500 h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                                   </div>
+                               </div>
+
+                               <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-4 md:mb-6 gap-3">
+                                    <h3 class="text-sm uppercase font-bold text-slate-500 tracking-wider" data-i18n="sub_directory_title">Subscriber Directory</h3>
+                                   <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                                       <select id="user-status-filter" onchange="renderUsersTable()" class="bg-[var(--color-bg)] border border-slate-200 dark:border-darkborder px-3 py-2.5 rounded-xl text-xs outline-none font-sans text-slate-600 dark:text-slate-400 focus:border-primary">
+                                           <option value="all" data-i18n="filter_all">All Users</option>
+                                           <option value="active" data-i18n="filter_active">Active</option>
+                                           <option value="paused" data-i18n="filter_paused">Paused</option>
+                                           <option value="auto-disabled" data-i18n="filter_auto_disabled">Auto-Disabled</option>
+                                       </select>
+                                       <input type="text" id="user-search-input" onkeyup="renderUsersTable()" placeholder="🔍 Find by Name or UUID..." data-i18n="user_search_placeholder" class="bg-[var(--color-bg)] border border-slate-200 dark:border-darkborder px-3 py-2.5 rounded-xl text-xs outline-none font-sans text-slate-600 dark:text-slate-400 focus:border-primary">
+                                       <button id="users-add-btn" onclick="openAddUserPage()" class="native-press px-4 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-xl text-xs font-bold transition-colors shadow-sm whitespace-nowrap flex items-center gap-1.5" data-i18n="btn_add_user"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg><span>+ Add New User</span></button>
+                                   </div>
+                               </div>
+                              <div class="overflow-x-auto">
+                                  <div id="tbl-users" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                                  </div>
+                              </div>
+                          </div>
+                       </div>
+
+                       <!-- PAGE: Add User -->

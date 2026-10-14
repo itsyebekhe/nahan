@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>__USER_NAME__ - Subscriber Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/gh/itsyebekhe/nahan@main/tailwindcss.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        fa: ['Vazirmatn', 'sans-serif'],
+                        en: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: {
+                            900: '#0b0f19',
+                            800: '#111827',
+                            700: '#1f2937',
+                        },
+                        brand: {
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg-primary: #f3f4f6;
+            --bg-card: #ffffff;
+            --bg-card-inner: #f9fafb;
+            --bg-input: #f3f4f6;
+            --border-card: #e5e7eb;
+            --border-inner: #e5e7eb;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
+            --accent: #6366f1;
+            --accent-light: #e0e7ff;
+            --accent-border: #c7d2fe;
+            --accent-hover: #4f46e5;
+            --green-bg: #d1fae5;
+            --green-border: #a7f3d0;
+            --green-text: #059669;
+            --amber-bg: #fef3c7;
+            --amber-border: #fde68a;
+            --amber-text: #d97706;
+            --red-bg: #fee2e2;
+            --red-border: #fecaca;
+            --red-text: #dc2626;
+            --progress-bg: #e5e7eb;
+            --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            --btn-primary-bg: #6366f1;
+            --btn-primary-hover: #4f46e5;
+            --btn-secondary-bg: #f3f4f6;
+            --btn-secondary-hover: #e5e7eb;
+            --modal-bg: rgba(0,0,0,0.5);
+            --modal-card: #ffffff;
+        }
+
+        .dark {
+            --bg-primary: #0b0f19;
+            --bg-card: rgba(17, 24, 39, 0.7);
+            --bg-card-inner: rgba(31, 41, 55, 0.5);
+            --bg-input: #111827;
+            --border-card: rgba(99, 102, 241, 0.15);
+            --border-inner: rgba(99, 102, 241, 0.1);
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent: #818cf8;
+            --accent-light: rgba(99, 102, 241, 0.15);
+            --accent-border: rgba(99, 102, 241, 0.3);
+            --accent-hover: #6366f1;
+            --green-bg: rgba(16, 185, 129, 0.1);
+            --green-border: rgba(16, 185, 129, 0.2);
+            --green-text: #34d399;
+            --amber-bg: rgba(245, 158, 11, 0.1);
+            --amber-border: rgba(245, 158, 11, 0.2);
+            --amber-text: #fbbf24;
+            --red-bg: rgba(239, 68, 68, 0.1);
+            --red-border: rgba(239, 68, 68, 0.2);
+            --red-text: #f87171;
+            --progress-bg: rgba(31, 41, 55, 0.8);
+            --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+            --btn-primary-bg: #6366f1;
+            --btn-primary-hover: #4f46e5;
+            --btn-secondary-bg: rgba(31, 41, 55, 0.6);
+            --btn-secondary-hover: rgba(55, 65, 81, 0.8);
+            --modal-bg: rgba(0,0,0,0.8);
+            --modal-card: #1f2937;
+        }
+
+        body {
+            font-family: 'Inter', 'Vazirmatn', sans-serif;
+            background: var(--bg-primary) !important;
+            color: var(--text-primary);
+            transition: background 0.3s, color 0.3s;
+            -webkit-font-smoothing: antialiased;
+        }
+        [lang="fa"] body { font-family: 'Vazirmatn', sans-serif; }
+        
+        .bento-card {
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border-card) !important;
+            box-shadow: var(--shadow-card) !important;
+            border-radius: 1.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        
+        .bento-inner {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-inner);
+            border-radius: 1rem;
+            transition: all 0.3s;
+        }
+
+        .input-field {
+            background: var(--bg-input);
+            border: 1px solid var(--border-inner);
+            color: var(--text-primary);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        
+        .btn-primary { background: var(--btn-primary-bg); color: white; transition: all 0.2s ease; }
+        .btn-primary:hover { background: var(--btn-primary-hover); transform: translateY(-1px); }
+        .btn-secondary { background: var(--btn-secondary-bg); color: var(--text-primary); border: 1px solid var(--border-inner); transition: all 0.2s ease; }
+        .btn-secondary:hover { background: var(--btn-secondary-hover); transform: translateY(-1px); }
+        .text-secondary { color: var(--text-secondary); }
+        .text-muted { color: var(--text-muted); }
+        .progress-bar-bg { background: var(--progress-bg); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.4s ease-out; }
+        
+        .modal-overlay { background: var(--modal-bg); backdrop-filter: blur(8px); }
+        .modal-card { background: var(--modal-card); border: 1px solid var(--border-card); }
+        
+        .app-btn {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border-inner);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+        .app-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+        
+        .glow-effect {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: var(--accent);
+            filter: blur(80px);
+            opacity: 0.15;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-start fade-in relative overflow-x-hidden">
+    <!-- Ambient Background Glows -->
+    <div class="glow-effect top-0 left-10"></div>
+    <div class="glow-effect bottom-20 right-10" style="background: #34d399;"></div>
+
+    <!-- Theme & Language Toggle -->
+    <div class="w-full max-w-6xl flex justify-end items-center mb-6 z-10 relative">
+        <div class="flex gap-3">
+            <button onclick="toggleTheme()" id="theme-toggle" class="btn-secondary px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm" title="Toggle Theme">
+                <span id="theme-icon">☀️</span>
+                <span id="theme-label"></span>
+            </button>
+            <button onclick="toggleLang()" id="lang-toggle" class="btn-secondary px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-sm" title="Toggle Language">
+                <span id="lang-icon">🇺🇸</span>
+                <span id="lang-label">EN</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Bento Grid Container -->
+    <div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-12 gap-6 z-10 relative">
+        
+        <!-- Left Sidebar / Profile (Col span 4) -->
+        <div class="md:col-span-4 flex flex-col gap-6">
+            <!-- Profile Card -->
+            <div class="bento-card p-6 flex flex-col items-center text-center relative overflow-hidden">
+                <div class="absolute top-0 w-full h-24" style="background: linear-gradient(135deg, var(--accent-light) 0%, transparent 100%); opacity: 0.5;"></div>
+                <div class="w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg mb-4 z-10 relative" style="background: var(--bg-card); border: 2px solid var(--accent-border); color: var(--accent);">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                </div>
+                <h1 class="text-2xl font-black tracking-tight z-10 mb-1" style="color: var(--text-primary);">__USER_NAME__</h1>
+                <p class="text-xs font-mono z-10 mb-5" style="color: var(--text-muted);">__USER_ID__</p>
+                <div class="z-10 w-full">
+                    <span id="status-badge" class="px-6 py-2 rounded-xl text-xs font-bold shadow-sm inline-block w-full uppercase tracking-wider"></span>
+                </div>
+            </div>
+
+            <!-- Expiry & General Info -->
+            <div class="bento-card p-6">
+                <h3 class="text-xs font-bold uppercase tracking-widest text-secondary mb-4 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    <span data-i18n="expDate">Expiration Date</span>
+                </h3>
+                <div class="flex flex-col gap-1">
+                    <span class="text-2xl font-black" style="color: var(--text-primary);">__EXPIRY_DATE__</span>
+                    <p class="text-xs text-muted font-medium" data-i18n="calendarLocal">Calendar Local Time</p>
+                </div>
+                <div class="mt-6 pt-5 border-t" style="border-color: var(--border-inner);">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-bold text-secondary">Connection IP</span>
+                        <span class="text-xs font-mono font-semibold" style="color: var(--text-primary);" id="client-ip">Detecting...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support / Help -->
+            <div class="bento-card p-6" style="background: linear-gradient(135deg, var(--bg-card) 0%, var(--accent-light) 200%);">
+                <h3 class="text-sm font-bold flex items-center gap-2 mb-3" style="color: var(--text-primary);">
+                    <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    Help & Support
+                </h3>
+                <p class="text-xs text-secondary mb-4 leading-relaxed">Having trouble connecting? Keep your clients updated or contact support for assistance.</p>
+                <a href="https://t.me/+mx5EmkbHzm41Y2Q5" class="btn-primary w-full py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 shadow-sm">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.12.03-1.98 1.26-5.59 3.7-.53.36-1.01.54-1.44.53-.47-.01-1.38-.27-2.05-.49-.83-.27-1.49-.42-1.44-.88.03-.24.36-.48.98-.74 3.84-1.67 6.4-2.78 7.68-3.32 3.64-1.52 4.4-1.79 4.9-1.8.11 0 .36.03.49.14.11.09.14.22.15.34-.01.07-.01.16-.02.26z"/></svg>
+                    Telegram Support
+                </a>
+            </div>
+        </div>
+
+        <!-- Right Main Content (Col span 8) -->
+        <div class="md:col-span-8 flex flex-col gap-6">
+            
+            <!-- Metrics Row -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- Total Usage -->
+                <div class="bento-card p-6 relative overflow-hidden group">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-indigo-500 opacity-5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+                    <div class="flex justify-between items-start mb-4 relative z-10">
+                        <p class="text-xs font-bold uppercase tracking-widest text-secondary" data-i18n="totalUsage">Total Usage</p>
+                        <span class="p-2 rounded-lg" style="background: var(--bg-card-inner); border: 1px solid var(--border-inner);">
+                            <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path></svg>
+                        </span>
+                    </div>
+                    <div class="flex items-baseline gap-1.5 mb-4 relative z-10">
+                        <span class="text-3xl font-black" style="color: var(--text-primary);">__TOTAL_GB__</span>
+                        <span class="text-sm font-medium text-secondary">/ __LIMIT_TOTAL_GB__ GB</span>
+                    </div>
+                    __TOTAL_PROGRESS__
+                </div>
+
+                <!-- Daily Usage -->
+                <div class="bento-card p-6 relative overflow-hidden group">
+                    <div class="absolute -right-6 -top-6 w-24 h-24 bg-emerald-500 opacity-5 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+                    <div class="flex justify-between items-start mb-4 relative z-10">
+                        <p class="text-xs font-bold uppercase tracking-widest text-secondary" data-i18n="dailyUsage">Daily Usage</p>
+                        <span class="p-2 rounded-lg" style="background: var(--bg-card-inner); border: 1px solid var(--border-inner);">
+                            <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </span>
+                    </div>
+                    <div class="flex items-baseline gap-1.5 mb-4 relative z-10">
+                        <span class="text-3xl font-black" style="color: var(--text-primary);">__DAILY_GB__</span>
+                        <span class="text-sm font-medium text-secondary">/ __LIMIT_DAILY_GB__ GB</span>
+                    </div>
+                    __DAILY_PROGRESS__
+                </div>
+            </div>
+
+            <!-- Universal Link Setup -->
+            <div class="bento-card p-6 sm:p-8">
+                <div class="flex justify-between items-end mb-6">
+                    <div>
+                        <h3 class="text-lg font-black flex items-center gap-2 mb-1" style="color: var(--text-primary);">
+                            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                            <span data-i18n="integrationTitle">Integration Connections</span>
+                        </h3>
+                        <p class="text-xs text-secondary" data-i18n="integrationDesc">Add your preferred configuration link.</p>
+                    </div>
+                </div>
+
+                <div class="bento-inner p-5 sm:p-6 border border-accent-border relative overflow-hidden" style="border-color: var(--accent-border);">
+                    <div class="absolute inset-0 opacity-10 pointer-events-none" style="background: radial-gradient(circle at 100% 0%, var(--accent) 0%, transparent 40%);"></div>
+                    <div class="relative z-10">
+                        <h4 class="font-bold mb-2 flex items-center gap-2" style="color: var(--text-primary);">
+                            <span data-i18n="universalLink">Universal Auto-Detecting Link</span>
+                            <span class="px-2 py-0.5 rounded text-[9px] uppercase tracking-wider font-bold shadow-sm" style="background: var(--accent); color: white;">Recommended</span>
+                        </h4>
+                        <p class="text-xs text-secondary mb-4 leading-relaxed" data-i18n="universalDesc">This URL automatically detects your client and delivers the optimal format.</p>
+                        
+                        <div class="flex flex-col sm:flex-row gap-3 w-full" dir="ltr">
+                            <input type="text" id="link-normal" value="__SYNC_NORMAL__" readonly class="input-field flex-1 px-4 py-3 rounded-xl text-sm font-mono w-full outline-none shadow-inner focus:ring-2 focus:ring-indigo-500 transition-shadow">
+                            <div class="flex gap-2">
+                                <button onclick="copyLink('link-normal')" class="btn-primary flex-1 sm:flex-none px-6 py-3 rounded-xl text-sm font-bold shrink-0 flex justify-center items-center gap-2 shadow-md">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                                    <span data-i18n="copy">Copy</span>
+                                </button>
+                                <button onclick="showQRModal('__SYNC_NORMAL__')" class="btn-secondary px-4 py-3 rounded-xl text-sm font-bold shrink-0 shadow-sm flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 bento-inner p-5 sm:p-6 border border-accent-border relative overflow-hidden" style="border-color: var(--accent-border);">
+                    <div class="absolute inset-0 opacity-5 pointer-events-none" style="background: radial-gradient(circle at 100% 0%, var(--accent) 0%, transparent 40%);"></div>
+                    <div class="relative z-10 space-y-4">
+                        <h4 class="font-bold flex items-center gap-2" style="color: var(--text-primary);">
+                            <span data-i18n="availableFormats">Available Subscription Formats</span>
+                        </h4>
+                        <p class="text-xs text-secondary leading-relaxed" data-i18n="formatsDesc">Use these links to explicitly request specific configuration formats.</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Raw -->
+                            <div class="p-4 rounded-xl border border-accent-border space-y-2 bg-black/5 dark:bg-white/5" style="border-color: var(--accent-border);">
+                                <div class="flex justify-between items-center" dir="ltr">
+                                    <span class="text-xs font-bold text-left" dir="ltr" style="color: var(--text-primary);">Raw Configs (Text/URI)</span>
+                                    <span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded" style="background: rgba(99, 102, 241, 0.15); color: #6366f1;">RAW</span>
+                                </div>
+                                <div class="flex gap-2" dir="ltr">
+                                    <input type="text" id="link-raw-fmt" readonly class="input-field flex-1 px-3 py-2 rounded-lg text-xs font-mono w-full outline-none" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--accent-border);">
+                                    <button onclick="copyLink('link-raw-fmt')" class="px-3 py-2 rounded-lg text-xs font-bold bg-indigo-500 text-white flex items-center gap-1 hover:bg-indigo-600 transition-colors">
+                                        <span data-i18n="copy">Copy</span>
+                                    </button>
+                                    <button onclick="showQRModal(document.getElementById('link-raw-fmt').value)" class="p-2 rounded-lg border border-accent-border hover:bg-white/10 flex items-center justify-center" style="border-color: var(--accent-border);">
+                                        <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Base64 -->
+                            <div class="p-4 rounded-xl border border-accent-border space-y-2 bg-black/5 dark:bg-white/5" style="border-color: var(--accent-border);">
+                                <div class="flex justify-between items-center" dir="ltr">
+                                    <span class="text-xs font-bold text-left" dir="ltr" style="color: var(--text-primary);">Base64 Sub (V2Ray / Shadowrocket)</span>
+                                    <span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">BASE64</span>
+                                </div>
+                                <div class="flex gap-2" dir="ltr">
+                                    <input type="text" id="link-base64-fmt" readonly class="input-field flex-1 px-3 py-2 rounded-lg text-xs font-mono w-full outline-none" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--accent-border);">
+                                    <button onclick="copyLink('link-base64-fmt')" class="px-3 py-2 rounded-lg text-xs font-bold bg-emerald-500 text-white flex items-center gap-1 hover:bg-emerald-600 transition-colors">
+                                        <span data-i18n="copy">Copy</span>
+                                    </button>
+                                    <button onclick="showQRModal(document.getElementById('link-base64-fmt').value)" class="p-2 rounded-lg border border-accent-border hover:bg-white/10 flex items-center justify-center" style="border-color: var(--accent-border);">
+                                        <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Singbox -->
+                            <div class="p-4 rounded-xl border border-accent-border space-y-2 bg-black/5 dark:bg-white/5" style="border-color: var(--accent-border);">
+                                <div class="flex justify-between items-center" dir="ltr">
+                                    <span class="text-xs font-bold text-left" dir="ltr" style="color: var(--text-primary);">Sing-box Subscription (JSON)</span>
+                                    <span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">SINGBOX</span>
+                                </div>
+                                <div class="flex gap-2" dir="ltr">
+                                    <input type="text" id="link-singbox-fmt" readonly class="input-field flex-1 px-3 py-2 rounded-lg text-xs font-mono w-full outline-none" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--accent-border);">
+                                    <button onclick="copyLink('link-singbox-fmt')" class="px-3 py-2 rounded-lg text-xs font-bold bg-amber-500 text-white flex items-center gap-1 hover:bg-amber-600 transition-colors">
+                                        <span data-i18n="copy">Copy</span>
+                                    </button>
+                                    <button onclick="showQRModal(document.getElementById('link-singbox-fmt').value)" class="p-2 rounded-lg border border-accent-border hover:bg-white/10 flex items-center justify-center" style="border-color: var(--accent-border);">
+                                        <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Clash -->
+                            <div class="p-4 rounded-xl border border-accent-border space-y-2 bg-black/5 dark:bg-white/5" style="border-color: var(--accent-border);">
+                                <div class="flex justify-between items-center" dir="ltr">
+                                    <span class="text-xs font-bold text-left" dir="ltr" style="color: var(--text-primary);">Clash Subscription (YAML)</span>
+                                    <span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">CLASH</span>
+                                </div>
+                                <div class="flex gap-2" dir="ltr">
+                                    <input type="text" id="link-clash-fmt" readonly class="input-field flex-1 px-3 py-2 rounded-lg text-xs font-mono w-full outline-none" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--accent-border);">
+                                    <button onclick="copyLink('link-clash-fmt')" class="px-3 py-2 rounded-lg text-xs font-bold bg-violet-500 text-white flex items-center gap-1 hover:bg-violet-600 transition-colors">
+                                        <span data-i18n="copy">Copy</span>
+                                    </button>
+                                    <button onclick="showQRModal(document.getElementById('link-clash-fmt').value)" class="p-2 rounded-lg border border-accent-border hover:bg-white/10 flex items-center justify-center" style="border-color: var(--accent-border);">
+                                        <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- v2rayN JSON -->
+                            <div class="p-4 rounded-xl border border-accent-border space-y-2 bg-black/5 dark:bg-white/5" style="border-color: var(--accent-border);">
+                                <div class="flex justify-between items-center" dir="ltr">
+                                    <span class="text-xs font-bold text-left" dir="ltr" style="color: var(--text-primary);">v2rayN Subscription (JSON)</span>
+                                    <span class="text-[9px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded" style="background: rgba(236, 72, 153, 0.15); color: #ec4899;">V2RAYN</span>
+                                </div>
+                                <div class="flex gap-2" dir="ltr">
+                                    <input type="text" id="link-v2rayn-fmt" readonly class="input-field flex-1 px-3 py-2 rounded-lg text-xs font-mono w-full outline-none" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--accent-border);">
+                                    <button onclick="copyLink('link-v2rayn-fmt')" class="px-3 py-2 rounded-lg text-xs font-bold bg-pink-500 text-white flex items-center gap-1 hover:bg-pink-600 transition-colors">
+                                        <span data-i18n="copy">Copy</span>
+                                    </button>
+                                    <button onclick="showQRModal(document.getElementById('link-v2rayn-fmt').value)" class="p-2 rounded-lg border border-accent-border hover:bg-white/10 flex items-center justify-center" style="border-color: var(--accent-border);">
+                                        <svg class="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-secondary mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        <span data-i18n="oneClickImport">One-Click Import</span>
+                    </h4>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                        <a id="v2rayng-link" href="v2rayng://install-sub?url=__SYNC_NORMAL__&name=__USER_NAME__" class="app-btn p-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm shadow-sm group hover:shadow-md">
+                            <span>v2rayNG</span>
+                            <svg class="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                        <a href="v2rayn://install-sub?url=__SYNC_NORMAL__&name=__USER_NAME__" class="app-btn p-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm shadow-sm group hover:shadow-md">
+                            <span>v2rayN</span>
+                            <svg class="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                        <a href="shadowrocket://add/sub://__SYNC_NORMAL_BASE64__?title=__USER_NAME__" class="app-btn p-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm shadow-sm group hover:shadow-md">
+                            <span>Shadowrocket</span>
+                            <svg class="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                        <a href="streisand://import/__SYNC_NORMAL__" class="app-btn p-3 rounded-xl flex items-center justify-center gap-2 font-bold text-sm shadow-sm group hover:shadow-md">
+                            <span>Streisand</span>
+                            <svg class="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-inner flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="text-xs text-secondary">
+                        Advanced users can retrieve raw config blocks manually.
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button onclick="fetchDecodedRawContent()" class="btn-secondary w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs font-bold transition-colors flex justify-center items-center gap-2 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                            <span data-i18n="parsedContent">Retrieve Raw Content</span>
+                        </button>
+                        <input type="text" id="link-raw" value="__SYNC_RAW__" class="hidden">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Modal -->
+    <div id="qr-modal" class="fixed inset-0 modal-overlay z-50 hidden items-center justify-center p-4 transition-opacity duration-300 opacity-0">
+        <div class="modal-card max-w-sm w-full rounded-3xl p-6 md:p-8 transform scale-95 transition-transform duration-300 shadow-2xl relative">
+            <button onclick="closeQRModal()" class="absolute top-4 right-4 p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                <svg class="w-6 h-6 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h3 class="text-xl font-black mb-6 text-center" style="color: var(--text-primary);" id="qr-title">Scan QR Code</h3>
+            <div class="bg-white p-4 rounded-2xl shadow-inner mb-6 mx-auto w-fit">
+                <img id="qr-img" src="" alt="QR Code" class="w-48 h-48 sm:w-56 sm:h-56">
+            </div>
+            <p id="qr-text" class="text-xs text-center text-secondary font-mono break-all mb-6 px-2 bg-black/5 dark:bg-white/5 py-3 rounded-xl border border-inner"></p>
+            <button onclick="closeQRModal()" class="btn-primary w-full py-3 rounded-xl font-bold shadow-md" data-i18n="close">Close</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-10 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-3 rounded-full shadow-2xl font-bold text-sm z-50 transition-all transform -translate-y-4 opacity-0 pointer-events-none flex items-center gap-2">
+        <svg class="w-5 h-5 text-emerald-400 dark:text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <span>Notification</span>
+    </div>
+
+    <script>
+
+        const I18N = {
+            en: {
+                totalUsage: 'Total Usage',
+                dailyUsage: 'Daily Usage',
+                expDate: 'Expiration Date',
+                calendarLocal: 'Calendar Local',
+                unlimitedPlan: 'Unlimited Plan',
+                noDailyLimit: 'No Daily Limit',
+                integrationTitle: 'Integration Connections',
+                integrationDesc: 'Add the correct configuration link based on your preferred format below.',
+                universalLink: 'Universal Auto-Detecting Link',
+                universalDesc: 'This URL automatically detects your client and delivers the optimal format.',
+                oneClickImport: 'One-Click Import',
+                copy: 'Copy',
+                copyRaw: 'Copy Raw URL',
+                qr: 'QR',
+                parsedContent: 'Retrieve Raw Content',
+                close: 'Close',
+                qrTitle: 'Scan QR Code',
+                copied: 'Copied to clipboard!',
+                decodedCopied: 'Decoded links copied!',
+                decodedError: 'Error fetching content',
+                used: '% Used',
+                active: 'Active',
+                paused: 'Paused',
+                expired: 'Expired',
+                limitExceeded: 'Limit Exceeded',
+                dailyLimitExceeded: 'Daily Limit Exceeded',
+                availableFormats: 'Available Subscription Formats',
+                formatsDesc: 'Use these links to explicitly request specific configuration formats.'
+            },
+            fa: {
+                totalUsage: 'مصرف کل',
+                dailyUsage: 'مصرف روزانه',
+                expDate: 'تاریخ انقضا',
+                calendarLocal: 'زمان محلی',
+                unlimitedPlan: 'طرح نامحدود',
+                noDailyLimit: 'بدون محدودیت روزانه',
+                integrationTitle: 'لینک‌های اتصال',
+                integrationDesc: 'لینک پیکربندی مورد نظر خود را اضافه کنید.',
+                universalLink: 'لینک خودکار',
+                universalDesc: 'این لینک کلاینت شما را شناسایی و بهترین فرمت را ارسال می‌کند.',
+                oneClickImport: 'وارد کردن با یک کلیک',
+                copy: 'کپی',
+                copyRaw: 'کپی لینک خام',
+                qr: 'QR',
+                parsedContent: 'دریافت متن خام',
+                close: 'بستن',
+                qrTitle: 'اسکن کد QR',
+                copied: 'کپی شد!',
+                decodedCopied: 'لینک‌ها کپی شد!',
+                decodedError: 'خطا در دریافت',
+                used: '% مصرف',
+                active: 'فعال',
+                paused: 'متوقف',
+                expired: 'منقضی',
+                limitExceeded: 'از حد مجاز رد شده',
+                dailyLimitExceeded: 'از حد روزانه رد شده',
+                availableFormats: 'فرمت‌های اشتراک در دسترس',
+                formatsDesc: 'از این لینک‌ها برای درخواست مستقیم فرمت‌های خاص پیکربندی استفاده کنید.'
+            }
+        };
+
+        let currentLang = 'en';
+        let isDark = true;
+
+        function applyTheme() {
+            const root = document.documentElement;
+            const themeLabel = document.getElementById('theme-label');
+            if (isDark) {
+                root.classList.add('dark');
+                document.getElementById('theme-icon').textContent = '☀️';
+                if (themeLabel) themeLabel.textContent = currentLang === 'fa' ? 'روشن' : 'Light';
+            } else {
+                root.classList.remove('dark');
+                document.getElementById('theme-icon').textContent = '🌙';
+                if (themeLabel) themeLabel.textContent = currentLang === 'fa' ? 'تاریک' : 'Dark';
+            }
+            try { localStorage.setItem('sub-theme', isDark ? 'dark' : 'light'); } catch(e) {}
+        }
+
+        function applyLang() {
+            const t = I18N[currentLang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) el.textContent = t[key];
+            });
+            if (currentLang === 'fa') {
+                document.documentElement.setAttribute('dir', 'rtl');
+                document.documentElement.setAttribute('lang', 'fa');
+                document.getElementById('lang-icon').textContent = '🇮🇷';
+                document.getElementById('lang-label').textContent = 'FA';
+            } else {
+                document.documentElement.setAttribute('dir', 'ltr');
+                document.documentElement.setAttribute('lang', 'en');
+                document.getElementById('lang-icon').textContent = '🇺🇸';
+                document.getElementById('lang-label').textContent = 'EN';
+            }
+            initStatusBadge();
+            try { localStorage.setItem('sub-lang', currentLang); } catch(e) {}
+        }
+
+        function toggleTheme() {
+            isDark = !isDark;
+            applyTheme();
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'en' ? 'fa' : 'en';
+            applyLang();
+            applyTheme();
+        }
+
+        function initStatusBadge() {
+            const badge = document.getElementById('status-badge');
+            const t = I18N[currentLang];
+            const map = {
+                active: { en: t.active || 'Active', bg: 'var(--green-bg)', border: 'var(--green-border)', color: 'var(--green-text)' },
+                paused: { en: t.paused || 'Paused', bg: 'var(--amber-bg)', border: 'var(--amber-border)', color: 'var(--amber-text)' },
+                expired: { en: t.expired || 'Expired', bg: 'var(--red-bg)', border: 'var(--red-border)', color: 'var(--red-text)' },
+                limit: { en: t.limitExceeded || 'Limit Exceeded', bg: 'var(--red-bg)', border: 'var(--red-border)', color: 'var(--red-text)' },
+                dailyLimit: { en: t.dailyLimitExceeded || 'Daily Limit Exceeded', bg: 'var(--red-bg)', border: 'var(--red-border)', color: 'var(--red-text)' }
+            };
+            const s = map['__STATUS_CODE__'] || map.active;
+            badge.textContent = s.en;
+            badge.style.background = s.bg;
+            badge.style.borderColor = s.border;
+            badge.style.color = s.color;
+            badge.style.border = '1px solid ' + s.border;
+        }
+
+        function copyLink(id) {
+            const el = document.getElementById(id);
+            el.select();
+            navigator.clipboard.writeText(el.value);
+            showToast(I18N[currentLang].copied);
+        }
+
+        async function fetchDecodedRawContent() {
+            try {
+                const res = await fetch('__SYNC_RAW__');
+                if(!res.ok) throw new Error('Failed');
+                const base64Str = await res.text();
+                const decodedText = atob(base64Str.trim());
+                await navigator.clipboard.writeText(decodedText);
+                showToast(I18N[currentLang].decodedCopied);
+            } catch(e) {
+                alert(I18N[currentLang].decodedError + ': ' + e.message);
+            }
+        }
+
+        function showQRModal(url) {
+            const t = I18N[currentLang];
+            document.getElementById('qr-title').innerText = t.qrTitle;
+            document.getElementById('qr-text').innerText = url;
+            document.getElementById('qr-img').src = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' + encodeURIComponent(url);
+            
+            const modal = document.getElementById('qr-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // Animation
+            setTimeout(() => {
+                modal.style.opacity = '1';
+                modal.querySelector('.modal-card').style.transform = 'scale(1)';
+            }, 10);
+        }
+
+        function closeQRModal() {
+            const modal = document.getElementById('qr-modal');
+            modal.style.opacity = '0';
+            modal.querySelector('.modal-card').style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.opacity = '1';
+            t.style.transform = 'translate(-50%, 0)';
+            setTimeout(() => { 
+                t.style.opacity = '0'; 
+                t.style.transform = 'translate(-50%, 16px)';
+            }, 2500);
+        }
+
+        
+        // Fetch Client IP
+        fetch('https://api.ipify.org?format=json')
+            .then(r => r.json())
+            .then(data => {
+                let ipEl = document.getElementById('client-ip');
+                if(ipEl) ipEl.textContent = data.ip;
+            }).catch(e => {
+                let ipEl = document.getElementById('client-ip');
+                if(ipEl) ipEl.textContent = 'Unknown';
+            });
+
+        (function init() {
+            try {
+                const savedTheme = localStorage.getItem('sub-theme');
+                if (savedTheme) isDark = savedTheme === 'dark';
+            } catch(e) {}
+            try {
+                const savedLang = localStorage.getItem('sub-lang');
+                if (savedLang && I18N[savedLang]) currentLang = savedLang;
+            } catch(e) {}
+            applyTheme();
+            applyLang();
+            
+            // Base64 encode normal link for shadowrocket
+            const normalLink = '__SYNC_NORMAL__';
+            document.querySelectorAll('a').forEach(a => {
+                if(a.href.includes('__SYNC_NORMAL_BASE64__')) {
+                    a.href = a.href.replace('__SYNC_NORMAL_BASE64__', btoa(normalLink));
+                }
+            });
+
+            // Set base64 flag for v2rayNG link
+            const v2rayngLink = document.getElementById('v2rayng-link');
+            if (v2rayngLink) {
+                const base64Url = normalLink + (normalLink.includes('?') ? '&flag=base64' : '?flag=base64');
+                v2rayngLink.href = 'v2rayng://install-sub?url=' + encodeURIComponent(base64Url) + '&name=' + encodeURIComponent('__USER_NAME__');
+            }
+
+            // Populate format-specific subscription links
+            const rawInput = document.getElementById('link-raw-fmt');
+            const base64Input = document.getElementById('link-base64-fmt');
+            const singboxInput = document.getElementById('link-singbox-fmt');
+            const clashInput = document.getElementById('link-clash-fmt');
+            const v2raynInput = document.getElementById('link-v2rayn-fmt');
+
+            if (rawInput) rawInput.value = normalLink + (normalLink.includes('?') ? '&flag=raw' : '?flag=raw');
+            if (base64Input) base64Input.value = normalLink + (normalLink.includes('?') ? '&flag=base64' : '?flag=base64');
+            if (singboxInput) singboxInput.value = normalLink + (normalLink.includes('?') ? '&flag=singbox' : '?flag=singbox');
+            if (clashInput) clashInput.value = normalLink + (normalLink.includes('?') ? '&flag=clash' : '?flag=clash');
+            if (v2raynInput) v2raynInput.value = normalLink + (normalLink.includes('?') ? '&flag=vjson' : '?flag=vjson');
+        })();
+    
+</script>
+</body>
+</html>

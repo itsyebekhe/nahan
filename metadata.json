@@ -1,0 +1,8 @@
+{
+  "name": "Nahan - Cloudflare Edge Gateway & Installer",
+  "description": "Modular Cloudflare Worker Gateway with automated Wrangler CLI installer and interactive Web Installer for seamless edge deployment.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

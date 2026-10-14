@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مستندات پیاده‌سازی پنل نهان</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Vazirmatn', 'sans-serif'] },
+                    colors: { brand: { light: '#4f46e5', dark: '#818cf8' } }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; }
+        .monospace-font { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace; direction: ltr; text-align: left; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-[#080c14] dark:text-slate-300 antialiased min-h-screen transition-colors duration-300">
+
+    <header class="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/80 dark:border-slate-800/80 dark:bg-[#080c14]/80 backdrop-blur-md transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="w-2.5 h-2.5 rounded-full bg-indigo-500 animate-pulse"></span>
+                <span class="font-extrabold text-slate-900 dark:text-white tracking-tight text-lg">نهان / مستندات فنی و مصور</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800">v3.0.1</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="theme-toggle" class="p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition" aria-label="تغییر پوسته">
+                    <svg id="theme-toggle-light-icon" class="hidden w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                    <svg id="theme-toggle-dark-icon" class="hidden w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                    </svg>
+                </button>
+                <a href="https://github.com/itsyebekhe/nahan/" target="_blank" class="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400">گیت‌هاب پروژه &larr;</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            
+            <aside class="hidden lg:block lg:col-span-3">
+                <div class="sticky top-24 space-y-6">
+                    <nav class="space-y-1 text-sm font-medium">
+                        <p class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-3 mb-2">مقدمه</p>
+                        <a href="#intro" class="block px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg transition">معرفی و پیش‌نیازها</a>
+                        
+                        <p class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-3 pt-4 mb-2">استقرار سیستم</p>
+                        <a href="#setup" class="block px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg transition">مراحل نصب گام‌به‌گام</a>
+                        <a href="#first-login" class="block px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg transition">ورود اولیه و امنیت</a>
+                        
+                        <p class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-3 pt-4 mb-2">پیکربندی هوشمند</p>
+                        <a href="#endpoints" class="block px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg transition">تب نقاط اتصال و ساب</a>
+                        <a href="#advanced-settings" class="block px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg transition">تب پیشرفته و ویژگی‌ها</a>
+                        <a href="#users" class="block px-3 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg transition">مدیریت کاربران و انقضا</a>
+                        
+                        <p class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-3 pt-4 mb-2">ابزارهای توسعه‌دهنده</p>
+                        <a href="#encoded-worker-section" class="block px-3 py-2 text-slate-800 dark:text-indigo-400 font-bold hover:bg-slate-100 dark:hover:bg-slate-900/50 rounded-lg transition">دریافت کدهای ورکر (_worker.encode.js)</a>
+                    </nav>
+                </div>
+            </aside>
+
+            <main class="col-span-1 lg:col-span-9 space-y-16">
+
+                <section id="intro" class="space-y-4">
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">معرفی پروژه نهان</h2>
+                    <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed text-justify">
+                        پروژه <strong>نهان (Nahan)</strong> یک راهکار توزیع ترافیک و پروکسی معکوس بدون سرور (Serverless) در بستر کلودفلر است. در این ساختار بدون نیاز به تهیه سرور مجازی شخصی (VPS)، با استفاده از معماری لبه کلودفلر و پایگاه داده با کارایی بالای SQLite D1، ترافیک شبکه‌ی کاربران به صورتی همگام و ایمن در بستر اینترنت هدایت می‌شود.
+                    </p>
+                </section>
+
+                <section id="setup" class="space-y-12">
+                    <div class="border-r-2 border-indigo-500 pr-3">
+                        <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">مراحل نصب گام‌به‌گام مصور (Interactive Mockups)</h2>
+                    </div>
+
+                    <div class="space-y-10">
+                        <h3 class="text-base sm:text-lg font-extrabold text-indigo-600 dark:text-indigo-400 border-b border-slate-200 dark:border-slate-800 pb-2">بخش اول: ساخت پایگاه داده D1 کلودفلر</h3>
+                        
+                        <div class="space-y-4">
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white">گام اول: منوی ناوبری و رفتن به بخش دیتابیس D1</h4>
+                            <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
+                                در پنل کلودفلر، منوی کناری را باز کرده و ابتدا از شاخه <strong class="text-slate-800 dark:text-slate-200">Storage & databases</strong> گزینه‌ی <strong class="text-indigo-600 dark:text-indigo-400 font-bold">D1 SQLite Database</strong> را انتخاب کنید.
+                            </p>
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950 overflow-hidden text-xs max-w-md shadow-md transition-colors">
+                                <div class="bg-slate-100 dark:bg-[#111625] px-4 py-2 flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
+                                    <div class="flex gap-1.5"><span class="w-3 h-3 rounded-full bg-red-400"></span><span class="w-3 h-3 rounded-full bg-yellow-400"></span><span class="w-3 h-3 rounded-full bg-green-400"></span></div>
+                                    <span class="text-slate-400 text-[10px] font-mono">dash.cloudflare.com</span><span class="w-4 h-4"></span>
+                                </div>
+                                <div class="flex h-56 font-sans">
+                                    <div class="w-1/2 border-e border-slate-200 dark:border-slate-800 p-3 space-y-2 bg-slate-50 dark:bg-[#0c0f1a]">
+                                        <div class="text-[9px] uppercase tracking-wider font-bold text-slate-400">Build</div>
+                                        <div class="p-1.5 rounded-lg text-slate-400 flex justify-between items-center text-[11px]"><span>Compute</span><span>▼</span></div>
+                                        <div class="p-1.5 rounded-lg text-slate-400 flex justify-between items-center text-[11px] font-bold bg-indigo-500/5 text-indigo-500 dark:text-indigo-400 border border-indigo-500/25"><span>Storage & databases</span><span>▲</span></div>
+                                        <div class="ps-3 text-slate-700 dark:text-slate-300 font-bold text-[11px] flex items-center gap-1.5 relative">
+                                            <span class="text-orange-500">⚡</span> D1 SQLite Database
+                                            <span class="absolute -left-3 text-orange-500 text-sm animate-pulse">&larr;</span>
+                                        </div>
+                                    </div>
+                                    <div class="w-1/2 p-4 flex items-center justify-center text-slate-400 text-[11px] text-center">بخش پایگاه داده D1 کلودفلر</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white">گام دوم: ایجاد و ساخت دیتابیس نو</h4>
+                            <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
+                                در صفحه دیتابیس D1، بر روی دکمه‌ی اختصاصی <strong class="text-slate-800 dark:text-slate-200">Create Database</strong> کلیک نمایید.
+                            </p>
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950 overflow-hidden text-xs max-w-md shadow-md p-6 space-y-4 transition-colors">
+                                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                                    <h5 class="font-bold text-slate-800 dark:text-white text-sm">D1 Databases</h5>
+                                    <span class="text-slate-400">...</span>
+                                </div>
+                                <div class="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-xl p-8 flex flex-col items-center justify-center text-center space-y-3 relative">
+                                    <span class="text-2xl">📁</span>
+                                    <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition shadow-md shadow-indigo-600/10 flex items-center gap-1">
+                                        <span>+ Create Database</span>
+                                        <span class="text-orange-500 text-sm absolute -left-5 animate-bounce">&larr;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white">گام سوم: نام‌گذاری دیتابیس بر مبنای قوانین نام کاربری</h4>
+                            <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
+                                در فیلد Name نام دیتابیس خود را با حروف کوچک انگلیسی وارد کرده و بر روی کلید آبی رنگ <strong class="text-slate-800 dark:text-slate-200">Create</strong> کلیک کنید.
+                            </p>
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950 overflow-hidden text-xs max-w-md shadow-md p-6 space-y-4 transition-colors">
+                                <div>
+                                    <label class="block text-slate-500 font-bold mb-1.5">Database Name</label>
+                                    <input type="text" readonly value="iot_db" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3 py-2 rounded-lg font-mono text-slate-800 dark:text-slate-200 outline-none">
+                                </div>
+                                <div class="p-3.5 bg-red-500/5 border border-red-500/10 rounded-lg text-red-400 text-[11px] leading-relaxed">
+                                    Database name can only contain lowercase letters (a-z), numbers (0-9), underscores (_), and hyphens (-)
+                                </div>
+                                <div class="flex justify-end gap-2 border-t border-slate-100 dark:border-slate-800 pt-3 relative">
+                                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold">Create</button>
+                                    <span class="absolute right-12 -top-2 text-orange-500 text-sm animate-pulse">&darr;</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-10 pt-8">
+                        <h3 class="text-base sm:text-lg font-extrabold text-indigo-600 dark:text-indigo-400 border-b border-slate-200 dark:border-slate-800 pb-2">بخش دوم: ساخت نرم‌افزار لبه (Worker)</h3>
+
+                        <div class="space-y-4">
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white">گام اول: ساخت اپلیکیشن ورکر جدید</h4>
+                            <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
+                                از منوی کناری به بخش <strong class="text-slate-800 dark:text-slate-200">Compute -> Workers & Pages</strong> رفته و روی دکمه‌ی آبی رنگ <strong class="text-slate-800 dark:text-slate-200">Create application</strong> کلیک کنید.
+                            </p>
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950 overflow-hidden text-xs max-w-md shadow-md p-6 space-y-4 transition-colors">
+                                <div class="flex justify-between items-center pb-2 border-b border-slate-100 dark:border-slate-800">
+                                    <span class="font-bold text-slate-800 dark:text-white text-sm">Workers & Pages</span>
+                                    <button class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition shadow-md shadow-indigo-600/10 relative">
+                                        <span>Create application</span>
+                                        <span class="absolute -left-6 text-orange-500 text-sm animate-pulse">&larr;</span>
+                                    </button>
+                                </div>
+                                <p class="text-slate-400 text-[11px]">Build & deploy serverless functions, sites, and full-stack applications.</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white">گام دوم: انتخاب قالب پایه و دپلو اولیه</h4>
+                            <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
+                                بر روی دکمه‌ی قالب پیش‌فرض یعنی <strong class="text-slate-800 dark:text-slate-200">Start with Hello World!</strong> کلیک نمایید. در مرحله بعد نام ورکر را تعیین نموده و روی دکمه آبی رنگ <strong class="text-slate-800 dark:text-slate-200">Deploy</strong> کلیک کنید.
+                            </p>
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950 overflow-hidden text-xs max-w-md shadow-md p-6 space-y-4 transition-colors">
+                                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Ship something new</div>
+                                <div class="space-y-2 font-medium">
+                                    <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-400 flex items-center gap-2">🐈 Connect GitHub</div>
+                                    <div class="p-2.5 rounded-xl bg-indigo-500/5 border border-indigo-500/25 text-indigo-500 dark:text-indigo-400 flex items-center justify-between relative">
+                                        <span class="flex items-center gap-2">🟢 Start with Hello World!</span>
+                                        <span class="text-orange-500 text-sm absolute -left-5 animate-pulse">&larr;</span>
+                                    </div>
+                                    <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-400 flex items-center gap-2">⚙️ Select a template</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-10 pt-8">
+                        <h3 class="text-base sm:text-lg font-extrabold text-indigo-600 dark:text-indigo-400 border-b border-slate-200 dark:border-slate-800 pb-2">بخش سوم: اتصال (Bind) پایگاه داده به Worker</h3>
+
+                        <div class="space-y-4">
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white">گام اول: ورود به بخش تنظیمات Bindings ورکر</h4>
+                            <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
+                                پس از اتمام دپلو اولیه، در داشبورد ورکر خود وارد زبانه <strong class="text-slate-800 dark:text-slate-200">Settings</strong> و زیرمنوی <strong class="text-slate-800 dark:text-slate-200">Bindings</strong> شده، و بر روی کلید <strong class="text-slate-800 dark:text-slate-200">Add binding</strong> کلیک نمایید.
+                            </p>
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950 overflow-hidden text-xs max-w-md shadow-md p-6 space-y-4 transition-colors">
+                                <div class="flex space-x-reverse space-x-4 border-b border-slate-100 dark:border-slate-800 pb-2 text-[11px] font-bold text-slate-400">
+                                    <span>Overview</span><span>Metrics</span><span>Deployments</span>
+                                    <span class="text-indigo-500 dark:text-indigo-400 border-b-2 border-indigo-500 pb-2 flex items-center gap-1.5 relative">
+                                        Bindings
+                                        <span class="text-orange-500 text-sm absolute -top-4 animate-bounce">&darr;</span>
+                                    </span>
+                                </div>
+                                <div class="p-4 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl flex justify-center">
+                                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold">Add binding +</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <h4 class="text-sm font-bold text-slate-900 dark:text-white">گام دوم: تعریف متغیر IOT_DB و پیوند دیتابیس D1</h4>
+                            <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm leading-relaxed">
+                                از منوی کشویی نوع بایندینگ را بر روی گزینه <strong class="text-slate-800 dark:text-slate-200">D1 database</strong> قرار داده و فیلدها را مطابق ماکاپ زیر پر کرده و روی دکمه‌ی آبی رنگ <strong class="text-slate-800 dark:text-slate-200">Add Binding</strong> کلیک نمایید.
+                            </p>
+                            <div class="border border-slate-200 dark:border-slate-800 rounded-xl bg-white dark:bg-slate-950 overflow-hidden text-xs max-w-md shadow-md p-6 space-y-4 transition-colors">
+                                <h5 class="text-sm font-bold text-slate-800 dark:text-white mb-2">Add a D1 database binding</h5>
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-slate-500 font-bold mb-1">Variable Name <span class="text-slate-400 font-normal">(برای کپی روی فیلد زیر کلیک کنید)</span></label>
+                                        <span id="copy-iot-db" class="monospace-font text-indigo-600 dark:text-indigo-400 font-bold block bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 cursor-pointer px-3 py-1.5 rounded border border-slate-200 dark:border-slate-800 w-fit transition-colors" title="کلیک برای کپی">IOT_DB</span>
+                                        <p class="text-[11px] text-slate-400 mt-1">The name used to refer to this binding.</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-slate-500 font-bold mb-1">D1 database</label>
+                                        <div class="p-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 font-mono text-[11px] flex justify-between">
+                                            <span>iot_db</span>
+                                            <span>▼</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end gap-2 border-t border-slate-100 dark:border-slate-800 pt-3 relative">
+                                    <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg font-bold">Add Binding</button>
+                                    <span class="absolute right-12 -top-2 text-orange-500 text-sm animate-pulse">&darr;</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="first-login" class="space-y-4">
+                    <div class="border-r-2 border-indigo-500 pr-3">
+                        <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">ورود اولیه به سیستم و امنیت</h2>
+                    </div>
+                    <div class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm space-y-3 leading-relaxed text-justify">
+                        <p>پس از جایگذاری کدهای اصلی در ادیتور آنلاین و دپلو کردن، برای ورود به پنل باید عبارت زیر را به انتهای آدرس دامنه‌ی ورکر خود اضافه کنید:</p>
+                        <div class="p-3 bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 rounded-xl text-xs sm:text-sm monospace-font border border-slate-200 dark:border-slate-800 w-fit">
+                            /sync/dash
+                        </div>
+                        <p>
+                            کلمه عبور اولیه برای ورود به پنل، عبارت <code id="copy-admin" class="monospace-font text-pink-600 dark:text-pink-400 font-bold bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-800 transition-colors" title="کلیک برای کپی">admin</code> با حروف کوچک است که باید بلافاصله پس از اولین ورود موفقیت‌آمیز، جهت امنیت از تنظیمات پنل تغییر داده شود.
+                        </p>
+                    </div>
+                </section>
+
+                <section id="endpoints" class="space-y-4">
+                    <div class="border-r-2 border-indigo-500 pr-3">
+                        <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">تب نقاط اتصال و اشتراک هوشمند</h2>
+                    </div>
+                    <div class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm space-y-4 leading-relaxed text-justify">
+                        <p>سربرگ نقاط اتصال حاوی اطلاعات اتصالات و آدرس‌های ساب‌اسکریپشن هر مشترک است. در نسخه‌های جدیدتر، قالب‌های مجزای قدیمی آلفا، بتا و گاما حذف شده و همگی در یک لینک اشتراک همگانی واحد (Universal Sync URL) ادغام شده‌اند.</p>
+                        <div class="p-4 bg-indigo-500/5 border border-indigo-500/10 rounded-xl space-y-2">
+                            <strong class="text-slate-900 dark:text-indigo-300 block text-xs">🌍 قابلیت تشخیص هوشمند کلاینت:</strong>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">این لینک ساب هوشمند، کلاینت متصل شده (نظیر Clash، Sing-Box، Shadowrocket و غیره) را از روی امضای مرورگر تشخیص داده و کدهای متناسب با هسته آن نرم‌افزار را صادر می‌کند.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="advanced-settings" class="space-y-4">
+                    <div class="border-r-2 border-indigo-500 pr-3">
+                        <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">تنظیمات پیشرفته و قابلیت‌های کلاستر</h2>
+                    </div>
+                    <div class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm space-y-4 leading-relaxed text-justify">
+                        <p>در تب تنظیمات پیشرفته، متغیرهای متعددی جهت شخصی‌سازی رفتارهای لایه عبور شبکه طراحی شده است:</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1">
+                                <strong class="text-slate-900 dark:text-slate-200">نودهای موازی (Slave Nodes):</strong>
+                                <p class="text-slate-500">امکان تعریف دامنه‌ی سایر ورکرهای کمکی جهت همگام‌سازی و همسان‌سازی خودکار تنظیمات از نود مادر.</p>
+                            </div>
+                            <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1">
+                                <strong class="text-slate-900 dark:text-slate-200">استراتژی نام‌گذاری کانفیگ‌ها:</strong>
+                                <p class="text-slate-500">تغییر شیوه‌ی درج پورت، شناسه کاربر، نام دامنه یا پیشوندهای سفارشی در کلاینت نهایی.</p>
+                            </div>
+                            <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1">
+                                <strong class="text-slate-900 dark:text-slate-200">بهینه‌سازهای TCP Fast Open و ECH:</strong>
+                                <p class="text-slate-500">افزایش سرعت هندشیک اولیه و پنهان‌سازی اطلاعات SNI ارسالی به مقصد کلودفلر.</p>
+                            </div>
+                            <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1">
+                                <strong class="text-slate-900 dark:text-slate-200">یکپارچه‌سازی ربات تلگرام:</strong>
+                                <p class="text-slate-500">قابلیت اتصال ربات اختصاصی جهت کنترل مصرف، جستجوی کاربران و مانیتورینگ پنل.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="users" class="space-y-4">
+                    <div class="border-r-2 border-indigo-500 pr-3">
+                        <h2 class="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">مدیریت کاربران و قطع خودکار</h2>
+                    </div>
+                    <div class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm space-y-3 leading-relaxed text-justify">
+                        <p>یکی از کاربردی‌ترین قابلیت‌های ارائه‌شده در نسخه ۳.۰.۱، سیستم توقف اتوماتیک حساب‌های مصرفی و منقضی‌شده (Auto-Disable) و کنترل لحظه‌ای تعداد کانفیگ‌ها است.</p>
+                        <p>زمانی که ترافیک کلی مصرف‌شده یک کاربر از سقف مجاز فراتر رود یا انقضای زمانی وی به اتمام برسد، پایگاه داده SQLite D1 بلافاصله وضعیت آن کاربر را به صورت خودکار به حالت غیرفعال تغییر می‌دهد تا از بار اضافی ترافیکی ورکر جلوگیری شود.</p>
+                    </div>
+                </section>
+
+                <section id="encoded-worker-section" class="space-y-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-xl font-extrabold text-indigo-600 dark:text-indigo-400">کدهای سورس ورکر (_worker.encode.js)</h2>
+                            <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">آماده دپلو و پایدار</span>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-400 text-xs sm:text-sm">
+                            در نسخه ۳.۰.۱، کدهای ورکر به صورت رسمی و بهینه‌سازی‌شده در فایل <strong>_worker.encode.js</strong> کدگذاری شده‌اند تا بدون ریسک شناسایی توسط روبات‌های کلودفلر، به صورت مستقیم در ویرایشگر ورکر مستقر شوند. نیازی به انجام فرایند دستی مبهم‌سازی نیست.
+                        </p>
+                    </div>
+
+                    <div class="space-y-4 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
+                            <div class="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-300">
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                                <span>فایل آماده استقرار: <code class="font-mono text-indigo-600 dark:text-indigo-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">_worker.js</code></span>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button id="fetch-code-btn" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-semibold transition flex items-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                    دریافت مجدد از گیت‌هاب
+                                </button>
+                                <button id="copy-code-btn" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm shadow-emerald-600/20">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+                                    کپی تمام کدها
+                                </button>
+                                <button id="download-code-btn" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm shadow-indigo-600/20">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                    دانلود فایل _worker.js
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1.5">
+                            <textarea id="encoded-code-area" readonly placeholder="در حال بارگذاری کدهای سورس کدگذاری‌شده..." class="w-full h-96 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-4 rounded-xl font-mono text-xs text-slate-700 dark:text-slate-300 focus:border-indigo-500 outline-none resize-none transition-colors leading-relaxed"></textarea>
+                        </div>
+
+                        <div class="p-4 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 space-y-2 leading-relaxed">
+                            <h4 class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                                <span>💡 راهنمای استقرار در کلودفلر:</span>
+                            </h4>
+                            <p>تمام محتوای بالا را کپی کرده یا با دکمه دانلود دریافت نمایید. سپس در داشبورد Cloudflare به ورکر ساخته‌شده رفته، دکمه <strong>Edit Code</strong> را بزنید، محتوای قبلی فایل <code>_worker.js</code> را پاک کرده و کدهای این فایل را جایگزین نموده و دکمه <strong>Deploy</strong> را کلیک کنید.</p>
+                        </div>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-3 bg-emerald-600 text-white rounded-xl text-xs shadow-xl opacity-0 transition-opacity duration-300 pointer-events-none font-bold">
+        با موفقیت انجام شد!
+    </div>
+
+    <script>
+        (function() {
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+            const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    themeToggleLightIcon.classList.remove('hidden');
+                    themeToggleDarkIcon.classList.add('hidden');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    themeToggleLightIcon.classList.add('hidden');
+                    themeToggleDarkIcon.classList.remove('hidden');
+                }
+            };
+
+            const currentTheme = localStorage.getItem('color-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            applyTheme(currentTheme);
+
+            themeToggleBtn.addEventListener('click', () => {
+                const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+                localStorage.setItem('color-theme', newTheme);
+                applyTheme(newTheme);
+            });
+
+            const showToast = (msg) => {
+                const toast = document.getElementById('toast');
+                toast.innerText = msg;
+                toast.style.opacity = '1';
+                setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+            };
+
+            const copyToClipboard = (text) => {
+                navigator.clipboard.writeText(text).then(() => showToast("کپی شد: " + text)).catch(() => showToast("خطا در کپی!"));
+            };
+
+            document.getElementById('copy-iot-db').addEventListener('click', () => copyToClipboard('IOT_DB'));
+            document.getElementById('copy-admin').addEventListener('click', () => copyToClipboard('admin'));
+
+            const encodedCodeArea = document.getElementById('encoded-code-area');
+            const fetchCodeBtn = document.getElementById('fetch-code-btn');
+            const copyCodeBtn = document.getElementById('copy-code-btn');
+            const downloadCodeBtn = document.getElementById('download-code-btn');
+
+            const ENCODED_WORKER_URL = 'https://raw.githubusercontent.com/itsyebekhe/nahan/main/_worker.encode.js';
+
+            const loadEncodedWorker = async () => {
+                encodedCodeArea.value = "// در حال دریافت کدهای ورکر نسخه Encoded از گیت‌هاب...";
+                try {
+                    const res = await fetch(ENCODED_WORKER_URL);
+                    if (res.ok) {
+                        const code = await res.text();
+                        encodedCodeArea.value = code;
+                        showToast("کدهای _worker.encode.js با موفقیت لود شدند");
+                    } else {
+                        encodedCodeArea.value = "// دریافت از گیت‌هاب با خطا مواجه شد (" + res.status + "). لطفاً مجدداً امتحان کنید.";
+                    }
+                } catch (e) {
+                    encodedCodeArea.value = "// خطای شبکه در دریافت سورس از گیت‌هاب. لطفاً اتصال اینترنت خود را بررسی کنید.";
+                }
+            };
+
+            fetchCodeBtn.addEventListener('click', loadEncodedWorker);
+
+            copyCodeBtn.addEventListener('click', () => {
+                if (encodedCodeArea.value && !encodedCodeArea.value.startsWith("//")) {
+                    navigator.clipboard.writeText(encodedCodeArea.value).then(() => showToast("تمام کدهای _worker.encode.js کپی شدند!")).catch(() => showToast("خطا در کپی!"));
+                } else {
+                    showToast("کدی برای کپی وجود ندارد");
+                }
+            });
+
+            downloadCodeBtn.addEventListener('click', () => {
+                const text = encodedCodeArea.value;
+                if (!text || text.startsWith("//")) {
+                    showToast("ابتدا اجازه دهید کدها لود شوند");
+                    return;
+                }
+                const blob = new Blob([text], { type: 'text/javascript;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = '_worker.js';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast("فایل _worker.js دانلود شد");
+            });
+
+            // Initial load
+            loadEncodedWorker();
+        })();
+    </script>
+</body>
+</html>

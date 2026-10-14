@@ -1,0 +1,45 @@
+              <header class="h-16 md:h-20 shrink-0 flex items-center justify-between px-4 md:px-8 z-10 pt-[env(safe-area-inset-top,0px)] md:pt-0 bg-[var(--color-surface)]/95 backdrop-blur-xl border-b border-[var(--color-border)] shadow-sm">
+                  <div class="flex items-center gap-3 min-w-0">
+                      <button onclick="toggleMobileNavDrawer()" class="md:hidden p-2 rounded-xl text-slate-500 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Menu">
+                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                      </button>
+                      <div class="flex flex-col">
+                          <h2 id="view-title" class="text-base md:text-2xl font-black text-slate-800 dark:text-white truncate">Overview</h2>
+                          <div class="hidden sm:flex items-center gap-2 text-[11px] text-slate-400 font-medium">
+                              <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                              <span id="hdr-edge-status">Edge Gateway Active</span>
+                              <span class="text-slate-300 dark:text-slate-600">•</span>
+                              <span id="hdr-colo" class="font-mono text-slate-500 dark:text-slate-400">-</span>
+                          </div>
+                      </div>
+                  </div>
+                  <!-- Quick Actions in Header -->
+                  <div class="flex items-center gap-1.5 md:gap-3">
+                      <!-- Quick Jump to CF Optimizer -->
+                      <button onclick="switchTab('optimiser')" class="native-press hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-bold transition-all border border-emerald-500/20">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polygon></svg>
+                          <span data-i18n="tab_optimiser">CF Optimizer</span>
+                      </button>
+                      <!-- Quick Copy Sub Link -->
+                      <button onclick="copySubUrl()" id="hdr-copy-sub-btn" class="native-press inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold transition-all border border-primary/20" title="Copy Subscription URL">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+                          <span class="hidden md:inline" data-i18n="quick_copy_sub">Copy Sub</span>
+                      </button>
+                      <!-- Language Switcher -->
+                      <button onclick="toggleLang()" class="native-press px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold transition-colors" title="Toggle Language">
+                          <span id="lang-btn-label">FA</span>
+                      </button>
+                      <!-- Theme Switcher -->
+                      <button onclick="toggleTheme()" class="native-press p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors" title="Toggle Dark/Light Mode">
+                          <svg class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+                          <svg class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+                      </button>
+                      <!-- Disconnect / Logout -->
+                      <button onclick="logout()" class="native-press hidden sm:inline-flex items-center gap-1 p-2 md:px-3 md:py-1.5 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 text-xs font-bold transition-colors" title="Disconnect">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                          <span class="hidden lg:inline" data-i18n="logout">Exit</span>
+                      </button>
+                  </div>
+              </header>
+
+              <!-- Scrollable Content -->
